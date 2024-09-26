@@ -1,0 +1,9 @@
+country_region,country_region_cn,varietie,board_type,price_limit_pct,remark
+China,中国,stock,主板,10,
+China,中国,stock,创业板,20,
+China,中国,stock,科创板,20,
+China,中国,stock,新三板,10,
+China,中国,stock,北交所,30,
+China,中国,stock,ST,5,
+China,中国,stock,ETF,100,
+China,中国,stock,指数,100,
