@@ -40,16 +40,6 @@
 
 
 
-## Version Updates
-
-|          Version          |    Date    |                         New Features                          |                         Notes                          |
-| :-----------------------: | :--------: | :----------------------------------------------------------: | :----------------------------------------------------: |
-|  v0.1.0_20231227_alpha   | 2023-12-27 | 1. Single stock price prediction<br />2. Buy and sell points for a single stock<br />3. Training a single stock model takes 15 minutes |                                                        |
-|   v0.2.0_20240222_beta   | 2024-02-22 | 1. No longer training and predicting for a single stock, but using the entire market's daily data for training and prediction.<br/>2. Focus on optimizing stock recommendation logic, providing daily TOP5 recommendations, and performing multiple backtests to optimize the recommendation logic. |                                                        |
-|   v0.2.1_20240226_rc     | 2024-02-26 | 1. Integrate 15-minute interval data<br />2. Sort homepage by recommendations, optimize recommendation effect for usability<br />3. Remove data with zero trading volume and one-way limit up/down to reduce interference |                                                        |
-| v0.2.2_20240222_release  | 2024-03-26 | 1. Classify as main board, ChiNext, STAR Market, NEEQ, and Beijing Stock Exchange, limiting daily price fluctuations to corresponding ratios during model training and prediction stages | Modified logic for training, evaluation, and testing.  |
-|   v0.3.0_20240925_beta   | 2024-09-25 |    1. Add vectorized backtesting for fast batch historical data testing    |                                                        |
-
 ## Initialization
 
 * Python
@@ -88,6 +78,18 @@ $ python /lib/backtest/backtest_vectorbt.py
     --date_end 2023-01-01
     --full_code SH.510300
 ```
+
+
+
+## Version Updates
+
+|         Version         |    Date    |                         New Features                         |                         Notes                         |
+| :---------------------: | :--------: | :----------------------------------------------------------: | :---------------------------------------------------: |
+|  v0.1.0_20231227_alpha  | 2023-12-27 | 1. Single stock price prediction<br />2. Buy and sell points for a single stock<br />3. Training a single stock model takes 15 minutes |                                                       |
+|  v0.2.0_20240222_beta   | 2024-02-22 | 1. No longer training and predicting for a single stock, but using the entire market's daily data for training and prediction.<br/>2. Focus on optimizing stock recommendation logic, providing daily TOP5 recommendations, and performing multiple backtests to optimize the recommendation logic. |                                                       |
+|   v0.2.1_20240226_rc    | 2024-02-26 | 1. Integrate 15-minute interval data<br />2. Sort homepage by recommendations, optimize recommendation effect for usability<br />3. Remove data with zero trading volume and one-way limit up/down to reduce interference |                                                       |
+| v0.2.2_20240222_release | 2024-03-26 | 1. Classify as main board, ChiNext, STAR Market, NEEQ, and Beijing Stock Exchange, limiting daily price fluctuations to corresponding ratios during model training and prediction stages | Modified logic for training, evaluation, and testing. |
+|  v0.3.0_20240925_beta   | 2024-09-25 | 1. Add vectorized backtesting for fast batch historical data testing |                                                       |
 
 
 
