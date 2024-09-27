@@ -97,10 +97,11 @@ $ python /lib/backtest/backtest_vectorbt.py
     SH.512390  34.175000  11.935000        -22.24000
     mean       20.523068  23.008397          2.48533
     [676 rows x 3 columns]
-    
-    
-    # 不同macd参数横向对比，其中14-28双均线效果最好
-    
+
+
+​    
+​    # 不同macd参数横向对比，其中14-28双均线效果最好
+​    
     window
     14-28-10          23.478
     13-28-10          23.341
@@ -162,12 +163,15 @@ $ python /lib/backtest/backtest_vectorbt.py
 
 ## 流程图
 
-<img src="./image/流程图.png" alt="流程图" style="width:55%;"/>
 
-<img src="./image/数据库概览.png" alt="数据库概览" style="width:55%;"/>
-
-<img src="./image/数据获取流程.png" alt="数据获取流程" style="width:55%;"/>
-
+<div style="text-align: center;">  
+    <img src="./image/流程图.png" alt="流程图" style="width:55%;"/>
+	<p style="text-align: center;">整体流程图</p>  
+    <img src="./image/数据库概览.png" alt="数据库概览" style="width:55%;"/>
+    <p style="text-align: center;">数据库概览</p>  
+    <img src="./image/数据获取流程.png" alt="数据获取流程" style="width:55%;"/>
+    <p style="text-align: center;">数据获取流程</p>  
+</div>
 
 
 ## 参考
