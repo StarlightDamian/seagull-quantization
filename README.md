@@ -1,270 +1,154 @@
-# 海鸥量化
+[English Version](./README-EN.md)
 
-**成员**：俞老师
-
-**频率**：日频、15分钟频
-
-**语言**：Python
-
-<p align="left">
-    <img alt="ViewCount" valign="bottom" src="https://views.whatilearened.today/views/github/UFund-Me/Qbot.svg">
-    <a href='https://github.com/MShawon/github-clone-count-badge'><img alt='GitHub Clones' valign="bottom" src='https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/MShawon/cf89f3274d06170b8a4973039aa6220a/raw/clone.json&logo=github'></a>
-    <img alt="releases" valign="bottom" src="https://img.shields.io/github/downloads/UFund-Me/Qbot/total"> <code>since Sep 26</code>
+<p align="center">
+    <a href="https://pypi.org/project/vectorbt" alt="PyPi">
+        <img src="https://img.shields.io/pypi/v/vectorbt?color=blueviolet" />
+    </a>
+    <a href="https://github.com/polakowo/vectorbt/blob/master/LICENSE.md" alt="License">
+	<img src="https://img.shields.io/badge/license-Fair%20Code-yellow" />
+    </a>
+    <a href="https://codecov.io/gh/polakowo/vectorbt" alt="codecov">
+        <img src="https://codecov.io/gh/polakowo/vectorbt/branch/master/graph/badge.svg?token=YTLNAI7PS3" />
+    </a>
+    <a href="https://vectorbt.dev/" alt="Website">
+        <img src="https://img.shields.io/website?url=https://vectorbt.dev/" />
+    </a>
+    <a href="https://mybinder.org/v2/gh/polakowo/vectorbt/HEAD?urlpath=lab" alt="Binder">
+        <img src="https://img.shields.io/badge/launch-binder-d6604a" />
+    </a>
+    <a href="https://gitter.im/vectorbt/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge" alt="Join the chat at https://gitter.im/vectorbt/community">
+        <img src="https://badges.gitter.im/vectorbt.svg" />
+    </a>
+</p>
+<p align="center">
+    <a href="https://pypi.org/project/vectorbt" alt="Python Versions">
+        <img src="https://img.shields.io/pypi/pyversions/vectorbt.svg?logo=python&logoColor=white" />
+    </a>
 </p>
 
-[![CodeQL](https://github.com/UFund-Me/Qbot/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/UFund-Me/Qbot/actions/workflows/codeql-analysis.yml)
-[![AutoTrade](https://github.com/UFund-Me/Qbot/actions/workflows/auto-trade.yml/badge.svg)](https://github.com/UFund-Me/Qbot/actions/workflows/auto-trade.yml)
-[![Pylint](https://github.com/UFund-Me/Qbot/actions/workflows/pylint.yml/badge.svg)](https://github.com/UFund-Me/Qbot/actions/workflows/pylint.yml)
-[![Coverage](https://github.com/UFund-Me/Qbot/actions/workflows/coverage.yml/badge.svg)](https://github.com/UFund-Me/Qbot/actions/workflows/coverage.yml)
-<a href="https://github.com/UFund-Me/Qbot"><img src="https://img.shields.io/badge/Python-%203.8|%203.9-000000.svg?logo=Python&color=blue" alt="Python version"></a>
-<a href="https://ufund-me.github.io/Qbot/#/"><img src="https://readthedocs.org/projects/pyod/badge/?version=latest" alt="Documentation status"></a>
+
+
+## 海鸥量化
 
 ```
-![GitHub stars](https://img.shields.io/github/stars/username/repo?style=social)
+ seagull = 数据 + 策略 + 回测 + 可视化 + 自动化交易
+            |      |      |      |          |
+            |      |      |      |           \_ vnpy
+            |      |      |       \____________ seaborn
+            |      |       \___________________ vectorbt
+            |      \___________________________ qlib, lightgbm
+            \__________________________________ adata, baostock, efinance
 ```
 
-1. 
 
-```markdown
-![Static Badge](https://img.shields.io/badge/:badgeContent)
-```
 
-Execute
+## 版本更新
 
-（https://img.shields.io/badge/any_text-you_like_damian-blue）
-
-# 内测
-
-**内测周期**：2023/12/27  ——  2024/1/5
-
-**内测目的**：
-
-* 补全用户最需要的功能
-
-* 测试数据BUG
-
-* 
-
-# 版本更新记录
-
-|   项目    |  版本  |  上线日期  |                           新增功能                           |                备注                |
-| :-------: | :----: | :--------: | :----------------------------------------------------------: | :--------------------------------: |
-| fish-leap | v0.1.0 | 2023-12-27 | 1.单一股票进行股价预测<br />2.单一股票的买入点和卖出点<br />3.训练一只股票模型速度为15分钟 |                                    |
-| fish-leap | v0.2.0 | 2024-02-22 | 1.不再进行单一股票的训练与预测，而且把整个股市全天的数据为单位进行训练与预测。<br/>2.重点优化推票的逻辑，进行每日TOP5的推票，进行多次回测，优化推票逻辑。 |                                    |
-| fish-leap | v0.2.1 | 2024-02-26 | 1.接入15分钟线数据<br />2.首页按推荐排序，推荐效果优化至可用<br />3.去除成交额为0和一字涨跌停数据预测，减少干扰项 |                                    |
-| fish-leap | v0.2.2 | 2024-03-26 | 1.分类为主板、创业板、科创版、新三板、北交所，在模型训练和预测阶段限制每日涨跌幅为相应比例 | 修改了训练、评估、测试阶段的逻辑。 |
+|          版本           |  上线日期  |                           新增功能                           |                备注                |
+| :---------------------: | :--------: | :----------------------------------------------------------: | :--------------------------------: |
+|  v0.1.0_20231227_alpha  | 2023-12-27 | 1.单一股票进行股价预测<br />2.单一股票的买入点和卖出点<br />3.训练一只股票模型速度为15分钟 |                                    |
+|  v0.2.0_20240222_beta   | 2024-02-22 | 1.不再进行单一股票的训练与预测，而且把整个股市全天的数据为单位进行训练与预测。<br/>2.重点优化推票的逻辑，进行每日TOP5的推票，进行多次回测，优化推票逻辑。 |                                    |
+|   v0.2.1_20240226_rc    | 2024-02-26 | 1.接入15分钟线数据<br />2.首页按推荐排序，推荐效果优化至可用<br />3.去除成交额为0和一字涨跌停数据预测，减少干扰项 |                                    |
+| v0.2.2_20240222_release | 2024-03-26 | 1.分类为主板、创业板、科创版、新三板、北交所，在模型训练和预测阶段限制每日涨跌幅为相应比例 | 修改了训练、评估、测试阶段的逻辑。 |
+|  v0.3.0_20240925_beta   | 2024-09-25 |          1.新增向量化回测，快速大批量的回测历史数据          |                                    |
 
 
 
-# 开放
+## 初始化
 
-**开放时间**：2024/1/5  ——  2024/12/31
+* python
 
-**投放平台流量入口**：小红书 / 抖音 / 知乎
-
-**私域流量**：微信群
-
-
-
-# 私域流量
-
-| 手机号 | 平台 |        名称        | 价格 | 新增功能 | 备注 |
-| :----: | :--: | :----------------: | :--: | :------: | :--: |
-|        | 微信 | 俞老师量化(内测版) |      |          |      |
-|        | 微信 |   俞老师量化2024   |      |          |      |
-|        |      |                    |      |          |      |
-
-
-
-# 功能
-
-**功能**：
-
-	1.输入**股票代码**，返回对应的推荐买入/卖出价格
+* ```bash
+	$ git clone https://github.com/StarlightDamian/lr-camera-presets.git
+	```
 	
-	2. 每日晚上6点，提供全部A股下一个交易日的预估最高点、预估最低点。（日频）
+* 配置数据库信息
 
-**待开放功能**：
+  /seagull-quantization/conf/setting_global.txt
 
-1. 在适合买入/卖出的时候，提供**指定股票代码**的推荐买入价格/卖出价格
-2. 提供该策略的历史回测图
+  
 
-**待开发功能**：
+## 快速开始
 
-1. 在适合买入/卖出的时候，提供**全部股票代码**的推荐买入价格/卖出价格
+* 服务器提交，每日定时获取增量数据，输出至数据库
 
-2. 提供**全部股票代码**该策略的历史回测图
+```bash
+$ cd seagull-quantization
+$ nohup python main.py & > /log/main.log 2>&1 & 
+```
 
-3. 补充**宏观经济指标**作为特征
+* 输入**股票代码**，返回下一个交易日推荐买入 / 卖出价格
 
-4. **模糊搜索**
+```bash
+$ python main.py 
+```
 
-5. 日线输出推荐，修改为**15分钟线**推荐
+* 通过macd对多只回测历史数据
+```bash
+$ python /lib/backtest/backtest_vectorbt.py 
+	--strategy macd
+    --date_start 2019-01-01
+    --date_end 2023-01-01
+    --full_code SH.510300
+```
 
-6. **微信自动回复**
 
-7. 做这个拉群最终的目的是 你要根据板块的分析 或者当天的新闻筛选出最优化的几只
 
-8. 推票就是这样 是提供买哪只 而不是只单单的预测我自己要买的价格
+## 开发计划
 
-   
+| 优先级 |                             功能                             | 备注 |
+| :----: | :----------------------------------------------------------: | :--: |
+|   1    | 在适合买入/卖出的时候，提供**指定股票代码**的推荐买入价格/卖出价格 |      |
+|   1    |                    提供该策略的历史回测图                    |      |
+|   2    | 在适合买入/卖出的时候，提供**全部股票代码**的推荐买入价格/卖出价格 |      |
+|   2    |            提供**全部股票代码**该策略的历史回测图            |      |
+|   2    |                 补充**宏观经济指标**作为特征                 |      |
+|   3    |                         **模糊搜索**                         |      |
+|   3    |             日线输出推荐，修改为**15分钟线**推荐             |      |
+|   4    |                         微信自动回复                         |      |
+|   4    | 做这个拉群最终的目的是 你要根据板块的分析 或者当天的新闻筛选出最优化的几只 |      |
+|   4    | 推票就是这样 是提供买哪只 而不是只单单的预测我自己要买的价格 |      |
 
-# 优化方向
 
-1.时间维度
 
-2.推票纬度：我的推票逻辑是：
-不是那种一字板的，那种一般人也参与不了，而是预测价格差值最大的，普通人可以在低价买入，高价卖出的那种
+## 优化方向
 
-3.仓位
+|   类别   |       功能       | 备注 |
+| :------: | :--------------: | :--: |
+| 投资组合 |     投资组合     |      |
+| 宏观特征 |    季报、年报    |      |
+|   特征   |  持仓比例和成本  |      |
+|   特征   |   主力流入流出   |      |
+|   模型   |    用rank来做    |      |
+|   特征   |    小市值策略    |      |
+|   特征   | 仓位对策略的影响 |      |
+|          |                  |      |
 
-4.投资组合
 
-5.止盈止损
 
-6.最佳买卖时机
+## 流程图
 
-7.风险预测
+<img src="./image/流程图.png" alt="流程图" style="width:55%;"/>
 
-8.确定性程度
+<img src="./image/数据库概览.png" alt="数据库概览" style="width:55%;"/>
 
-9新股，用超过半年的数据进行训练
+<img src="./image/数据获取流程.png" alt="数据获取流程" style="width:55%;"/>
 
-10持仓比例和成本
 
-11.季报、年报
 
+## 参考
 
+【1】https://github.com/polakowo/vectorbt/tree/54cbe7c5bff332b510d1075c5cf11d006c1b1846
 
-1.通过后向前来评估，当前价格是否处于短期/中期/长期的价格硅地，低于95%的时候
+【2】https://efinance.readthedocs.io/en/latest/
 
-2.评估指标小于x，x=2y
 
-3.双曲线日线交叉少的
+```
+@article{seagull-quantization,
+  author = {Starlight Damian},
+  title = {seagull-quantization: Local quantitative research platform
+},
+  year = {2024}
+}
+```
 
-持仓分布
-
-主力流入流出
-
-板块分析，板块内流动性最好，市盈率最低，
-
-大基金持仓
-
-宏观数据
-
-美元降息、美元指数
-
-流动性
-
-用未来五天的数据进行验证，五日最低价
-
-大部分人亏钱的方向相反走
-
-对应的期货会先于股票有表现，如航运
-
-如果五分钟线的流动性有异常（k<0），果断清仓，等稳定上行再入手
-
-如工业富联和美股英伟达强关联
-
-先判断当前行情的类型，再根据行情是趋势/震荡配置对应的策略
-
-不同的资金规模会遇到不同的问题。小资金是手续费、大资金是流动性
-
-旋转180度看K线
-
-通过过去五天的线预测未来五天，而不是只用今日
-
-用rank来做
-
-用图来做
-
-用模型做投资组合rank
-
-涨的概率 * 涨的幅度>跌的概率 * 跌的幅度 * 2
-
-涨跌的稳不稳，还是突然暴涨
-
-涨的量能是否能跟上涨幅
-
-赛马轮动机制
-
-追新闻热点
-
-看看涨跌翻转，判别模型是否能区分
-
-比如小市值策略以前是α，现在是风险策略，训练时候要考虑权重衰减，或者冻结最后一层，用最近20天的数据去微调模型
-
-rank后是否能够以单笔直接预测收益率和胜率进行排序
-
-# 预警模块
-
-1.ST、退市
-
-2.季报
-
-3.收缩
-
-# 问题记录
-
-1.没有ETF板块数据
-
-2.有部分涨跌幅溢出（超出涨跌停）
-
-3.没有历史数据的次新股怎么进行两年前的回测
-
-4.最近上市的数据剔除，没有经过训练
-
-5.短线和长线的百分比收益是有区别的。
-
-6.上市后多久的数据才算正常数据能够用于训练和预测
-
-7.rear_close_pct_pred差距很大
-
-
-
-# 问题
-
-1.为什么交易是对称的，盈亏同源
-
-# 特征
-
-1.炸板（封板没封死）、封板
-
-2.MACD
-
-3.主力
-
-4.30日最低、90日最低、1年最低、2年最低、1年最高
-
-# 返回
-
-1. 推票
-2. 回测
-3. 买入/卖出价格
-
-
-
-
-# 评估指标
-
-1.收益/风险
-
-2.胜率/时间/成本
-
-# 权责
-
-**责任**：
-
-* 只提供数据分析
-* 不指导交易
-* 不承担责任
-
-
-
-# 长期主义
-
-1.盈亏比
-
-2.行业板块 & 龙头
-
-3.趋势开始
