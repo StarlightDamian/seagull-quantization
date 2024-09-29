@@ -1,4 +1,4 @@
-e# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Thu Sep 19 15:50:06 2024
 
@@ -106,7 +106,6 @@ portfolio = vbt.Portfolio.from_holding(
 returns_series = portfolio.returns()
 annual_returns = returns_series.resample('YE').apply(lambda x: (1 + x).prod() - 1)
 print(annual_returns)
-
 
 
 
