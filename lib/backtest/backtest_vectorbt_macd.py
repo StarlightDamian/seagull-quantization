@@ -82,6 +82,7 @@ class backtestVectorbtMacd(backtestVectorbt):
         
         
 if __name__ == '__main__':
+    # 策略参数
     strategy_params_list = [
         {'window_fast': window_fast,  # Fast EMA period, Default value 12
          'window_slow': window_slow,  # Slow EMA period, Default value 26
@@ -89,9 +90,10 @@ if __name__ == '__main__':
          }
         for window_fast, window_slow, window_signal in itertools.product(list(range(10, 15)),
                                                                          list(range(24,29)),
-                                                                         list(range(7,11))) if window_slow > window_fast
+                                                                          list(range(7,11))) if window_slow > window_fast
     ]
     backtest_vectorbt_macd = backtestVectorbtMacd(output='database',
+                                                  use_multiprocess=False,#True
                                                   output_trade_details=False,
                                                   strategy_params_batch_size=512,  # MemoryError
                                                   portfolio_params={'freq': 'd',

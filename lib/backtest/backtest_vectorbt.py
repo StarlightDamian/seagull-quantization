@@ -14,9 +14,10 @@ calmar_ratio = ann_return / max_dd
 from_signals
 
 目前问题：
-1，一个批次的横向比较数据，未初始价格被第一次有效价格补全，导致开始时间、结束时间为整个批次的开始/结束时间。因此建议用来筛选最佳策略，而不适合用来定量分析各只详细情况
+1，一个批次的横向比较数据，未初始价格被第一次有效价格补全，导致开始时间、结束时间为整个批次的开始 / 结束时间。因此建议用来筛选最佳策略，而不适合用来定量分析各只详细情况
 """
 import os
+import multiprocessing
 
 import vectorbt as vbt
 import pandas as pd
@@ -39,13 +40,15 @@ set_num_threads(num_threads)
 
 class backtestVectorbt:
     def __init__(self, output='database',
+                       use_multiprocess=False,
                        output_trade_details=False,
                        strategy_params_batch_size=20,
-                       portfolio_params=None,
+                       portfolio_params=None, # 投资组合参数
                        strategy_params_list=[{'window_fast': 10, 'window_slow': 50},
                                              {'window_fast': 10, 'window_slow': 40}],
                        ):
         self.output_database_filename = 'ads_info_incr_bacetest'
+        self.use_multiprocess=use_multiprocess
         self.strategy_params_df = self.strategy_params(strategy_params_list)
         self.strategy_params_batch_size = strategy_params_batch_size
         self.output = output
@@ -103,9 +106,9 @@ class backtestVectorbt:
                                           'Alpha': 'alpha',
                                           'Beta': 'beta'}
         self.portfolio_params = {'freq': 'd',
-                                     'fees': 0.001,
-                                     'slippage': 0.001,
-                                     'init_cash': 10000}
+                                 'fees': 0.001,
+                                 'slippage': 0.001,
+                                 'init_cash': 10000}
         if portfolio_params:
             self.portfolio_params.update(portfolio_params)
         
@@ -159,8 +162,8 @@ class backtestVectorbt:
         try:
             backtest_df = portfolio.stats(
                                     metrics=self.stats_metrics_dict.values(),  # ['sharpe_ratio', 'max_dd']
-                                    settings=dict(freq=freq), # freq in ['d','30d','365d']
-                                    year_freq='243 days',
+                                    settings=dict(freq=freq,
+                                                  year_freq='243 days'),  # freq in ['d','30d','365d']
                                     #group_by=False,
                                     agg_func=None)
             backtest_df = backtest_df.rename(columns=self.stats_metrics_dict)
@@ -374,35 +377,46 @@ class backtestVectorbt:
         strategy_params_df['primary_key'] = strategy_params_df['window_fast'].astype(str)+'-'+\
                                             strategy_params_df['window_slow'].astype(str)
         return strategy_params_df
-    
-    def backtest(self, data, comparison_experiment='base'):
-        if comparison_experiment == 'base':
-            portfolio = vbt.Portfolio.from_holding(close=data,
-                                                   # ffill_val_price=True,
-                                                   **self.portfolio_params)
-            self.output_backtest_metrics(portfolio, data, comparison_experiment)
-        else:
-            #if strategy_params is None:
-            #    strategy_params = {}
-            # 很多回测不能一次性回测大量数据的所有参数指标,把参数切块后每次回测部分
-            for _, strategy_params_df_1 in self.strategy_params_df.groupby(self.strategy_params_df.index // self.strategy_params_batch_size):
-                entries_exits_t = strategy_params_df_1.groupby('primary_key', as_index=False).apply(self.strategy, data)
-                entries_exits = entries_exits_t.T
-                entries_exits.columns = entries_exits.columns.droplevel(0)
-                entries = entries_exits['entries']
-                exits = entries_exits['exits']
-                
-                data_concat = pd.concat([data] * strategy_params_df_1.shape[0], axis=1)
-                logger.info(data_concat.shape) # (730, 217318) is ok
-                portfolio = vbt.Portfolio.from_signals(data_concat,
-                                                       entries.astype(np.bool_),
-                                                       exits.astype(np.bool_),
-                                                       # ffill_val_price=True,
-                                                       **self.portfolio_params,
-                                                       )
-                self.output_backtest_metrics(portfolio, data_concat, comparison_experiment)
+
+    def backtest_chunk(self, args):
+        data, strategy_params_df_chunk, comparison_experiment = args
+        entries_exits_t = strategy_params_df_chunk.groupby('primary_key', as_index=False).apply(self.strategy, data)
+        entries_exits = entries_exits_t.T
+        entries_exits.columns = entries_exits.columns.droplevel(0)
+        entries = entries_exits['entries']
+        exits = entries_exits['exits']
+        
+        data_concat = pd.concat([data] * strategy_params_df_chunk.shape[0], axis=1)
+        logger.info(f"Data shape: {data_concat.shape}")
+        portfolio = vbt.Portfolio.from_signals(data_concat,
+                                               entries.astype(np.bool_),
+                                               exits.astype(np.bool_),
+                                               **self.portfolio_params)
+        self.output_backtest_metrics(portfolio, data_concat, comparison_experiment)
         return portfolio
 
+    def backtest(self, data, comparison_experiment='base'):
+        if comparison_experiment == 'base':
+            portfolio = vbt.Portfolio.from_holding(close=data, **self.portfolio_params)
+            self.output_backtest_metrics(portfolio, data, comparison_experiment)
+        else:
+            chunks = [self.strategy_params_df.iloc[i:i+self.strategy_params_batch_size] 
+                      for i in range(0, len(self.strategy_params_df), self.strategy_params_batch_size)]
+            
+            args_list = [(data, chunk, comparison_experiment) for chunk in chunks]
+            
+            if self.use_multiprocess:
+                # 使用多进程
+                multiprocessing.set_start_method('spawn', force=True)
+                with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                    portfolios = pool.map(self.backtest_chunk, args_list)
+            else:
+                # 使用单进程
+                portfolios = [self.backtest_chunk(args) for args in args_list]
+            
+            # 如果需要，这里可以合并或进一步处理多个portfolio的结果
+            return portfolios
+        
     def ablation_experiment(self, symbols,
                             date_start='2021-01-01',
                             date_end='2022-01-01',
@@ -420,6 +434,7 @@ class backtestVectorbt:
     def plot(self, fig):
         fig.write_html("./html/portfolio_plot.html")
         
+
 if __name__ == '__main__':
     # symbols=["ADA-USD"]
     symbols=["ADA-USD", "ETH-USD"]  # "BTC-USD", 'AAPL', 'MSFT', 'GOOG'
@@ -436,5 +451,5 @@ if __name__ == '__main__':
                                                                    comparison_experiment='10-50 Dual Moving Average',  # 10/50双线
                                                                    )
 
-    
+
 # data = backtest_vectorbt.dataset(symbols=["ADA-USD", "ETH-USD"], date_start=date_start, date_end=date_end)

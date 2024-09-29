@@ -21,12 +21,6 @@ with base_connect_database.engine_conn('postgre') as conn:
 
 data.index = data.date
 #data.index = pd.to_datetime(data.index)
-# Create a complete date range
-# =============================================================================
-# full_date_range = pd.date_range(start=data.index.min(), end=data.index.max())
-# # Reindex the DataFrame to this full date range and fill missing values
-# data = data.reindex(full_date_range).fillna(method='ffill')
-# =============================================================================
 
 data = data[['SH.512690', 'SH.510300']]    #'SH.513360', 
 macd = vbt.MACD.run(
