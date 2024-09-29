@@ -93,7 +93,7 @@ if __name__ == '__main__':
                                                                           list(range(7,11))) if window_slow > window_fast
     ]
     backtest_vectorbt_macd = backtestVectorbtMacd(output='database',
-                                                  use_multiprocess=False,#True
+                                                  use_multiprocess=False,  # [False, True]
                                                   output_trade_details=False,
                                                   strategy_params_batch_size=512,  # MemoryError
                                                   portfolio_params={'freq': 'd',
