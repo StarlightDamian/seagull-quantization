@@ -18,11 +18,11 @@ import pandas as pd
 #import matplotlib.pyplot as plt
 
 from __init__ import path
-from base import base_log
-from backtest_vectorbt import backtestVectorbt
+from utils import log
+from vectorbt_base import backtestVectorbt
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = base_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = log.logger_config_local(f'{path}/log/{log_filename}.log')
 
 
 class backtestVectorbtMacd(backtestVectorbt):

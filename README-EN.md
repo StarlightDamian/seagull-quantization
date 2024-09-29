@@ -32,10 +32,10 @@
  seagull = Data + Strategy + Backtesting + Visualization + Automated Trading
             |         |           |              |                 |
             |         |           |              |                  \_ vnpy
-            |         |           |               \____________ seaborn
-            |         |            \___________________ vectorbt
-            |         \___________________________ qlib, lightgbm
-            \__________________________________ adata, baostock, efinance
+            |         |           |               \___________________ seaborn
+            |         |            \__________________________________ vectorbt
+            |         \_______________________________________________ qlib, lightgbm
+            \_________________________________________________________ adata, baostock, efinance
 ```
 
 
@@ -139,6 +139,8 @@ $ python /lib/backtest/backtest_vectorbt.py
 [1] https://github.com/polakowo/vectorbt/tree/54cbe7c5bff332b510d1075c5cf11d006c1b1846
 
 [2] https://efinance.readthedocs.io/en/latest/
+
+[3] https://github.com/microsoft/qlib
 
 ```
 @article{seagull-quantization,

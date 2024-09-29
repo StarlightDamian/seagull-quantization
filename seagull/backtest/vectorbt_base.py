@@ -28,11 +28,11 @@ from numba import config, set_num_threads
 
 
 from __init__ import path
-from base import base_log, base_utils, base_connect_database, base_data
+from utils import log, utils, connect_database, data
 from data.data_dwd import dwdData
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = base_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = log.logger_config_local(f'{path}/log/{log_filename}.log')
 
 num_threads = 8  # for example, if you have an 8-core CPU
 config.NUMBA_NUM_THREADS = num_threads
@@ -244,7 +244,7 @@ class backtestVectorbt:
                                                              'Direction': 'direction',
                                                              'Status': 'status',
                                                              'Position Id': 'position_id'})
-        base_data.output_database(trade_details_df, 'ads_info_incr_valid_trade_details')
+        data.output_database(trade_details_df, 'ads_info_incr_valid_trade_details')
         
     def dataset_demo(self, symbols,
                            date_start='2021-01-01',
@@ -277,14 +277,14 @@ class backtestVectorbt:
         return df
     
     def dataset(self, symbols, date_start='2020-01-01', date_end='2022-01-01', column_price='Close'):
-        with base_connect_database.engine_conn('postgre') as conn:
+        with connect_database.engine_conn('postgre') as conn:
             table_exists = pd.read_sql( """SELECT EXISTS (
                 SELECT FROM information_schema.tables 
                 WHERE table_schema = 'public' 
                 AND table_name = 'dwd_freq_full_portfolio_daily_backtest');""", con=conn.engine).iloc[0, 0]
         if not table_exists:
             self.dwd_freq_full_portfolio_daily_backtest()
-        with base_connect_database.engine_conn('postgre') as conn:
+        with connect_database.engine_conn('postgre') as conn:
             portfolio_daily_df = pd.read_sql(f"SELECT * FROM dwd_freq_full_portfolio_daily_backtest WHERE date BETWEEN '{date_start}' AND '{date_end}'", con=conn.engine)
             #portfolio_daily_df = pd.read_sql('dwd_freq_full_portfolio_daily_backtest', con=conn.engine)
         portfolio_daily_df.columns.name = 'symbol'

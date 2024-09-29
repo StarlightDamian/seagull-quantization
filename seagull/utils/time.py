@@ -4,7 +4,7 @@ Created on Wed Feb 16 10:17:01 2022
 
 @author: admin
 工具包，常用工具模块，文件管理、时间管理(base_utils)
-"""
+"""md5_str
 import random
 from datetime import datetime, timedelta
 from functools import wraps

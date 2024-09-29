@@ -191,6 +191,8 @@ $ python /lib/backtest/backtest_vectorbt.py
 
 【2】https://efinance.readthedocs.io/en/latest/
 
+【3】https://github.com/microsoft/qlib
+
 
 ```
 @article{seagull-quantization,

@@ -26,6 +26,9 @@ share/python-wheels/
 MANIFEST
 bak/
 backtest_vectorbt_example
+other/
+env/
+_*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
