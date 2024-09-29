@@ -45,7 +45,7 @@
 * Python
 
 * ```bash
-  $ git clone https://github.com/StarlightDamian/lr-camera-presets.git
+  $ git clone https://github.com/StarlightDamian/seagull-quantization.git
 ```
 
 * Configure database information
