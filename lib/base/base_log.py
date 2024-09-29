@@ -13,14 +13,6 @@ critical: 最严重的错误，可能导致程序崩溃或终止
 """
 from loguru import logger
 
-# 配置控制台输出
-# logger.add("app.log", format="{time} {level} {message} {file}:{line}", level="DEBUG")
-logger.add(
-    sink=lambda msg: print(msg, end=''),  # 控制台输出
-    format="{time:YY-MM-DD HH:mm:ss} | {level} | {message}",
-    level="INFO"
-)
-
 def logger_config_local(file_path, level="DEBUG", rotation="10 MB", retention="10 days"):
     """
     添加文件日志输出。
@@ -39,4 +31,11 @@ def logger_config_local(file_path, level="DEBUG", rotation="10 MB", retention="1
     return logger
 
 def logger_config_base():
+    # 配置控制台输出
+    # logger.add("app.log", format="{time} {level} {message} {file}:{line}", level="DEBUG")
+    logger.add(
+        sink=lambda msg: print(msg, end=''),  # 控制台输出
+        format="{time:YY-MM-DD HH:mm:ss} | {level} | {message}",
+        level="INFO"
+    )
     return logger
