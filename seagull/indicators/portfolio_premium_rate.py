@@ -4,6 +4,9 @@ Created on Tue Oct  8 23:24:14 2024
 
 @author: awei
 ETF溢价率(portfolio_premium_rate)
+
+IOPV：基金的净值，基金的真实价值，15秒就刷新一次.当ETF的市场价格和IOPV出现较大偏差时，可能会产生套利机会。
+NAV：ETF基金每日收盘后的净值
 """
 
 import pandas as pd
