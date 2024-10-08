@@ -8,7 +8,6 @@ Created on Thu Aug 10 15:01:44 2023
 2获取股票对应的板块
 3获取证券基本资料
 4获取证券代码
-
 """
 import argparse
 from datetime import datetime, timedelta
@@ -20,18 +19,18 @@ import baostock as bs
 import pandas as pd
 
 from __init__ import path
-from data import data_loading
-from base import base_connect_database, base_log
+from data import (data_loading,
+                  ods_part_baostock_index_api)
+from utils import utils_database, utils_log, utils_data
 
 
-logger = base_log.logger_config_local(f'{path}/log/data_ods.log')
+logger = utils_log.logger_config_local(f'{path}/log/data_ods.log')
 
 
 class odsData():
     def __init__(self):
-        self.conn = base_connect_database.engine_conn('postgre')
-        
-
+        #self.conn = utils_database.engine_conn('postgre')
+        ods_full_baostock_index_api = ods_part_baostock_index_api.odsFullBaostockIndexApi()
         
     def ods_api_info_baostock(self, data_type):
         """
@@ -53,43 +52,37 @@ class odsData():
             filename = 'ods_api_info_baostock_allstocks_basic'
             
         elif data_type == '证券代码':
-            date = (datetime.now()+timedelta(days=-3)).strftime('%F')  # 只有交易日才会更新，取当天的不一定及时更新，先尝试前一天
-            rs = bs.query_all_stock(date)
+            #date = (datetime.now()+timedelta(days=-3)).strftime('%F')  # 只有交易日才会更新，取当天的不一定及时更新，先尝试前一天
+            #rs = bs.query_all_stock(date)
             filename = 'ods_api_info_baostock_asset_base'
         
-        elif data_type == '上证50':  # 上证50成分股
+        elif data_type == '成分股':
             rs = bs.query_sz50_stocks()
             filename = 'ods_api_baostock_sz50_stocks'
             
-        elif data_type == '沪深300':  # 沪深300成分股
-            rs = bs.query_hs300_stocks()
-            filename = 'ods_api_baostock_hs300_stocks'
-            
-        elif data_type == '中证500':  # 中证500成分股
-            rs = bs.query_zz500_stocks()
-            filename = 'ods_api_baostock_zz500_stocks'
             
         result = data_loading.re_get_row_data(rs)
-        self.output_database(result, filename)
+        utils_data.output_database(result, filename)
         
-    def ods_api_info_adata_etf_code(self, data_type):
+    def ods_adata_portfolio_base(self, data_type):
         if data_type == 'ETF代码':
             result = adata.fund.info.all_etf_exchange_traded_info()
-            filename = 'ods_api_info_adata_etf_code'
+            filename = 'ods_info_nrtd_adata_portfolio_base'
             dtype={'primary_key': String,
-                  'date': String,}
-        self.output_database(result, filename, dtype)
+                   'date': String,}
+        utils_data.output_database(result, filename, dtype)
     
-    def ods_api_freq_efinance_etf_daily(self, data_type):
-        etf_code_df = pd.read_sql('ods_api_info_adata_etf_code', con=self.conn.engine)
+    def ods_efinance_portfolio(self, data_type):
+        with utils_database.engine_conn('postgre') as conn:
+            etf_code_df = pd.read_sql('ods_info_nrtd_adata_portfolio_base', con=conn.engine)
         if data_type == 'ETF日频':
             etf_dict = ef.stock.get_quote_history(etf_code_df.fund_code)
-            filename = 'ods_api_freq_efinance_etf_daily'
+            filename = 'ods_freq_incr_efinance_portfolio_daily'
         elif data_type == 'ETF五分钟频':
             etf_dict = ef.stock.get_quote_history(etf_code_df.fund_code, klt=5)
-            filename = 'ods_api_freq_efinance_etf_5min'
+            filename = 'ods_freq_incr_efinance_portfolio_minute'
         result = pd.concat({k: pd.DataFrame(v) for k, v in etf_dict.items()})
-        self.output_database(result, filename)
+        utils_data.output_database(result, filename)
         
         
 if __name__ == '__main__':

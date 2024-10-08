@@ -3,60 +3,14 @@
 Created on Wed Feb 16 10:17:01 2022
 
 @author: admin
-工具包，常用工具模块，文件管理、时间管理(base_utils)
-"""md5_str
+时间(time)
+"""
 import random
-from datetime import datetime, timedelta
-from functools import wraps
 import string
+from datetime import datetime, timedelta
+
 
 import pandas as pd
-
-#from __init__ import path
-
-
-def run_time_decorator(func):
-    """
-    装饰器：计时器
-    """
-    @wraps(func)
-    def wrapper(*args, **kw):
-        time_stamp_start = datetime.timestamp(datetime.now())
-        result = func(*args, **kw)
-        time_stamp_end = datetime.timestamp(datetime.now())
-        time_difference = '%.4f' % (time_stamp_end - time_stamp_start)
-        print(f"文件路径： {__file__}\n函数名称： {func.__name__}\n运行耗时： {time_difference}秒\n------------------")
-        return result
-    return wrapper
-
-# def run_time_decorator(func):
-#     @wraps(func)
-#     def wrapper(para, *args, **kw):
-#         time_stamp_start = datetime.timestamp(datetime.now())
-#         func(para, *args, **kw)
-#         time_stamp_end = datetime.timestamp(datetime.now())
-#         time_difference = '%.4f'%(time_stamp_end - time_stamp_start)
-#         print(f"运行耗时：{time_difference}秒")
-#         return func(para, time_difference)
-#     return wrapper
-
-
-def get_all_index_from_list(lst=None, item=''):
-    """
-    功能：列表中子串的所有索引
-    """
-    return [index for (index, value) in enumerate(lst) if value == item]
-
-
-def get_all_index_from_str(sentence, word):
-    """
-    功能：列表中子串的所有索引
-    """
-    try:
-        return [n for n in range(len(sentence)) if sentence.find(word, n) == n]
-    except e:
-        print(str(e), sentence, word, 'utils_get_all_index_from_str异常')
-
 
 def __gen_dates(b_date, days):
     day = timedelta(days=1)
@@ -72,7 +26,6 @@ def __date_list(start, end):
     for day in __gen_dates(start_datetime, (end_datetime - start_datetime)):
         data.append(day)
     return data
-
 
 def date_binary_list(start_date, end_date):
     date_datetime = __date_list(start_date, end_date)
@@ -111,22 +64,6 @@ def run_many_days(date_start, date_end, func):
     return data_many_days_list
 
 
-def find_file(path):
-    """
-    功能：返回地址下的所有文件
-    输出：文件名称列表
-    """
-    for root, dirs, files in os.walk(path):
-        return files
-
-
-def lm_get_cmd_result(cmd):
-    """
-    功能：获取shell语句的返回值
-    输入：shell语句
-    """
-    content = os.popen(cmd).read()
-    return content
 
 
 def date_suffix(date_type='today'):
@@ -157,152 +94,21 @@ def today_date_range(date_type='today'):
         return [yesterday, today]
 
 
-def build_random_str(len_str=6):
-    """
-    功能：生成随机字符串，kafka的KafkaConsumer.group_id属性需要每次不一样
-    输入：len_str：字符串的长度
-    """
-    char_pool = 'qwertyuiopasdfghjklzxcvbnm123456789'  # 字符池
-    char_list = [random.choice(char_pool) for idx in list(range(len_str))]
-    return ''.join(char_list)
 
 
-def build_index_pair_2(input_list):
-    """
-    功能：生成索引对
-    
-    输入示例：[6, 12, 19]
-    输出示例：[[0,6],[6,12],[12,19],[19,10000]]
-    
-    输入示例2：[]
-    输出示例2：[[0,10000]]
-    """
-    input_list = [0]+input_list+[10000]
-    output_list = []
-    for idx in list(range(len(input_list)-1)):
-        output_list.append([input_list[idx], input_list[idx+1]])
-    return output_list
 
 
-def accumulator(input_list):
-    """
-    功能:累加器
-    输入示例：[2, 5, 6]
-    输出示例：[0, 2, 7]
-    """
-    output_list = [0]
-    add = 0
-    for idx, num in enumerate(input_list[:-1]):
-        add += num
-        output_list.append(add)
-    return output_list
-
-def accumulator_int_and_list(input_list, base_number):
-    """
-    功能:累加器
-    输入示例：[2, 5, 6], 5
-    输出示例：[5, 7, 10]
-    """
-    output_list = []
-    for num in input_list:
-        output_list.append(base_number)
-        base_number += num
-    return output_list
-
-def accumulator_index_list(index_list, len_list):
-    """
-    功能:长索引累加器
-    输入示例：index_list=[0,1,2,0,1,2],
-            len_list=[2, 5, 6,1,5,6]
-    输出示例：[0, 2, 7,0,1,6]
-    """
-    output_list, add_list = [], []
-    for idx, index in enumerate(index_list):
-        if (index == 0) and (idx != 0):
-            output_list += accumulator(add_list)
-            add_list = []
-        add_list.append(len_list[idx])
-    output_list += accumulator(add_list)
-    return output_list
 
 
-def fake_dtype(ws_pos, columns):
-    """
-    功能:伪类型转换
-    """
-    ws_pos = ws_pos.fillna('')
-    for column in columns:
-        ws_pos[column] = [x if '.' not in x else x[:-2] for x in ws_pos[column].tolist()]
-    return ws_pos
 
 
-def is_contain_chinese(check_str):
-    """
-    功能:判断字符串中是否有中文
-    """
-    for ch in check_str:
-        if u'\u4e00' <= ch <= u'\u9fff':
-            return True
-    return False
 
 
-def get_pinyin_initial():
-    """
-    功能：把一列中文转化为拼音
-    """
-    import pinyin
-    import pandas as pd
-    data = pd.read_csv('D:/semantic_analysis_police_information_v1.3.0/data/transformation_pinyin.csv', encoding='gb18030')
-    field_list = data.field.tolist()
-    pingyin_list = [pinyin.get_initial(x, delimiter="") for x in field_list]
-    pingyin_list = [x.replace('/', '_') if '/' in x else x for x in pingyin_list]
-    data['pinyin'] = pingyin_list
-    data.to_csv('D:/semantic_analysis_police_information_v1.3.0/data/output_transformation_pinyin.csv')
 
 
-def parenthesis_match(entity_one_polic):
-    """
-    功能:给左括号配对右括号，考虑各种溢出问题
-    输出示例：[(22, 42),
-             (139, 162),
-             (449, 568),
-             (900, 10000)]
-    """
-    max_index = 10000
-    left_index_list = entity_one_polic[entity_one_polic.word == '('].index_start.tolist()
-    right_index_list = entity_one_polic[entity_one_polic.word == ')'].index_start.tolist() + [max_index]
-    len_right_index_list = len(right_index_list)
-    output_pair_list = []
-    
-    for left_index in left_index_list:
-        right_index = len_right_index_list - sum([int(x) > int(left_index) for x in right_index_list])
-        output_pair_list.append((left_index, right_index_list[right_index]))
-    return output_pair_list
 
 
-import hashlib
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
 
-
-def md5_file(data):
-    file_md5 = hashlib.md5(data).hexdigest()
-    return file_md5
-
-
-def md5_str(content):
-    str_ma5 = hashlib.md5(content.encode(encoding='utf-8')).hexdigest()
-    return str_ma5
-
-def generate_random_string(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(length))
-
-def generate_random_md5():
-    #生成随机md5
-    random_string = generate_random_string(16)  # 16字节随机字符串
-    md5_hash = hashlib.md5(random_string.encode()).hexdigest()
-    return md5_hash
 # =============================================================================
 # import hashlib
 # texts=['织里南海路与北盛唐路交叉口，两辆轿车相撞，无人员受伤','志称其的女儿（童亚娟 15215876411 ）情绪不稳定，需']
@@ -321,141 +127,6 @@ def find_specified_str(str_1, text):
 def output_excel(forecast_original, file_path):
     with pd.ExcelWriter(file_path) as writer:
         forecast_original.to_excel(writer, sheet_name='预测表', index=False)
-
-
-class NumberStrToInt:
-    def __init__(self):
-        self.number_dict = {'一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
-                            '十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000, '点': '.'}
-        self.number_list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
-        self.number_int_dict = {x[1]:x[0] for x in self.number_dict.items()}
-    
-    def transformation_int_to_str(self, int_add):
-        number_str = ''
-        # print(f'int_add:{int_add}')
-        int_add = float(int_add)
-        
-        flag_int = int_add//100000000
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + '亿'
-            int_add -= flag_int*100000000
-            
-        flag_int = int_add//10000000
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + '千万'
-            int_add -= flag_int*10000000
-        
-        flag_int = int_add//1000000
-        if flag_int >= 1:
-            if '万'in number_str:
-                number_str = number_str.replace('万', '')
-            number_str += self.number_int_dict.get(flag_int) + '百万'
-            int_add -= flag_int*1000000
-        
-        flag_int = int_add//100000
-        if flag_int >= 1:
-            if '万' in number_str:
-                number_str = number_str.replace('万', '')
-            number_str += self.number_int_dict.get(flag_int) + '十万'
-            int_add -= flag_int*100000
-            
-        flag_int = int_add//10000
-        if flag_int >= 1:
-            if '万' in number_str:
-                number_str = number_str.replace('万', '')
-            number_str += self.number_int_dict.get(flag_int) + '万'
-            int_add -= flag_int*10000
-        
-        flag_int = int_add//1000
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + '千'
-            int_add -= flag_int*1000
-        
-        flag_int = int_add//100
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + '百'
-            int_add -= flag_int*100
-        
-        flag_int = int_add//10
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + '十'
-            int_add -= flag_int*10
-            
-        flag_int = int_add//1
-        if flag_int >= 1:
-            number_str += self.number_int_dict.get(flag_int) + ''
-            int_add -= flag_int*1
-        return number_str
-        
-    def number_int_to_str(self, text):
-        output_str_money = ''
-        int_add = ''
-        for word in text+'元':
-            if word in self.number_list:
-                int_add += word
-            elif (word not in self.number_list) and (int_add != ''):
-                number_str = self.transformation_int_to_str(int_add)
-                output_str_money += number_str+word
-                int_add = ''
-            elif (word not in self.number_list) and (int_add == ''):
-                output_str_money += word
-        # print(output_str_money)
-        return output_str_money
-    
-    def superposition_number_detection(self, money_int):
-        """
-        功能：叠加树检测
-        示例数据：texts=['四五个人','两三个人']
-        """
-        if str(money_int) in self.number_list:
-            return True
-        else:
-            return False
-        
-    def get_one_number(self, text):
-        try:
-            # print('text',text)
-            if text == '':
-                return ''
-            out_money = ''
-            money_int_prev = money_type_prev = None
-            text = self.number_int_to_str(text)
-            superposition_number_prev_flag = False  # 用于标记叠加数
-            for idx, word in enumerate(text):
-                money_int = self.number_dict.get(word)
-                # print(money_int)
-                if money_int:
-                    superposition_number_now_flag = self.superposition_number_detection(money_int)
-                    if not(superposition_number_prev_flag & superposition_number_now_flag):
-                        money_type = money_int // 10
-                        money_type_bool = money_type >= 1
-                        if money_int_prev is None:
-                            out_money += str(money_int)
-                        elif (money_int_prev != money_int) and (money_type_bool is False):
-                            out_money += f'+{money_int}'
-                        elif money_type_bool is True:
-                            if (money_type_prev is None) or (money_type < money_type_prev):
-                                out_money += f'*{money_int}'
-                            elif money_type > money_type_prev:
-                                out_money = f'({out_money})*{money_int}'
-                            money_type_prev = money_type
-                        money_int_prev = money_int
-                        superposition_number_prev_flag = superposition_number_now_flag
-                    else:
-                        superposition_number_prev_flag = False
-                # print(out_money)
-            return eval(out_money)
-        except:
-            return False
-        return eval(out_money)
-    
-    def get_n_number(self, texts):
-        return [self.get_one_number(text) for text in texts]
-
-    @classmethod
-    def classmethod_n_number(cls, texts):
-        return cls().get_n_number(texts)
-
 
 def dict_inversion(input_dict):
     """
@@ -566,36 +237,6 @@ def round_floats(value):
     if isinstance(value, float):
         return round(value, 2)
     return value
- # def gettime(self, date_str, result_len):
- #        """
- #        获取时间gettime
- #        :param date_str:
- #        :param result_len:
- #        :return:time
- #        """
- #        try:
- #            date = date_str.replace("\\", "")#替换转移字符
- #            date = self.regNum.sub(" ", date_str)
- #            date_list = date.split(" ")
- #            data_list_len = len(date_list)
- #            if (data_list_len == 1):
- #                date = date_list[0]
- #            elif (len(date_list[0]) == 4):
- #                date = date_list[0]
- #                for i in range(1,data_list_len):
- #                    if (len(date_list[i]) == 1):
- #                        date += '0' + date_list[i]
- #                    elif (len(date_list[i]) == 2):
- #                        date += date_list[i]
- #            date = date[0:14]
- #            if (not self.checktime(date)):
- #                return None
- #            date_len = len(date)
- #            if(date_len < result_len):
- #                date += (int(result_len) - date_len) * "0"
- #            return date[0:result_len]
- #        except Exception:
- #            pass
 
 # isinstance(5,int)
 # =============================================================================
@@ -656,10 +297,4 @@ def round_floats(value):
 if __name__ == '__main__':
     # print(get_data_binary_list('2022-04-03', '2022-04-07'))
     # print(get_data_binary_replace_list('20220403', '20220407'))
-    texts = ['160万元', '三十五万', '五万三十', '三百万', '一万三千', '三千两百万五千元', '三千零五万', '五万三千', '三百三十五', '三十五', '三千五十']
-    texts = ['赌资上千', '两三个人', '一万三千']
-    number_str_to_int = NumberStrToInt()
-    number_int_list = number_str_to_int.get_n_number(texts)
-    print(number_int_list)
-
-    print(NumberStrToInt().classmethod_n_number(texts))
+    ...

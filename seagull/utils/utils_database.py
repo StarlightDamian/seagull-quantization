@@ -22,7 +22,7 @@ import logger
 import pandas as pd
 
 from __init__ import path
-from base import base_arguments as arg
+from utils import utils_arguments as arg
 
 
 class DatabaseConnection:

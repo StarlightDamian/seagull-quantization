@@ -3,11 +3,11 @@
 Created on Sun Sep 29 16:23:41 2024
 
 @author: awei
-字符处理(character)
+字符处理(utils_character)
 """
 import hashlib
 import random
-
+import string
 
 def md5_file(data):
     file_md5 = hashlib.md5(data).hexdigest()
@@ -23,21 +23,9 @@ def get_all_index_from_str(sentence, word):
     """
     try:
         return [n for n in range(len(sentence)) if sentence.find(word, n) == n]
-    except e:
+    except Exception as e:
         print(str(e), sentence, word, 'utils_get_all_index_from_str异常')
         
-def accumulator_int_and_list(input_list, base_number):
-    """
-    功能:累加器
-    输入示例：[2, 5, 6], 5
-    输出示例：[5, 7, 10]
-    """
-    output_list = []
-    for num in input_list:
-        output_list.append(base_number)
-        base_number += num
-    return output_list
-
 def get_all_index_from_list(lst=None, item=''):
     """
     功能：列表中子串的所有索引
@@ -104,10 +92,6 @@ def accumulator(input_list):
         output_list.append(add)
     return output_list
 
-def generate_random_string(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(length))
-
 def parenthesis_match(entity_one_polic):
     """
     功能:给左括号配对右括号，考虑各种溢出问题
@@ -135,3 +119,57 @@ def is_contain_chinese(check_str):
         if u'\u4e00' <= ch <= u'\u9fff':
             return True
     return False
+
+def generate_random_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters_and_digits) for i in range(length))
+
+def accumulator_int_and_list(input_list, base_number):
+    """
+    功能:累加器
+    输入示例：[2, 5, 6], 5
+    输出示例：[5, 7, 10]
+    """
+    output_list = []
+    for num in input_list:
+        output_list.append(base_number)
+        base_number += num
+    return output_list
+
+def find_specified_str(str_1, text):
+    str_list = str_1.split('|')
+    str_list = [x for x in str_list if x in text]
+    return str_list
+
+def dict_inversion(input_dict):
+    """
+    功能：字典反转
+    输入：input_dict = {'a':1, 'b':2, 'c':1}
+    输出：output_dict = {1:['a','c'],2:['b']}
+    """
+    from collections import defaultdict
+    reversed_dict = defaultdict(list)
+    for key, value in input_dict.items():
+        reversed_dict[value].append(key)
+    return reversed_dict
+
+def stackfind_left_right_index(sentence, char_left, char_right):
+    stack = []
+    stack_dict = {}
+    for idx, char in enumerate(sentence):
+        if char == char_left:
+            stack.append(idx)
+        elif char == char_right:
+            index_left = stack.pop()
+            stack_dict[index_left] = idx  # 栈字典的键值对为{左：右}
+    # print(self.stack_dict)
+    index_pair_sorted = sorted([x for x in stack_dict.items()])  # 有序索引对
+    index_left_list, index_right_list = [x for x in zip(*index_pair_sorted)]
+    return index_left_list, index_right_list
+
+def round_floats(value):
+    if isinstance(value, float):
+        return round(value, 2)
+    return value
+
+# isinstance(5,int)
