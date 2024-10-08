@@ -28,6 +28,8 @@ For US Stock:
 3.full_code: A combination of market_code and asset_code (e.g., 'SH.510300' or 'NYSE.AAPL')
 4.asset_type: Specifies the type of asset (e.g., 'STOCK', 'ETF', 'BOND', 'FUTURE', 'REIT')
 5.asset_name: The full name of the asset
+
+ETF,创业板可以突破10%的限制和地域限制
 """
 import argparse
 from loguru import logger

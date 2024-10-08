@@ -44,9 +44,9 @@
 
 * Python
 
-* ```bash
+ ```bash
   $ git clone https://github.com/StarlightDamian/seagull-quantization.git
-```
+ ```
 
 * Configure database information
 
@@ -54,14 +54,14 @@
 
 
 
-## Quick Start
+## Quick Start(TL;DR)
 
 * Server submission, daily scheduled incremental data retrieval, output to database
 
 ```bash
 $ cd seagull-quantization
 $ nohup python main.py & > /log/main.log 2>&1 & 
-```
+ ```
 
 * Input **stock code**, return recommended buy/sell price for the next trading day
 
@@ -93,7 +93,7 @@ $ python /lib/backtest/backtest_vectorbt.py
 
 
 
-## Development Plan
+## Development Plan(TODO)
 
 | Priority |                           Feature                            | Notes |
 | :------: | :----------------------------------------------------------: | :---: |

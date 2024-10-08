@@ -11,7 +11,7 @@ import pandas as pd
 from __init__ import path
 from base import base_connect_database
 from application import application_daily, application_rl_real
-from test_ import test_board
+from tests import test_board
 
 class dailyPipline:
     def __init__(self):
@@ -30,9 +30,11 @@ class dailyPipline:
         prediction_df = board.board_pipline(history_day_df)
         prediction_df.to_sql('rl_environment', con=conn.engine, index=False, if_exists='append')
         
-    def pipline_stock_pick_wechat():
+    def pipline_stock_pick():
         ...
-        
+    
+    def wechat():
+        ...
         
 if __name__ == '__main__':
     today = datetime.now().strftime('%F')
