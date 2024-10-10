@@ -168,6 +168,6 @@ if __name__ == '__main__':
 # path_file = 'C:/Users/admin/Desktop/GeoHzWg.json'
 # with open(path_file,'r',encoding='utf-8') as load_f:
 #     load_dict = json.load(load_f)
-
+# 键值对：key_value_dict = dict(zip(df['KeyColumn'], df['ValueColumn']))
 #df['date_column'] = pd.to_datetime(df['date_column'])
 #df['year_column'] = df['date_column'].dt.year
