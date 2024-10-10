@@ -28,13 +28,77 @@ logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 class backtestVectorbtMacd(backtestVectorbt):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+        self.macd_hist = None
+        
     def strategy_params(self, strategy_params_list):
         strategy_params_df = pd.DataFrame(strategy_params_list)
         strategy_params_df['primary_key'] = strategy_params_df['window_fast'].astype(str)+'-'+ \
                                             strategy_params_df['window_slow'].astype(str)+'-'+ \
                                             strategy_params_df['window_signal'].astype(str)
         return strategy_params_df
+    
+    def strategy_base(self, subtable_df, data):
+        window_fast, window_slow, window_signal = subtable_df[['window_fast', 'window_slow', 'window_signal']].values[0]
+
+        # https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/indicators/nb.py#L171
+        macd = vbt.MACD.run(
+            close=data,  # close: 2D数组，表示收盘价
+            fast_window=window_fast,  # 快速移动平均线的窗口大小,Fast EMA period, default value 12
+            slow_window=window_slow,  # 慢速移动平均线的窗口大小,Slow EMA period, default value 26
+            signal_window=window_signal,  # 信号线的窗口大小,Signal line period, default value 9,这个参数好像没什么用
+            macd_ewm=False,  # #布尔值，是否使用指数加权移动平均（EMA）计算MACD线，True:EMA, False:SMA
+            signal_ewm=True, #布尔值，是否使用EMA计算信号线，True:EMA, False:SMA
+            adjust=False #布尔值，是否在计算EMA时进行调整
+            #cache_dict,字典，用于缓存计算结果
+        )
+        
+        self.macd_hist = macd.hist # macd能量柱
+        
+
+        # cache_dict 示例数据
+        # 用于存储预先计算的移动平均线，以提高性能
+        # 创建缓存字典（这里只是示例，实际使用时需要预先计算）
+        # cache_dict = {
+        #     hash((fast_window, macd_ewm)): np.random.randn(100, 2),  # 模拟快速MA
+        #     hash((slow_window, macd_ewm)): np.random.randn(100, 2)   # 模拟慢速MA
+        # }
+        
+        # https://github.com/polakowo/vectorbt/issues/136
+        entries = macd.macd_above(0) & macd.macd_below(0).vbt.signals.fshift(1)
+        exits = macd.macd_below(0) & macd.macd_above(0).vbt.signals.fshift(1)
+        
+        global entries1,exits1
+        entries1 = entries
+        exits1=exits
+        
+        entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
+        return entries_exits_t
+    
+    def strategy_diff(self, subtable_df, data):
+        window_fast, window_slow, window_signal = subtable_df[['window_fast', 'window_slow', 'window_signal']].values[0]
+
+        # https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/indicators/nb.py#L171
+        macd = vbt.MACD.run(
+            close=data,  # close: 2D数组，表示收盘价
+            fast_window=window_fast,  # 快速移动平均线的窗口大小,Fast EMA period, default value 12
+            slow_window=window_slow,  # 慢速移动平均线的窗口大小,Slow EMA period, default value 26
+            signal_window=window_signal,  # 信号线的窗口大小,Signal line period, default value 9,这个参数好像没什么用
+            macd_ewm=False,  # #布尔值，是否使用指数加权移动平均（EMA）计算MACD线，True:EMA, False:SMA
+            signal_ewm=True, #布尔值，是否使用EMA计算信号线，True:EMA, False:SMA
+            adjust=False #布尔值，是否在计算EMA时进行调整
+            #cache_dict,字典，用于缓存计算结果
+        )
+        
+        # 计算 DIF 和 DEA 的斜率
+        dif_slope = macd.macd.diff()  # DIF 线的斜率
+        dea_slope = macd.signal.diff()  # DEA 线的斜率
+        
+        # 交易信号
+        entries = (dif_slope > 0) & (dea_slope > 0)  # 买入条件：DIF 和 DEA 的斜率都为正
+        exits = (dif_slope < 0) & (dea_slope < 0)  # 卖出条件：DIF 和 DEA 的斜率都为负
+        
+        entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
+        return entries_exits_t
     
     def strategy(self, subtable_df, data):
         window_fast, window_slow, window_signal = subtable_df[['window_fast', 'window_slow', 'window_signal']].values[0]
@@ -50,21 +114,27 @@ class backtestVectorbtMacd(backtestVectorbt):
             adjust=False #布尔值，是否在计算EMA时进行调整
             #cache_dict,字典，用于缓存计算结果
         )
-        # cache_dict 示例数据
-        # 用于存储预先计算的移动平均线，以提高性能
-        # 创建缓存字典（这里只是示例，实际使用时需要预先计算）
-        # cache_dict = {
-        #     hash((fast_window, macd_ewm)): np.random.randn(100, 2),  # 模拟快速MA
-        #     hash((slow_window, macd_ewm)): np.random.randn(100, 2)   # 模拟慢速MA
-        # }
         
-        # https://github.com/polakowo/vectorbt/issues/136
-        entries = macd.macd_above(0) & macd.macd_below(0).vbt.signals.fshift(1)
-        exits = macd.macd_below(0) & macd.macd_above(0).vbt.signals.fshift(1)
+        # 计算 DIF 和 DEA 的斜率
+        dif_slope = macd.macd.diff()  # DIF 线的斜率
+        dea_slope = macd.signal.diff()  # DEA 线的斜率
         
+        # 交易信号
+        #entries = (dif_slope > dea_slope) # 买入条件：DIF的斜率开始大于DEA的斜率
+        #exits = (dif_slope < 0) # 卖出条件：DIF斜率=0
+        # 买入信号：DIF 的斜率从负变正，且 DEA 的斜率也从负变正
+        entries = (dif_slope > 0) & (dif_slope.shift(1) < 0) & (dea_slope > 0) & (dea_slope.shift(1) < 0)
+        
+        # 卖出信号：DIF 的斜率从正变负
+        exits = (dif_slope < 0) & (dif_slope.shift(1) > 0)
+        
+        
+        global entries1,exits1
+        entries1 = entries
+        exits1=exits
         entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
         return entries_exits_t
-        
+    
     def ablation_experiment(self, symbols=[],
                             date_start='2020-01-01',
                             date_end='2022-01-01',
@@ -105,6 +175,6 @@ if __name__ == '__main__':
     
     backtest_vectorbt_macd.ablation_experiment(date_start='2019-01-01', 
                                                date_end='2023-01-01',
-                                               comparison_experiment="macd_20240925",
+                                               comparison_experiment="macd_diff_20241010_6",
                                                )
     

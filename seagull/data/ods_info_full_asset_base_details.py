@@ -3,8 +3,7 @@
 Created on Fri Feb 23 01:45:25 2024
 
 @author: awei
-投资品种(data_ods_info_full_asset_price_limit)
-投资品类表(data_investment_varietie)，很少修改
+投资品种明细(ods_info_full_asset_base_details)
 """
 import pandas as pd
 from datetime import datetime

@@ -88,6 +88,7 @@ class backtestAnalyze:
         
         # 显示图形
         plt.show()
+        
     def output_csv(self):
         """
         ads_info_incr_bacetest.columns = ['start', 'end', 'period', 'start_value', 'end_value', 'total_return',
@@ -197,7 +198,8 @@ class backtestAnalyze:
     
     
 if __name__ == '__main__':
-    comparison_experiment='macd_20240925'
+    comparison_experiment='macd_diff_20241010_6'
+    #macd_20240925,macd_diff_20241010,macd_diff_20241010_2
     backtest_analyze = backtestAnalyze()
     bacetest_df, base_df, strategy_df = backtest_analyze.pipeline(comparison_experiment=comparison_experiment)
     portfolio_df = backtest_analyze.comparison_base_strategy(base_df, strategy_df)

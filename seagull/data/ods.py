@@ -9,6 +9,7 @@ Created on Thu Aug 10 15:01:44 2023
 3获取证券基本资料
 4获取证券代码
 """
+import os
 import argparse
 from datetime import datetime, timedelta
 from sqlalchemy import String  # Float, Numeric, 
@@ -20,25 +21,30 @@ import pandas as pd
 
 from __init__ import path
 from data import (data_loading,
-                  ods_part_baostock_index_api)
+                  ods_part_baostock_index_api,
+                  ods_info_incr_baostock_trade_stock_api)
 from utils import utils_database, utils_log, utils_data
 
 
-logger = utils_log.logger_config_local(f'{path}/log/data_ods.log')
+log_filename = os.path.splitext(os.path.basename(__file__))[0]
+logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 
 
 class odsData():
     def __init__(self):
-        #self.conn = utils_database.engine_conn('postgre')
-        ods_full_baostock_index_api = ods_part_baostock_index_api.odsFullBaostockIndexApi()
+        self.ods_full_baostock_index_api = ods_part_baostock_index_api.odsFullBaostockIndexApi()
         
-    def ods_api_info_baostock(self, data_type):
+    def ods_baostock(self, data_type):
         """
         获取常规数据
         :param data_type:获取数据类型
         备注：1.更新频率：天
         """
         logger.info(f'数据类型: {data_type}')
+        baostock_login_list = ['交易日', '行业分类', '证券资料', '证券代码']
+        if data_type in baostock_login_list:
+            bs.login()
+            
         if data_type == '交易日':
             rs = bs.query_trade_dates()
             filename = 'ods_api_info_baostock_trade_dates'
@@ -52,14 +58,14 @@ class odsData():
             filename = 'ods_api_info_baostock_allstocks_basic'
             
         elif data_type == '证券代码':
-            #date = (datetime.now()+timedelta(days=-3)).strftime('%F')  # 只有交易日才会更新，取当天的不一定及时更新，先尝试前一天
-            #rs = bs.query_all_stock(date)
+            rs = ods_info_incr_baostock_trade_stock_api.baostock_trade_stock(date_start=args.date_start)
             filename = 'ods_api_info_baostock_asset_base'
-        
-        elif data_type == '成分股':
-            rs = bs.query_sz50_stocks()
-            filename = 'ods_api_baostock_sz50_stocks'
             
+        elif data_type == '指数成分股':
+            self.ods_full_baostock_index_api.index_daily()
+        
+        if data_type in baostock_login_list:
+            bs.logout()
             
         result = data_loading.re_get_row_data(rs)
         utils_data.output_database(result, filename)
@@ -83,17 +89,31 @@ class odsData():
             filename = 'ods_freq_incr_efinance_portfolio_minute'
         result = pd.concat({k: pd.DataFrame(v) for k, v in etf_dict.items()})
         utils_data.output_database(result, filename)
+    
+    def full(self):
+        ...
+    
+    def incr(self):
+        self.ods_efinance_portfolio(data_type='ETF日频', schedule_frequency='1d')
+        
+    def pipeline(self):
+        
+        self.ods_baostock(data_type='交易日')
+        self.ods_baostock(data_type='行业分类')
+        self.ods_baostock(data_type='证券资料')
+        self.ods_baostock(data_type='证券代码')
+        
+        
+        self.ods_adata_portfolio_base(data_type='ETF代码')
+        self.ods_efinance_portfolio(data_type='ETF日频')#日
         
         
 if __name__ == '__main__':
-    lg = bs.login()  # 登陆系统
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_type', type=str, default='证券代码', help='["交易日", "行业分类", "证券资料", "证券代码"]')
     args = parser.parse_args()
     
     ods_data = odsData()
-    result = ods_data.api_baostock(args.data_type)
+    result = ods_data.ods_baostock(args.data_type)
     print(result)
-    
-    bs.logout()  # 登出系统
     

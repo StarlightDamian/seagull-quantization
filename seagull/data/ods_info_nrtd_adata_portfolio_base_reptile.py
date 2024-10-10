@@ -7,6 +7,7 @@ Created on Wed Aug  7 02:35:13 2024
 获取所有场内ETF当前信息(data_ods_info_nrtd_adata_portfolio_base_reptile)
 重写adata的adata.fund.info.all_etf_exchange_traded_info()接口，额外新增获取ETF的市场名称
 因为是爬虫数据，所以无法获取到历史的etf数据
+net_value净值数据是增量数据，15秒更新一次
 """
 import json
 import requests
@@ -17,7 +18,7 @@ from adata.fund.info.fund_info import FundInfo
 from __init__ import path
 from data import data_utils
 
-class odsIncrAdataPortfolioBaseReptile(FundInfo):
+class odsNrtdAdataPortfolioBaseReptile(FundInfo):
     """
     ETF信息,只有SH和SZ的ETF
     """
@@ -58,5 +59,5 @@ class odsIncrAdataPortfolioBaseReptile(FundInfo):
         data_utils.output_database(portfolio_base_df, 'ods_info_nrtd_adata_portfolio_base', if_exists='replace')
 
 if __name__ == '__main__':
-    ods_incr_adata_portfolio_base_reptile = odsIncrAdataPortfolioBaseReptile()
-    ods_incr_adata_portfolio_base_reptile.portfolio_base()
+    ods_nrtd_adata_portfolio_base_reptile = odsNrtdAdataPortfolioBaseReptile()
+    ods_nrtd_adata_portfolio_base_reptile.portfolio_base()

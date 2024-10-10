@@ -12,7 +12,7 @@ from qlib.contrib.strategy.strategy import TopkDropoutStrategy
 from qlib.contrib.backtest.backtest import BacktestEngine, default_setup  
 from qlib.contrib.evaluate.backtest_metric import calculate_backtest_metrics  
 from qlib.utils import init_env  
-  
+
 # 初始化环境  
 qlib.init(provider_uri="~/.qlib/qlib_data/cn_data")  
   
@@ -48,7 +48,7 @@ print(metrics)
   
 # 可视化回测结果（需要安装 matplotlib）  
 import matplotlib.pyplot as plt  
-  
+
 # 绘制收益曲线  
 plt.figure(figsize=(14, 7))  
 engine.plot_curve(records)  

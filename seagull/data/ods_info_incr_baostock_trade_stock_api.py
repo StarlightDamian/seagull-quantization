@@ -29,7 +29,7 @@ def __apply_baostock_trade_stock_1(subtable):
     baostock_trade_stock_1_df['date'] = date
     return baostock_trade_stock_1_df
 
-def baostock_trade_stock(date_start, date_end=datetime.now()):
+def baostock_trade_stock(date_start, date_end=datetime.now().strftime('%F')):
     daily_dates = pd.date_range(start=date_start, end=date_end, freq='D')
     daily_dates_df = pd.DataFrame(daily_dates,columns=['date'])
     

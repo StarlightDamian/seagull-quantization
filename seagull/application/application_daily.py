@@ -13,7 +13,7 @@ import baostock as bs
 
 from __init__ import path
 from data import data_ods_a_stock_k
-from data.data_ods import odsData
+from data.ods import odsData
 ods_data = odsData()
 
 def custom_date(date=None):
@@ -24,12 +24,12 @@ def custom_date(date=None):
         bs.login()
         
         ## ODS层
-        ods_data.api_baostock(data_type='交易日')
-        ods_data.api_baostock(data_type='行业分类')
-        ods_data.api_baostock(data_type='证券资料')
-        ods_data.api_baostock(data_type='证券代码')
-        ods_data.api_adata(data_type='ETF代码')
-        ods_data.api_efinance(data_type='ETF日频')
+        ods_data.ods_baostock(data_type='交易日')
+        ods_data.ods_baostock(data_type='行业分类')
+        ods_data.ods_baostock(data_type='证券资料')
+        ods_data.ods_baostock(data_type='证券代码')
+        ods_data.ods_adata_portfolio_base(data_type='ETF代码')
+        ods_data.ods_efinance_portfolio(data_type='ETF日频')
         # get_data.api_efinance(data_type='ETF五分钟频')
         
         # 每日k线
