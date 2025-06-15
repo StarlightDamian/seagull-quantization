@@ -12,6 +12,8 @@ from __init__ import path
 config = configparser.ConfigParser()
 config.read(f'{path}/conf/setting_global.txt')
 
+annual_trading_days = 242  # 一年的交易天数
+
 argparse_user_dict = {
     '达米安': ['科大讯飞', '鸿博股份', '国缆检测','浪潮信息','寒武纪','紫光国微','通达动力','华西股份','三六零','中船科技','璞泰来','中文在线','高新发展','克来机电'],
     '阿妮亚': ['双环传动','宇晶股份','光迅科技','剑桥科技','三联锻造','三柏硕','科华数据','利通电子','德业股份','德新科技' ],

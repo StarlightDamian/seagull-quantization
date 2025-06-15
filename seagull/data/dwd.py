@@ -30,6 +30,9 @@ For US Stock:
 5.asset_name: The full name of the asset
 
 ETF,创业板可以突破10%的限制和地域限制
+
+
+
 """
 import argparse
 from loguru import logger
@@ -65,8 +68,8 @@ class dwdData():
                                                                 'short_name': 'code_name',
                                                                 'net_value': 'prev_close',
                                                                 })
-        portfolio_base_df.market_code = portfolio_base_df.market_code.map({1: 'SH',
-                                                                           0: 'SZ',
+        portfolio_base_df.market_code = portfolio_base_df.market_code.map({1: 'sh',
+                                                                           0: 'sz',
                                                                            })
         portfolio_base_df['full_code'] = portfolio_base_df.market_code + '.' + portfolio_base_df.asset_code
         utils_data.output_database(portfolio_base_df, filename='dwd_info_nrtd_portfolio_base', if_exists='replace')
@@ -167,6 +170,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     dwd_data = dwdData()
-    result = dwd_data.pipline(args.data_type)
-    print(result)
+    #result = dwd_data.pipline(args.data_type)
+    dwd_data.dwd_info_nrtd_portfolio_base()
+    #print(result)
     

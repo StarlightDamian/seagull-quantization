@@ -15,7 +15,7 @@ mysql_database =
 
 [postgre_database]
 postgre_user = postgres
-postgre_password = zyw8253688/
+postgre_password = zyw8253688
 postgre_host = 127.0.0.1
 postgre_port = 5432
 postgre_database = postgres

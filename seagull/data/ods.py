@@ -45,17 +45,19 @@ class odsData():
         if data_type in baostock_login_list:
             bs.login()
             
-        if data_type == '交易日':
-            rs = bs.query_trade_dates()
-            filename = 'ods_api_info_baostock_trade_dates'
-            
-        elif data_type == '行业分类':  # 获取行业分类数据
-            rs = bs.query_stock_industry()
-            filename = 'ods_api_info_baostock_stock_industry'
-            
-        elif data_type == '证券资料':  # 获取证券基本资料
-            rs = bs.query_stock_basic()
-            filename = 'ods_api_info_baostock_allstocks_basic'
+# =============================================================================
+#         if data_type == '交易日':
+#             rs = bs.query_trade_dates()
+#             filename = 'ods_api_info_baostock_trade_dates'
+#             
+#         elif data_type == '行业分类':  # 获取行业分类数据
+#             rs = bs.query_stock_industry()
+#             filename = 'ods_api_info_baostock_stock_industry'
+#             
+#         elif data_type == '证券资料':  # 获取证券基本资料
+#             rs = bs.query_stock_basic()
+#             filename = 'ods_api_info_baostock_allstocks_basic'
+# =============================================================================
             
         elif data_type == '证券代码':
             rs = ods_info_incr_baostock_trade_stock_api.baostock_trade_stock(date_start=args.date_start)
@@ -83,10 +85,10 @@ class odsData():
             etf_code_df = pd.read_sql('ods_info_nrtd_adata_portfolio_base', con=conn.engine)
         if data_type == 'ETF日频':
             etf_dict = ef.stock.get_quote_history(etf_code_df.fund_code)
-            filename = 'ods_freq_incr_efinance_portfolio_daily'
+            filename = 'ods_ohlc_incr_efinance_portfolio_daily'
         elif data_type == 'ETF五分钟频':
             etf_dict = ef.stock.get_quote_history(etf_code_df.fund_code, klt=5)
-            filename = 'ods_freq_incr_efinance_portfolio_minute'
+            filename = 'ods_ohlc_incr_efinance_portfolio_minute'
         result = pd.concat({k: pd.DataFrame(v) for k, v in etf_dict.items()})
         utils_data.output_database(result, filename)
     
@@ -98,14 +100,14 @@ class odsData():
         
     def pipeline(self):
         
-        self.ods_baostock(data_type='交易日')
-        self.ods_baostock(data_type='行业分类')
-        self.ods_baostock(data_type='证券资料')
-        self.ods_baostock(data_type='证券代码')
+        #self.ods_baostock(data_type='交易日')
+        #self.ods_baostock(data_type='行业分类')
+        #self.ods_baostock(data_type='证券资料')
+        #self.ods_baostock(data_type='证券代码')
         
         
         self.ods_adata_portfolio_base(data_type='ETF代码')
-        self.ods_efinance_portfolio(data_type='ETF日频')#日
+        self.ods_efinance_portfolio(data_type='ETF日频')
         
         
 if __name__ == '__main__':

@@ -35,8 +35,7 @@ def pipline(symbols):
         
         # Create portfolios
         strategy_portfolio = vbt.Portfolio.from_signals(data, entries, exits, init_cash=10000, freq='1D')
-        
-        
+                
         total_return = strategy_portfolio.total_return()
         sharpe_ratio = strategy_portfolio.sharpe_ratio()
 

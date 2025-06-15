@@ -1,267 +1,207 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Nov 29 17:07:09 2023
 
 @author: awei
 特征工程主程序(feature_engineering_main)
+
+
 """
+import os
 import argparse
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.utils import Bunch
 
 from __init__ import path
-from base import base_connect_database, base_utils, base_trading_day
+from utils import utils_database, utils_log
+from finance import finance_trading_day
+
+log_filename = os.path.splitext(os.path.basename(__file__))[0]
+logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 
 pd.options.mode.chained_assignment = None
+TARGET_NAMES = ['next_low_rate',
+                     'next_high_rate',
+                     ]  
 
-TARGET_REAL_NAMES = ['rear_low_pct_real', 'rear_high_pct_real', 'rear_diff_pct_real', 'rear_open_pct_real', 'rear_close_pct_real']  # , 'rear_rise_pct_real'
-
-
-class featureEngineering(base_trading_day.tradingDay):
-    def __init__(self, target_names=TARGET_REAL_NAMES):
+class FeatureEngineering(finance_trading_day.TradingDayAlignment):
+    def __init__(self, target_names=TARGET_NAMES):
         """
         初始化函数，用于登录系统和加载行业分类数据
-        :param check:是否检修中间层history_day_df
+        :param check:是否检修中间层asset_df
         """
         super().__init__()
-        
-        # 行业分类数据
-        with base_connect_database.engine_conn('postgre') as conn:
-            stock_industry = pd.read_sql('stock_industry', con=conn.engine)
-        #stock_industry.loc[stock_industry.industry.isnull(), 'industry'] = '其他' # 不能在这步补全，《行业分类数据》不够完整会导致industry为nan
-        
-        self.code_and_industry_dict = stock_industry.set_index('code')['industry'].to_dict()
-        
-        self.one_hot_encoder = OneHotEncoder(sparse_output=False)
         self.target_names = target_names
-        self.price_limit_pct = None
         
-    def merge_features_after(self, history_day_df):
+    def feature_merge(self, df):
         """
-        制作待预测值，为后一天的最高价和最低价
-        :param history_day_df: 包含日期范围的DataFrame
-        :return: 包含待预测值的DataFrame
-        """
-        # debug isST
-        last_day = history_day_df.date.unique()[-1]
-        last_day_df = history_day_df[history_day_df.date==last_day]
-        print('last_day',last_day)
-        
-        # 待预测的指定交易日的主键、价格
-        predict_pd = history_day_df[['date_before', 'code', 'open', 'low', 'high', 'close','price_limit']]
-        try:
-            predict_pd = predict_pd[~(predict_pd.date_before.isnull())]
-            predict_pd['primary_key'] = (predict_pd['date_before']+predict_pd['code']).apply(base_utils.md5_str)
-        except:
-            print('没有获取交易日最新数据')
-            
-        predict_pd = predict_pd.rename(columns={'open': 'rear_open',
-                                                'low': 'rear_low',
-                                                'high': 'rear_high',
-                                                'close': 'rear_close',
-                                                'price_limit': 'rear_price_limit',
-                                                })
-        predict_pd = predict_pd[['primary_key', 'rear_high', 'rear_low', 'rear_open', 'rear_close','rear_price_limit']]
-        
-        # 关联对应后置最低最高价格
-        history_day_df = pd.merge(history_day_df, predict_pd, on='primary_key')
-        
-        ## 制作待预测值
-        # 明日最高/低值相对于今日收盘价的涨跌幅真实值
-        history_day_df['rear_low_pct_real'] = ((history_day_df['rear_low'] - history_day_df['close']) / history_day_df['close']) * 100
-        history_day_df['rear_high_pct_real'] = ((history_day_df['rear_high'] - history_day_df['close']) / history_day_df['close']) * 100
-        history_day_df['rear_diff_pct_real'] = history_day_df.rear_high_pct_real - history_day_df.rear_low_pct_real
-        history_day_df['rear_open_pct_real'] = ((history_day_df['rear_open'] - history_day_df['close']) / history_day_df['close']) * 100
-        history_day_df['rear_close_pct_real'] = ((history_day_df['rear_close'] - history_day_df['close']) / history_day_df['close']) * 100
-        #history_day_df['rear_rise_pct_real'] = ((history_day_df['rear_high'] - history_day_df['low']) / history_day_df['low']) * 100
-        
-        last_day_df[['rear_low_pct_real', 'rear_high_pct_real', 'rear_diff_pct_real', 'rear_open_pct_real', 'rear_close_pct_real']] = 0.0  # 最后一天：真实数据预测，y设置为0.0., 'rear_rise_pct_real'
-        
-        last_day_df[['rear_price_limit']] = 0
-        history_day_df = pd.concat([history_day_df, last_day_df],axis=0)
-        return history_day_df
-    
-    
-    def build_features_after(self, history_day_df):
-        # 特征: 宏观大盘_大盘成交量
-        sh000001_map_dict = history_day_df[history_day_df.code=='sh.000001'][['date', 'amount']].set_index('date')['amount'].to_dict()
-        history_day_df['macro_amount_sh000001'] = history_day_df['date'].map(sh000001_map_dict)  # 上证综合指数
-        
-        sz399106_map_dict = history_day_df[history_day_df.code=='sz.399106'][['date', 'amount']].set_index('date')['amount'].to_dict()
-        history_day_df['macro_amount_sz399106'] = history_day_df['date'].map(sz399106_map_dict)  # 深证综合指数
-        
-        history_day_df['macro_amount'] = history_day_df['macro_amount_sh000001'] + history_day_df['macro_amount_sz399106']#两市成交额
-        return history_day_df
-    
-    def merge_features_before(self, history_day_df):
-        """
-        制作待预测值，为后一天的最高价和最低价
-        :param history_day_df: 包含日期范围的DataFrame
-        :return: 包含待预测值的DataFrame
-        """
-        # 待预测的指定交易日的主键、价格
-        predict_pd = history_day_df[['date_after', 'code', 'macro_amount']]
-        
-        predict_pd['primary_key'] = (predict_pd['date_after']+predict_pd['code']).apply(base_utils.md5_str)
-        predict_pd = predict_pd.rename(columns={'macro_amount': 'pre_macro_amount',
-                                                })
-        predict_pd = predict_pd[['primary_key', 'pre_macro_amount']]
-        # 关联对应后置最低最高价格
-        #print('history_day_df',history_day_df.columns,history_day_df.shape,history_day_df.primary_key.tolist())
-        #print('predict_pd',predict_pd.columns,predict_pd.shape,predict_pd.primary_key.tolist())
-        history_day_df.to_csv(f'{path}/data/history_day_df.csv',index=False)
-        predict_pd.to_csv(f'{path}/data/history_day_df.csv',index=False)
-        history_day_df = pd.merge(history_day_df, predict_pd, on='primary_key')
-        
-        #前一天成交额差值
-        history_day_df['macro_amount_diff_1'] = history_day_df['macro_amount'] - history_day_df['pre_macro_amount']
-        return history_day_df
-    
-    def build_features_before(self, history_day_df):
-        """
-        构建数据集，将DataFrame转换为Bunch
-        :param history_day_df: 包含日期范围的DataFrame
+        特征工程的主要流程，包括指定交易日、创建待预测值、构建数据集
+        :param df: 包含日期范围的DataFrame
         :return: 包含数据集的Bunch
         """
-        ## 训练特征
+        ohlc_features = ['open_rate', 'high_rate', 'low_rate', 'close_rate', 'volume', 'turnover', 'turnover_pct',
+                         'price_limit_rate','board_type', 'date_diff_prev', 'date_diff_next', 'date_week','is_limit_down_prev',
+                         'is_limit_up_prev']
+        fundamental_features = ['chg_rel', 'pe_ttm', 'ps_ttm', 'pcf_ttm', 'pb_mrq']
+        # =============================================================================
+        #     # 多标签进行onehot， 先置空加快计算
+        #     ohlc_df = onehot(ohlc_df, label_df[['full_code', 'label']])
+        #     label_features =  [x for x in ohlc_df.columns if ('label_' in x) and ('label_昨日' not in x)]#[]#
+        # =============================================================================
+        label_features = []
+        macd_features = ['close_slope_12_26_9'
+                    ,'volume_slope_12_26_9'
+                    ,'turnover_slope_12_26_9'
+                    ,'turnover_pct_slope_12_26_9'
+                    ,'close_acceleration_12_26_9'
+                    ,'volume_acceleration_12_26_9'
+                    ,'turnover_acceleration_12_26_9'
+                    ,'turnover_pct_acceleration_12_26_9'
+                    ,'close_hist_12_26_9'
+                    ,'volume_hist_12_26_9'
+                    ,'turnover_hist_12_26_9'
+                    ,'turnover_pct_hist_12_26_9'
+                    ,'close_diff_1'
+                    ,'close_diff_5'
+                    ,'close_diff_30'
+                    ,'volume_diff_1'
+                    ,'volume_diff_5'
+                    ,'volume_diff_30'
+                    ,'turnover_diff_1'
+                    ,'turnover_diff_5'
+                    ,'turnover_diff_30'
+                    ,'turnover_hist_diff_1'
+                    ,'volume_hist_diff_1'
+                    ,'close_hist_diff_1']
+# =============================================================================
+#         flow_features = ['loge_main_inflow', 'loge_ultra_large_inflow',
+#                'loge_large_inflow', 'loge_medium_inflow', 'loge_small_inflow','loge_main_small_net_inflow',
+#                'main_inflow_slope_12_26_9', 'ultra_large_inflow_slope_12_26_9',
+#                'large_inflow_slope_12_26_9', 'medium_inflow_slope_12_26_9',
+#                'small_inflow_slope_12_26_9', 'main_inflow_acceleration_12_26_9',
+#                'ultra_large_inflow_acceleration_12_26_9',
+#                'large_inflow_acceleration_12_26_9',
+#                'medium_inflow_acceleration_12_26_9',
+#                'small_inflow_acceleration_12_26_9', 'main_inflow_hist_12_26_9',
+#                'ultra_large_inflow_hist_12_26_9', 'large_inflow_hist_12_26_9',
+#                'medium_inflow_hist_12_26_9', 'small_inflow_hist_12_26_9',
+#                'main_inflow_diff_1', 'main_inflow_diff_5', 'main_inflow_diff_30',
+#                'ultra_large_inflow_diff_1', 'ultra_large_inflow_diff_5',
+#                'ultra_large_inflow_diff_30', 'large_inflow_diff_1',
+#                'large_inflow_diff_5', 'large_inflow_diff_30', 'medium_inflow_diff_1',
+#                'medium_inflow_diff_5', 'medium_inflow_diff_30', 'small_inflow_diff_1',
+#                'small_inflow_diff_5', 'small_inflow_diff_30',
+#                'main_inflow_hist_diff_1', 'ultra_large_inflow_hist_diff_1',
+#                'large_inflow_hist_diff_1', 'medium_inflow_hist_diff_1',
+#                'small_inflow_hist_diff_1',
+#                'main_small_net_inflow_slope_12_26_9',
+#                'main_small_net_inflow_acceleration_12_26_9',
+#                'main_small_net_inflow_hist_12_26_9',
+#                'main_small_net_inflow_diff_1',
+#                'main_small_net_inflow_diff_5',
+#                'main_small_net_inflow_diff_30',
+#                'main_small_net_inflow_hist_diff_1']
+# =============================================================================
+        alpha_features = ['alpha001', 'alpha002', 'alpha003', 'alpha004', 'alpha005', 'alpha006', 'alpha007', 'alpha008', 'alpha009', 'alpha010', 'alpha011', 'alpha012', 'alpha013', 'alpha014', 'alpha015', 'alpha016', 'alpha017', 'alpha018', 'alpha019', 'alpha020', 'alpha021', 'alpha022', 'alpha023', 'alpha024', 'alpha025', 'alpha026', 'alpha027', 'alpha028', 'alpha029', 'alpha030', 'alpha031', 'alpha032', 'alpha033', 'alpha034', 'alpha035', 'alpha036', 'alpha037', 'alpha038', 'alpha039', 'alpha040', 'alpha041', 'alpha042', 'alpha043', 'alpha044', 'alpha045', 'alpha046', 'alpha047', 'alpha049', 'alpha050', 'alpha051', 'alpha052', 'alpha053', 'alpha054', 'alpha055', 'alpha057', 'alpha060', 'alpha061', 'alpha062', 'alpha064', 'alpha065', 'alpha066', 'alpha068', 'alpha071', 'alpha072', 'alpha073', 'alpha074', 'alpha075', 'alpha077', 'alpha078', 'alpha081', 'alpha083', 'alpha084', 'alpha085', 'alpha086', 'alpha088', 'alpha092', 'alpha094', 'alpha095', 'alpha096', 'alpha098', 'alpha099', 'alpha101']
+        index_features = ['index_close_diff_1', 'index_close_diff_5', 'index_close_diff_30', 'index_volume_diff_1','index_volume_diff_5',
+                          'index_volume_diff_30', 'index_turnover_diff_1', 'index_turnover_diff_5', 'index_turnover_diff_30','index_close_rate',
+                          'index_close','index_volume','index_turnover','index_turnover_pct']
+        indicators_features = ['rsi','cci', 'wr', 'vwap', 'ad', 'mom', 'atr', 'adx', 'plus_di', 'minus_di', 'mfi', 'upper_band', 'middle_band', 'lower_band', 'kdj_fastk','kdj_fastd']
         
-        # 特征: 基础_距离上一次开盘天数
-        #history_day_df['date_diff'] = (pd.to_datetime(history_day_df.date_before) - pd.to_datetime(history_day_df.date)).dt.days
+        feature_names = ['primary_key'] +\
+                ohlc_features +\
+                   fundamental_features +\
+                   label_features +\
+                   macd_features +\
+                   alpha_features +\
+                   index_features +\
+                   indicators_features
+                   # flow_features +\
+# =============================================================================
+#         # 删除非训练字段
+#         feature_names = df.columns.tolist()board_type
+#         columns_to_drop = ['date', 'time', 'freq', 'market_code', 'full_code', 'asset_code',
+#                            'code_name', 'adj_type','st_status', 'prev_date',
+#                            'next_low', 'next_high', 'next_open', 'next_close',
+#                            'prev_macro_value_traded','board_type','price_limit_rate',
+#                            'board_primary_key','insert_timestamp'] + self.target_names
+#         feature_names = list(set(feature_names) - set(columns_to_drop))
+#         feature_names = [x for x in feature_names if '_real' not in x]
+# =============================================================================
+
+        constant_features = df.columns[df.nunique() == 1]  # 筛选出所有值相同的列
+        logger.warning(f'相同值特征: {constant_features}')  # ['alpha019', 'alpha027', 'alpha039']
+        df = df.loc[:, df.nunique() > 1]
         
-        # 特征：基础_星期
-        history_day_df['date_week'] = pd.to_datetime(history_day_df['date'], format='%Y-%m-%d').dt.day_name()
-        
-        # 特征: 宏观大盘_大盘成交量
-        sz399101_map_dict = history_day_df[history_day_df.code=='sz.399101'][['date', 'amount']].set_index('date')['amount'].to_dict()
-        history_day_df['macro_amount_sz399101'] = history_day_df['date'].map(sz399101_map_dict) # 中小企业综合指数 
-         
-        sz399102_map_dict = history_day_df[history_day_df.code=='sz.399102'][['date', 'amount']].set_index('date')['amount'].to_dict()
-        history_day_df['macro_amount_sz399102'] = history_day_df['date'].map(sz399102_map_dict) # 创业板综合指数
-         
-        sh000300_map_dict = history_day_df[history_day_df.code=='sh.000300'][['date', 'amount']].set_index('date')['amount'].to_dict()
-        history_day_df['macro_amount_sh000300'] = history_day_df['date'].map(sh000300_map_dict)  # 沪深300指数
-         
-        # 特征: 宏观大盘_大盘换手率
-        sh000001_map_dict = history_day_df[history_day_df.code=='sh.000001'][['date', 'turn']].set_index('date')['turn'].to_dict()
-        history_day_df['macro_turn_sh000001'] = history_day_df['date'].map(sh000001_map_dict)  # 上证综合指数
-        sz399106_map_dict = history_day_df[history_day_df.code=='sz.399106'][['date', 'turn']].set_index('date')['turn'].to_dict()
-        history_day_df['macro_turn_sz399106'] = history_day_df['date'].map(sz399106_map_dict)  # 深证综合指数
-         
-        # 特征: 中观板块_行业
-        history_day_df['industry'] = history_day_df.code.map(self.code_and_industry_dict)
-        history_day_df['industry'] = history_day_df['industry'].replace(['', pd.NA], '其他')
-         
-        # lightgbm不支持str，把str类型转化为ont-hot
-        history_day_df = pd.get_dummies(history_day_df, columns=['industry', 'tradestatus',  'date_week']) # 'isST',
-        
-        feature_names = history_day_df.columns.tolist()
-        
-        # 删除非训练字段
-        columns_to_drop = ['date', 'code', 'code_name', 'adjustflag','isST', 'date_before', 'date_after', 'rear_low', 'rear_high', 'rear_open', 'rear_close', 'pre_macro_amount','board_type','price_limit_pct'] + self.target_names
-        feature_names = list(set(feature_names) - set(columns_to_drop))
-        feature_names = [x for x in feature_names if '_real' not in x] # rear_
-        return history_day_df, feature_names
+        # 特征选择
+        categorical_features = ['date_week']#'full_code',
+        numeric_features = list(set(feature_names)-set(constant_features)-set(categorical_features)-
+                                set(['alpha061','alpha062','alpha064','alpha065','alpha068','alpha074','alpha075',
+                                     'alpha081','alpha086','alpha095','alpha099']))
+# =============================================================================
+#     wide_df.alpha095.unique()
+#     Out[8]: array([False, True, nan], dtype=object)
+# =============================================================================
+# =============================================================================
+#     Fields with bad pandas dtypes: alpha062: object, alpha064: object, alpha065: object, alpha074: object, alpha081: object, alpha099: object
+# # =============================================================================
+# =============================================================================
+# ValueError: pandas dtypes must be int, float or bool.
+# Fields with bad pandas dtypes: alpha061: object, alpha075: object, alpha095: object
+# =============================================================================
+        return df, numeric_features, categorical_features
     
-    def build_dataset(self, history_day_df, feature_names, price_limit_pct=None):
-        
-        num_before = history_day_df.shape[0]
-        print(f'处理前数据量: {num_before} |price_limit_pct: {self.price_limit_pct}')
-        if self.price_limit_pct!=None:
-            history_day_df = history_day_df[(history_day_df.rear_low_pct_real<=self.price_limit_pct)&(history_day_df.rear_low_pct_real>=-self.price_limit_pct)&(history_day_df.rear_high_pct_real<=self.price_limit_pct)&(history_day_df.rear_high_pct_real>=-self.price_limit_pct)]
-        
-            num_after = history_day_df.shape[0]
-            print(f'处理前数据量: {num_before} |处理后数据量: {num_after}')
-            
-        # 构建数据集
-        feature_names = sorted(feature_names) # 输出有序标签
+    def build_dataset(self, asset_df, numeric_features, categorical_features):
+        ## 构建数据集
+        # 输出有序标签
+        numeric_features = sorted(numeric_features)
+        categorical_features = sorted(categorical_features)
         # print(f'feature_names_engineering:\n {feature_names}')
-        
-        date_range_dict = {'data': np.array(history_day_df[feature_names].to_records(index=False)),  # 不使用 feature_df.values,使用结构化数组保存每一列的类型
-                         'feature_names': feature_names,
-                         'target': history_day_df[self.target_names].values,  # 机器学习预测值
-                         'target_names': [self.target_names],
-                         }
-        date_range_bunch = Bunch(**date_range_dict)
-        return date_range_bunch
+        #print('self.target_names',self.target_names)
+        date_range_dict = {'data': np.array(asset_df[numeric_features + categorical_features].to_records(index=False)),  # 不使用 feature_df.values,使用结构化数组保存每一列的类型
+                           'numeric_features': numeric_features,
+                           'categorical_features': categorical_features,
+                           'target': asset_df[self.target_names].values,  # 机器学习预测值
+                           'target_names': [self.target_names],
+                           }
+        bunch = Bunch(**date_range_dict)
+        return bunch
     
-    def feature_engineering_pipline(self, history_day_df):
+    def feature_engineering_pipeline(self, asset_df):
         """
         特征工程的主要流程，包括指定交易日、创建待预测值、构建数据集
-        :param history_day_df: 包含日期范围的DataFrame
-        :return: 包含数据集的Bunch
-        """
-        trading_day_before_dict = self.specified_trading_day_before(pre_date_num=1)
-        history_day_df['date_before'] = history_day_df.date.map(trading_day_before_dict)
-        #print(history_day_df[['date','date_before']])
-        
-        trading_day_after_dict = self.specified_trading_day_after(pre_date_num=1)
-        history_day_df['date_after'] = history_day_df.date.map(trading_day_after_dict)
-        
-        #特征: 微观个股_涨跌停标识
-        history_day_df['price_limit'] = history_day_df.apply(lambda row: 1 if row['high'] == row['low'] else 0, axis=1)
-        
-        history_day_df = self.merge_features_after(history_day_df)
-        
-        history_day_df = self.build_features_after(history_day_df)
-        
-        history_day_df = self.merge_features_before(history_day_df)
-        
-        # 构建数据集
-        history_day_df, feature_names = self.build_features_before(history_day_df)
-        return history_day_df, feature_names
-    
-    def feature_engineering_dataset_pipline(self, history_day_df, price_limit_pct=None):
-        """
-        特征工程的主要流程，包括指定交易日、创建待预测值、构建数据集
-        :param history_day_df: 包含日期范围的DataFrame
+        :param asset_df: 包含日期范围的DataFrame
         :return: 包含数据集的Bunch
         """
         # 构建数据集
-        self.price_limit_pct = price_limit_pct
-        #print('fem',history_day_df)
-        history_day_df, feature_names = self.feature_engineering_pipline(history_day_df)
-        print('feature_names',feature_names)
-        date_range_bunch = self.build_dataset(history_day_df, feature_names)
-        return date_range_bunch
+        logger.info(f'asset_shape_input: {asset_df.shape}')
+        asset_df, numeric_features, categorical_features = self.feature_merge(asset_df)
+        logger.info(f'asset_shape_output: {asset_df.shape}')
+        logger.info(f'numeric_features: {numeric_features}')
+        logger.info(f'categorical_features: {categorical_features}')
+        bunch = self.build_dataset(asset_df, numeric_features, categorical_features)
+        return bunch
+    
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--date_start', type=str, default='2023-12-20', help='When to start feature engineering')
+    parser.add_argument('--date_start', type=str, default='2023-09-20', help='When to start feature engineering')
     parser.add_argument('--date_end', type=str, default='2023-12-27', help='End time for feature engineering')
     args = parser.parse_args()
     
-    print(f'When to start feature engineering: {args.date_start}\nEnd time for feature engineering: {args.date_end}')
+    logger.info(f"""task: feature_engineering
+                    date_start: {args.date_start}
+                    date_end: {args.date_end}""")
     
     # 获取日期段数据
-    with base_connect_database.engine_conn('postgre') as conn:
-        history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
-    #history_day_df = data_loading.feather_file_merge(args.date_start, args.date_end)
-    print(history_day_df)
+    with utils_database.engine_conn('postgre') as conn:
+        asset_df = pd.read_sql(f"SELECT * FROM dwd_ohlc_incr_stock_daily WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
-    feature_engineering = featureEngineering()
-    
-    history_day_feature_df, feature_names = feature_engineering.feature_engineering_pipline(history_day_df)
+    feature_engineering = FeatureEngineering()
+    feature_df, numeric_features, categorical_features = feature_engineering.feature_merge(asset_df)
+    # date_range_bunch = feature_engineering.pipeline(asset_df)
     
     
-# =============================================================================
-#     Index(['dateDiff', 'open', 'high', 'low', 'close', 'volume', 'amount', 'turn',
-#            'tradestatus', 'pctChg', 'isST', 'industry_交通运输', 'industry_休闲服务',
-#            'industry_传媒', 'industry_公用事业', 'industry_其他', 'industry_农林牧渔',
-#            'industry_化工', 'industry_医药生物', 'industry_商业贸易', 'industry_国防军工',
-#            'industry_家用电器', 'industry_建筑材料', 'industry_建筑装饰', 'industry_房地产',
-#            'industry_有色金属', 'industry_机械设备', 'industry_汽车', 'industry_电子',
-#            'industry_电气设备', 'industry_纺织服装', 'industry_综合', 'industry_计算机',
-#            'industry_轻工制造', 'industry_通信', 'industry_采掘', 'industry_钢铁',
-#            'industry_银行', 'industry_非银金融', 'industry_食品饮料'],
-#           dtype='object')
-# =============================================================================
-#macro_sz399101_diff
-#macro_sh000001_diff
 
-#sh.000002, 上证A股指数,432298594654
-#sz.399107, 深证A股指数,356732648847
-#sh.000001,上证综合指数,357057491972
-#sz.399106, 深证综合指数,432390342915
+

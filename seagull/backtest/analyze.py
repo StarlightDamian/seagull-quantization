@@ -3,7 +3,9 @@
 Created on Thu Sep 19 15:50:06 2024
 
 @author: awei
-(backtest_analyze)
+(analyze)
+
+
 """
 import os
 #import functools
@@ -91,7 +93,7 @@ class backtestAnalyze:
         
     def output_csv(self):
         """
-        ads_info_incr_bacetest.columns = ['start', 'end', 'period', 'start_value', 'end_value', 'total_return',
+        ads_info_incr_backtest.columns = ['start', 'end', 'period', 'start_value', 'end_value', 'total_return',
                'benchmark_return', 'max_gross_exposure', 'total_fees_paid', 'max_dd',
                'max_dd_duration', 'total_trades', 'total_closed_trades',
                'total_open_trades', 'open_trade_pnl', 'win_rate', 'best_trade',
@@ -104,7 +106,7 @@ class backtestAnalyze:
                'fast_ma', 'slow_ma', 'comparison_experiment', 'fees', 'slippage',
                'freq_portfolio', 'insert_timestamp']
         """
-        strategy_portfolio_d = strategy_portfolio_d[['ann_return','max_dd','sharpe_ratio','sortino_ratio','win_rate','profit_loss_ratio','score']]
+        strategy_portfolio_d = strategy_portfolio_d[['ann_return','max_dd','total_closed_trades','total_open_trades','sharpe_ratio','sortino_ratio','win_rate','profit_loss_ratio','score']]
         strategy_portfolio_d_cn = strategy_portfolio_d.rename(columns={'ann_return': '策略_年化收益 [%]',
                                                                     'max_dd': '策略_最大回撤 [%]',
                                                                     'sharpe_ratio': '策略_夏普比',
@@ -113,7 +115,7 @@ class backtestAnalyze:
                                                                     'profit_loss_ratio': '策略_盈亏比',
                                                                     'score': '策略_总分',
                                                                     })
-        base_portfolio_d[['ann_return','max_dd','sharpe_ratio','sortino_ratio','win_rate','profit_loss_ratio','score']]
+        base_portfolio_d = base_portfolio_d[['ann_return','max_dd','total_closed_trades','total_open_trades','sharpe_ratio','sortino_ratio','win_rate','profit_loss_ratio','score']]
         base_portfolio_d_cn = base_portfolio_d.rename(columns={'ann_return': '基准_年化收益 [%]',
                                                             'max_dd': '基准_最大回撤 [%]',
                                                             'sharpe_ratio': '基准_夏普比',
@@ -138,7 +140,7 @@ class backtestAnalyze:
     def pipeline(self, comparison_experiment):
         ## dataset
         with utils_database.engine_conn('postgre') as conn:
-            bacetest_raw_df = pd.read_sql(f"select * from ads_info_incr_bacetest where comparison_experiment in ('{comparison_experiment}', 'base')", con=conn.engine)#ads_info_incr_bacetest_signal
+            bacetest_raw_df = pd.read_sql(f"select * from ads_info_incr_backtest where comparison_experiment in ('{comparison_experiment}', 'base')", con=conn.engine)#ads_info_incr_bacetest_signal
         bacetest_df = bacetest_raw_df.drop_duplicates('primary_key', keep='first') # 去重
         bacetest_df = bacetest_df[~bacetest_df.score.isnull()]
         
@@ -151,11 +153,21 @@ class backtestAnalyze:
         strategy_effective_df = strategy_df[strategy_df.bar_num/strategy_df.period>0.6]  # effective strategy df
         
         # base
+        logger.info(strategy_df[['date_start','date_end','period','start_value',
+                                 'end_value','total_return','benchmark_return',
+                                 'ann_return','max_dd','calmar_ratio','bar_num','price_start',
+                                 'price_end','total_open_trades','total_closed_trades']])
+
         start, end = strategy_df[['start','end']].values[0]
         base_df = bacetest_df[(bacetest_df.comparison_experiment=='base')&
                               (bacetest_df.start==start)&
                               (bacetest_df.end==end)]
-        
+        logger.info(f'base_ann_return_mean: {base_df.ann_return.mean():.3f}')
+        logger.info(f'strategy_ann_return_mean: {strategy_df.ann_return.mean():.3f}')
+        logger.info(f'base_max_dd_mean: {base_df.max_dd.mean():.3f}')
+        logger.info(f'strategy_max_dd_mean: {strategy_df.max_dd.mean():.3f}')
+        logger.info(f'strategy_total_open_trades_mean: {strategy_df.total_open_trades.mean():.3f}')
+        logger.info(f'strategy_total_closed_trades_mean: {strategy_df.total_closed_trades.mean():.3f}')
         ## analyze
         # chiropractic
         score_mean_base = base_df.score.mean() # 34.279
@@ -182,10 +194,13 @@ class backtestAnalyze:
         pass
         
         # baseline
-        baseline_df = base_df[base_df.full_code=='SH.510300'].score.values[0]  # 48.932
-        baseline_strategy_df = strategy_df[strategy_df.full_code=='SH.510300'].score.max()  # 22.496
-        logger.info(f'baseline: {baseline_df}')
-        logger.info(f'baseline_strategy: {baseline_strategy_df}')
+        try:
+            baseline_df = base_df[base_df.full_code=='SH.510300'].score.values[0]  # 48.932
+            baseline_strategy_df = strategy_df[strategy_df.full_code=='SH.510300'].score.max()  # 22.496
+            logger.info(f'baseline: {baseline_df}')
+            logger.info(f'baseline_strategy: {baseline_strategy_df}')
+        except IndexError:
+            logger.info('IndexError: index 0 is out of bounds for axis 0 with size 0')
         
         # comparison-group-score
         comparison_portfolio_df = self.comparison_base_strategy(base_df, strategy_df)

@@ -6,28 +6,32 @@ Created on Tue Dec 19 12:15:49 2023
 SAC算法_模型结构_训练过程(rl_sac_train)
 """
 import argparse
-from datetime import datetime, timedelta
-import math
+from datetime import datetime  # , timedelta
+# import math
 import os
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import numpy as np
-import gym
+# import torch.nn as nn
+# import torch.optim as optim
+# import numpy as np
 import pandas as pd
 
 from __init__ import path
 from trade import trade_eval
 from base import base_connect_database, base_utils
-from reinforcement_learning import rl_sac
+from rl import rl_sac
+from utils import utils_log  # utils_database, utils_data, 
+
+log_filename = os.path.splitext(os.path.basename(__file__))[0]
+logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 TRADE_MODEL_TABLE_NAME = 'trade_model'
 TRADE_ORDER_TABLE_NAME = 'trade_order_details'
 TRADE_SHARES_HELD_TABLE_NAME = 'trade_shares_held_pct'
-RE_ENVIRONMENT = 'rl_environment'#'test_stock_pick'  # rl_environment
+RE_ENVIRONMENT = 'rl_environment'  # 'test_stock_pick'  # rl_environment
 
 
 FEATURE = ['rear_low_pct_pred',

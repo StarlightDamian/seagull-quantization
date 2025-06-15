@@ -39,6 +39,8 @@ class backtestVectorbtAlpha(backtestVectorbt):
         data = data.fillna(method='ffill')
         returns = data.pct_change().dropna()
         return returns
+    
+    
 if __name__ == '__main__':
     data = vbt.YFData.download('BTC-USD', start='2018-01-01', end='2022-01-01', missing_index='drop').get('Close')
     

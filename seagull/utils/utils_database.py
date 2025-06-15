@@ -3,7 +3,7 @@
 Created on Fri Feb 18 14:53:45 2022
 
 @author: admin
-连接数据库(base_connect_database)
+连接数据库(utils_database)
 
 数据库连接模块考虑情况：
 1.数据库连接池，连接数量
@@ -12,11 +12,14 @@ Created on Fri Feb 18 14:53:45 2022
 4.有时候项目只需要部分类型的包支持指定数据库，如只安装hive和postgre相应的包
 5.不同类型连接的参数不一致，比如hive有'auth'、'auth_mechanism'
 6.支持windows和Linux连接同一类数据库，但是host：post不一致。windows测试，Linux正式
+
+schema
 """
 import os
 from urllib import parse
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from datetime import datetime, timedelta
+import psycopg2
 
 import logger
 import pandas as pd
@@ -95,7 +98,42 @@ def database_maximum_date(table_name, field_name):
         logger.info(f'date_start: {date_start}')
         return date_start
 
-            
+        
+def psycopg2_conn():
+    # 创建数据库连接
+    conn = psycopg2.connect(
+        dbname='postgres', 
+        user='postgres', 
+        password='zyw8253688',
+        host='127.0.0.1', 
+        port='5432'
+    )
+    return conn
+
+def engine_url(type_database):
+    user = arg.conf(f'{type_database}_user')
+    password = arg.conf(f'{type_database}_password')
+    password = parse.quote_plus(str(password))  # 处理密码中带有@，被create_engine误分割导致的BUG
+    host = arg.conf(f'{type_database}_host')
+    port = arg.conf(f'{type_database}_port')
+    database = arg.conf(f'{type_database}_database')
+    database_dict = {'hive': 'hive', 'postgre': 'postgresql', 'oracle': 'oracle', 'mysql': 'mysql+pymysql'}
+    database_name = database_dict.get(f"{type_database}")
+    user_password_host_port_database_str = f"{user}:{password}@{host}:{port}/{database}"
+
+    if type_database == 'hive':
+        auth = arg.conf('hive_auth')
+        db_url = f"{database_name}://{user_password_host_port_database_str}?auth={auth}"
+    elif type_database in ['postgre', 'oracle', 'mysql']:
+        db_url = f"{database_name}://{user_password_host_port_database_str}"
+    return  db_url
+
+def table_exists(tablename):
+    db_url = engine_url('postgre')
+    engine = create_engine(db_url)
+    inspector = inspect(engine)
+    return inspector.has_table(tablename)
+
 def engine_conn(type_database):
     """
     功能：连接数据库
@@ -120,20 +158,23 @@ def engine_conn(type_database):
     # print(db_url)
     return DatabaseConnection(db_url)
 
-
 if __name__ == '__main__':
     # print(path)
     
     # Data exploration
     with engine_conn('postgre') as conn:
-        table_name = 'history_a_stock_k_data'
-        count_field = 'date'
+        table_name = 'ods_ohlc_incr_efinance_stock_bj_daily'
+        count_field = '日期'
         #data = pd.read_sql("SELECT * FROM history_a_stock_k_data limit 10", con=conn.engine)  # Use conn_pg.engine
         data = pd.read_sql(f"SELECT {count_field}, COUNT(*) AS data_count FROM {table_name} GROUP BY {count_field} ORDER BY {count_field}", con=conn.engine)
         print(data)
     
     print('The amount of data:', data.data_count.sum())
-    data.to_csv(f'{path}/data/history_a_stock_k_data_count_date.csv')
+
+    
+        
+        
+    #data.to_csv(f'{path}/data/history_a_stock_k_data_count_date.csv')
     
     #from base import base_utils
     #data['primaryKey'] = (data['date']+data['code']).apply(base_utils.md5_str) # md5（日期、时间、代码）

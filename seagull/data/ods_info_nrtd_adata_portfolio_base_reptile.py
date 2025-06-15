@@ -4,7 +4,7 @@ Created on Wed Aug  7 02:35:13 2024
 
 @author: awei
 
-获取所有场内ETF当前信息(data_ods_info_nrtd_adata_portfolio_base_reptile)
+获取所有场内ETF当前信息(ods_info_nrtd_adata_portfolio_base_reptile)
 重写adata的adata.fund.info.all_etf_exchange_traded_info()接口，额外新增获取ETF的市场名称
 因为是爬虫数据，所以无法获取到历史的etf数据
 net_value净值数据是增量数据，15秒更新一次
@@ -16,7 +16,7 @@ import pandas as pd
 from adata.fund.info.fund_info import FundInfo
 
 from __init__ import path
-from data import data_utils
+from utils import utils_data
 
 class odsNrtdAdataPortfolioBaseReptile(FundInfo):
     """
@@ -56,7 +56,9 @@ class odsNrtdAdataPortfolioBaseReptile(FundInfo):
 
     def portfolio_base(self):
         portfolio_base_df = self.all_etf_exchange_traded_info_east()
-        data_utils.output_database(portfolio_base_df, 'ods_info_nrtd_adata_portfolio_base', if_exists='replace')
+        utils_data.output_database(portfolio_base_df,
+                                   filename='ods_info_nrtd_adata_portfolio_base',
+                                   if_exists='replace')
 
 if __name__ == '__main__':
     ods_nrtd_adata_portfolio_base_reptile = odsNrtdAdataPortfolioBaseReptile()

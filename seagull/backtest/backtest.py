@@ -14,7 +14,7 @@ import backtrader.strategies as btstrats
 import backtrader.analyzers as btanalyzers
 
 from __init__ import path
-from base import base_connect_database
+from utils import utils_database
 
 
 

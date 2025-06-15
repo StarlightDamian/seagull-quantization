@@ -12,7 +12,7 @@ from __init__ import path
 from train import train_0_lightgbm
 
         
-class lightgbmClassificationTrain(train_0_lightgbm.lightgbmTrain):
+class LightgbmClassificationTrain(train_0_lightgbm.LightgbmTrain):
     def __init__(self, TARGET_REAL_NAMES=None):
         super().__init__(TARGET_REAL_NAMES)
         
@@ -26,7 +26,7 @@ class lightgbmClassificationTrain(train_0_lightgbm.lightgbmTrain):
             'verbose': -1,  # 控制输出信息的详细程度，-1 表示不输出任何信息
         }
         lgb_classifier = lgb.LGBMClassifier(**params)
-        self.model_multioutput = MultiOutputClassifier(lgb_classifier)
+        self.model = MultiOutputClassifier(lgb_classifier)
         
         #train_model
         self.problem_type = 'classification'

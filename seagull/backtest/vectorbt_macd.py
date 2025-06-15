@@ -7,6 +7,7 @@ Created on Wed Sep 18 18:01:17 2024
 
 macd特征
 1.适合趋势，不适合震荡
+
 """
 import os
 import itertools
@@ -19,13 +20,13 @@ import pandas as pd
 
 from __init__ import path
 from utils import utils_log
-from vectorbt_base import backtestVectorbt
+from backtest import vectorbt_base
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 
 
-class backtestVectorbtMacd(backtestVectorbt):
+class backtestVectorbtMacd(vectorbt_base.backtestVectorbt):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.macd_hist = None
@@ -67,71 +68,6 @@ class backtestVectorbtMacd(backtestVectorbt):
         entries = macd.macd_above(0) & macd.macd_below(0).vbt.signals.fshift(1)
         exits = macd.macd_below(0) & macd.macd_above(0).vbt.signals.fshift(1)
         
-        global entries1,exits1
-        entries1 = entries
-        exits1=exits
-        
-        entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
-        return entries_exits_t
-    
-    def strategy_diff(self, subtable_df, data):
-        window_fast, window_slow, window_signal = subtable_df[['window_fast', 'window_slow', 'window_signal']].values[0]
-
-        # https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/indicators/nb.py#L171
-        macd = vbt.MACD.run(
-            close=data,  # close: 2D数组，表示收盘价
-            fast_window=window_fast,  # 快速移动平均线的窗口大小,Fast EMA period, default value 12
-            slow_window=window_slow,  # 慢速移动平均线的窗口大小,Slow EMA period, default value 26
-            signal_window=window_signal,  # 信号线的窗口大小,Signal line period, default value 9,这个参数好像没什么用
-            macd_ewm=False,  # #布尔值，是否使用指数加权移动平均（EMA）计算MACD线，True:EMA, False:SMA
-            signal_ewm=True, #布尔值，是否使用EMA计算信号线，True:EMA, False:SMA
-            adjust=False #布尔值，是否在计算EMA时进行调整
-            #cache_dict,字典，用于缓存计算结果
-        )
-        
-        # 计算 DIF 和 DEA 的斜率
-        dif_slope = macd.macd.diff()  # DIF 线的斜率
-        dea_slope = macd.signal.diff()  # DEA 线的斜率
-        
-        # 交易信号
-        entries = (dif_slope > 0) & (dea_slope > 0)  # 买入条件：DIF 和 DEA 的斜率都为正
-        exits = (dif_slope < 0) & (dea_slope < 0)  # 卖出条件：DIF 和 DEA 的斜率都为负
-        
-        entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
-        return entries_exits_t
-    
-    def strategy(self, subtable_df, data):
-        window_fast, window_slow, window_signal = subtable_df[['window_fast', 'window_slow', 'window_signal']].values[0]
-
-        # https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/indicators/nb.py#L171
-        macd = vbt.MACD.run(
-            close=data,  # close: 2D数组，表示收盘价
-            fast_window=window_fast,  # 快速移动平均线的窗口大小,Fast EMA period, default value 12
-            slow_window=window_slow,  # 慢速移动平均线的窗口大小,Slow EMA period, default value 26
-            signal_window=window_signal,  # 信号线的窗口大小,Signal line period, default value 9,这个参数好像没什么用
-            macd_ewm=False,  # #布尔值，是否使用指数加权移动平均（EMA）计算MACD线，True:EMA, False:SMA
-            signal_ewm=True, #布尔值，是否使用EMA计算信号线，True:EMA, False:SMA
-            adjust=False #布尔值，是否在计算EMA时进行调整
-            #cache_dict,字典，用于缓存计算结果
-        )
-        
-        # 计算 DIF 和 DEA 的斜率
-        dif_slope = macd.macd.diff()  # DIF 线的斜率
-        dea_slope = macd.signal.diff()  # DEA 线的斜率
-        
-        # 交易信号
-        #entries = (dif_slope > dea_slope) # 买入条件：DIF的斜率开始大于DEA的斜率
-        #exits = (dif_slope < 0) # 卖出条件：DIF斜率=0
-        # 买入信号：DIF 的斜率从负变正，且 DEA 的斜率也从负变正
-        entries = (dif_slope > 0) & (dif_slope.shift(1) < 0) & (dea_slope > 0) & (dea_slope.shift(1) < 0)
-        
-        # 卖出信号：DIF 的斜率从正变负
-        exits = (dif_slope < 0) & (dif_slope.shift(1) > 0)
-        
-        
-        global entries1,exits1
-        entries1 = entries
-        exits1=exits
         entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
         return entries_exits_t
     

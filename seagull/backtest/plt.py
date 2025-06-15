@@ -9,6 +9,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+from __init__ import path
 
 # 假设 portfolio_strategy 是一个包含策略结果的 DataFrame
 # 这里我们创建一个示例 DataFrame
@@ -48,8 +50,8 @@ def save_matplotlib_chart(portfolio_strategy, filename):
     print(f"图表已保存到 {filename}")
 
 # 使用示例
-save_plotly_chart(portfolio_strategy, "./html/portfolio_strategy_plotly.html")
-save_matplotlib_chart(portfolio_strategy, "./images/portfolio_strategy_matplotlib.png")
+save_plotly_chart(portfolio_strategy, f"{path}/seagull/html/portfolio_strategy_plotly.html")
+save_matplotlib_chart(portfolio_strategy, f"{path}/seagull/html/portfolio_strategy_matplotlib.png")
 
 # 如果在支持显示的环境中（如 Jupyter Notebook），可以直接显示
 # fig = px.line(portfolio_strategy)

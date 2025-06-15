@@ -15,6 +15,7 @@ from_signals
 
 目前问题：
 1，一个批次的横向比较数据，未初始价格被第一次有效价格补全，导致开始时间、结束时间为整个批次的开始 / 结束时间。因此建议用来筛选最佳策略，而不适合用来定量分析各只详细情况
+
 """
 import os
 import multiprocessing
@@ -46,7 +47,7 @@ class backtestVectorbt:
                        strategy_params_list=[{'window_fast': 10, 'window_slow': 50},
                                              {'window_fast': 10, 'window_slow': 40}],
                        ):
-        self.output_database_filename = 'ads_info_incr_bacetest'
+        self.output_database_filename = 'ads_info_incr_backtest'
         self.use_multiprocess=use_multiprocess
         self.strategy_params_df = self.strategy_params(strategy_params_list)
         self.strategy_params_batch_size = strategy_params_batch_size
@@ -134,7 +135,7 @@ class backtestVectorbt:
         norm_omega = df['omega_ratio'] / 5
         norm_alpha = df['alpha']
         norm_beta = 1 - df['beta']  # Lower beta is usually better
-    
+        
         # Compute weighted score
         score = (weights['ann_return'] * norm_ann_return +
                  weights['max_dd'] * norm_max_dd +
@@ -276,15 +277,10 @@ class backtestVectorbt:
         return df
     
     def dataset(self, symbols, date_start='2020-01-01', date_end='2022-01-01', column_price='Close'):
-        with utils_database.engine_conn('postgre') as conn:
-            table_exists = pd.read_sql( """SELECT EXISTS (
-                SELECT FROM information_schema.tables 
-                WHERE table_schema = 'public' 
-                AND table_name = 'dwd_freq_full_portfolio_daily_backtest');""", con=conn.engine).iloc[0, 0]
-        if not table_exists:
+        if not utils_data.table_in_database('dwd_ohlc_full_portfolio_daily_backtest_eff'):
             self.dwd_freq_full_portfolio_daily_backtest()
         with utils_database.engine_conn('postgre') as conn:
-            portfolio_daily_df = pd.read_sql(f"SELECT * FROM dwd_freq_full_portfolio_daily_backtest WHERE date BETWEEN '{date_start}' AND '{date_end}'", con=conn.engine)
+            portfolio_daily_df = pd.read_sql(f"SELECT * FROM dwd_ohlc_full_portfolio_daily_backtest_eff WHERE date BETWEEN '{date_start}' AND '{date_end}'", con=conn.engine)
             #portfolio_daily_df = pd.read_sql('dwd_freq_full_portfolio_daily_backtest', con=conn.engine)
         portfolio_daily_df.columns.name = 'symbol'
         
@@ -306,9 +302,10 @@ class backtestVectorbt:
         backtest_df = self.backtest_metrics(portfolio)
         if isinstance(backtest_df.index, pd.MultiIndex):
             backtest_df['symbol'] = backtest_df.index.get_level_values('symbol')
-            backtest_df['fast_ma'] = backtest_df.index.get_level_values(0)
-            backtest_df['slow_ma'] = backtest_df.index.get_level_values(1)
-            backtest_df['signal_ma'] = backtest_df.index.get_level_values(2)
+            #backtest_df['fast_ma'] = backtest_df.index.get_level_values(0)
+            #backtest_df['slow_ma'] = backtest_df.index.get_level_values(1)
+            #backtest_df['signal_ma'] = backtest_df.index.get_level_values(2)
+            #backtest_df['rsi_window'] = backtest_df.index.get_level_values('rsi_window')
         else:
             backtest_df['symbol'] = backtest_df.index
             backtest_df[['fast_ma', 'slow_ma', 'signal_ma']] = None 
@@ -334,8 +331,8 @@ class backtestVectorbt:
                                       backtest_df['fees'].astype(str)+
                                       backtest_df['slippage'].astype(str)+
                                       # backtest_df['init_cash'].astype(str)+
-                                      backtest_df['fast_ma'].astype(str)+
-                                      backtest_df['slow_ma'].astype(str)+
+                                      #backtest_df['fast_ma'].astype(str)+
+                                      #backtest_df['slow_ma'].astype(str)+
                                       backtest_df['comparison_experiment'].astype(str)
                                       ).apply(utils_character.md5_str) # md5
         
@@ -379,7 +376,7 @@ class backtestVectorbt:
 
     def backtest_chunk(self, args):
         data, strategy_params_df_chunk, comparison_experiment = args
-        entries_exits_t = strategy_params_df_chunk.groupby('primary_key', as_index=False).apply(self.strategy, data, include_groups=False)
+        entries_exits_t = strategy_params_df_chunk.groupby('primary_key', as_index=False).apply(self.strategy, data)#, include_groups=False
         entries_exits = entries_exits_t.T
         entries_exits.columns = entries_exits.columns.droplevel(0)
         entries = entries_exits['entries']
@@ -397,6 +394,7 @@ class backtestVectorbt:
     def backtest(self, data, comparison_experiment='base'):
         if comparison_experiment == 'base':
             portfolio = vbt.Portfolio.from_holding(close=data, **self.portfolio_params)
+            logger.info(portfolio)
             self.output_backtest_metrics(portfolio, data, comparison_experiment)
         else:
             chunks = [self.strategy_params_df.iloc[i:i+self.strategy_params_batch_size] 
@@ -452,3 +450,34 @@ if __name__ == '__main__':
 
 
 # data = backtest_vectorbt.dataset(symbols=["ADA-USD", "ETH-USD"], date_start=date_start, date_end=date_end)
+
+#https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/portfolio/trades.py#L69
+#胜率，盈亏比，plot_pnl
+
+# =============================================================================
+# Daily and longer timeframes: freq
+# 
+# 'D' : Daily
+# 'B' : Business day
+# 'W' : Weekly
+# 'ME' : Month end
+# 'MS' : Month start
+# 'Q' : Quarter end
+# 'QS' : Quarter start
+# 'A' or 'Y' : Year end
+# 'AS' or 'YS' : Year start
+# Hourly and shorter timeframes:
+# 
+# 'H' : Hourly
+# 'T' or 'min' : Minutes
+# 'S' : Seconds
+# 'L' or 'ms' : Milliseconds
+# 'U' or 'us' : Microseconds
+# 'N' : Nanoseconds
+# Offset Modifiers:
+# 
+# '5T' : 5 minutes
+# '30T' : 30 minutes
+# '15min' : 15 minutes
+# '2H' : 2 hours
+# =============================================================================

@@ -12,7 +12,7 @@ from __init__ import path
 from train import train_0_lightgbm
 
 
-class lightgbmRegressionTrain(train_0_lightgbm.lightgbmTrain):
+class LightgbmRegressionTrain(train_0_lightgbm.LightgbmTrain):
     def __init__(self, TARGET_REAL_NAMES=None):
         super().__init__(TARGET_REAL_NAMES)
         
@@ -28,7 +28,11 @@ class lightgbmRegressionTrain(train_0_lightgbm.lightgbmTrain):
         }
         # loading data
         lgb_regressor = lgb.LGBMRegressor(**params)
-        self.model_multioutput = MultiOutputRegressor(lgb_regressor)
+        self.model = MultiOutputRegressor(lgb_regressor)
         
-        #train_model
+        # train_model
         self.problem_type = 'regression'
+        
+        
+        
+        

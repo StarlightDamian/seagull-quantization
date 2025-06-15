@@ -13,17 +13,22 @@ import pandas as pd
 from __init__ import path
 from utils import utils_database
 # ETF dictionary
-# =============================================================================
-# etf_dict = {
-#     '510300': '沪深300ETF',
-#     '159681': '创50ETF',
-#     '512000': '券商ETF',
-#     '512880': '证券ETF',
-#     '515000': '科技ETF',
-#     '512480': '半导体ETF',
-#     '512760': '芯片ETF',
-# }
-# =============================================================================
+etf_dict = {
+    '510300': '沪深300ETF',
+    '159681': '创50ETF',
+    '512000': '券商ETF',
+    '512880': '证券ETF',
+    '515000': '科技ETF',
+    '512480': '半导体ETF',
+    '512760': '芯片ETF',
+    '510150': '消费ETF',
+    '518880': '黄金ETF',
+    '159509': '纳指科技ETF',
+    '513500': '标普500ETF',
+    '513600': '恒生指数ETF',
+    '159869': '游戏ETF',
+    '516390': '新能源汽车ETF',
+}
 
 # Time frequencies
 freq_dict = {
@@ -31,9 +36,9 @@ freq_dict = {
     15: '15min',
     30: '30min',
     60: '60min',
-    101: '日线',
-    102: '周线',
-    103: '月线',
+    #101: '日线',
+    #102: '周线',
+    #103: '月线',
 }
 
 def get_rsi(data, window=14):
@@ -41,15 +46,18 @@ def get_rsi(data, window=14):
     return rsi
 
 
-def process_etf_data(klt):
-    etf_freq_dict = ef.stock.get_quote_history(list(etf_dict.keys()), klt=str(klt))
+def dataset(klt):
+    etf_freq_dict = ef.stock.get_quote_history(list(etf_dict.keys()),
+                                               klt=str(klt),
+                                               beg='20240101',
+                                               )
     # etf_freq_df = pd.concat(etf_freq_dict, names=['code', 'row']).reset_index(level='row', drop=True)
     etf_freq_df = pd.concat({k: v for k, v in etf_freq_dict.items()}).reset_index(drop=True)
-    etf_freq_df = etf_freq_df.rename(columns={'日期': 'date',
+    etf_freq_df = etf_freq_df.rename(columns={'日期': 'time',
                                               '股票代码': 'full_code',
                                               '收盘': 'close'})
-    etf_freq_df['date'] = pd.to_datetime(etf_freq_df['date'])
-    etf_freq_df = etf_freq_df.pivot(index='date', columns='full_code', values='close')
+    etf_freq_df['time'] = pd.to_datetime(etf_freq_df['time'])
+    etf_freq_df = etf_freq_df.pivot(index='time', columns='full_code', values='close')
     # etf_freq_df.columns = [etf_dict[code] for code in etf_freq_df.columns]
     return etf_freq_df
 
@@ -81,42 +89,72 @@ def strategy(subtable_df, data):
     # 卖出信号：DIF 的斜率从正变负
     exits = (dif_slope < 0) & (dif_slope.shift(1) > 0)
     
-    entries_exits_t = pd.concat([entries, exits], axis=1, keys=['entries', 'exits']).T
+    global entries1,exits1
+    entries1=entries
+    exits1=exits
+    entries_exits_t = pd.concat([entries, exits],
+                                axis=1,
+                                keys=['entries', 'exits'],
+                                names=['signal_type', 'macd_fast_window', 'macd_slow_window', 'macd_signal_window', 'macd_macd_ewm', 'macd_signal_ewm', 'full_code']
+                                ).T
     return entries_exits_t
 
 def pipeline(subtable):
     klt = subtable.name
     
-    etf_data = process_etf_data(klt)
+    etf_data = dataset(klt)
     entries_exits_t = strategy(subtable, etf_data)
-    entries_exits = entries_exits_t.T
     # entries_exits.columns = entries_exits.columns.droplevel(0)# 不需要去除第一行column
-    entries = entries_exits['entries']
-    exits = entries_exits['exits']
-    
-    macd_entries_1 = entries.iloc[-1]  # Get the last row (most recent data)
-    macd_exits_1 = exits.iloc[-1]
-    
-    # 使用列表推导生成结果列
-    result = [
-        1 if entry else -1 if exit else 0
-        for entry, exit in zip(macd_entries_1, macd_exits_1)
-    ]
+    entries_exits_t = entries_exits_t.T
+
+# =============================================================================
+#     macd_entries_1 = entries.iloc[-1]  # Get the last row (most recent data)
+#     macd_exits_1 = exits.iloc[-1]
+#     
+#     
+#     
+#     # 使用列表推导生成结果列
+#     result = [
+#         1 if entry else -1 if exit else 0
+#         for entry, exit in zip(macd_entries_1, macd_exits_1)
+#     ]
+# =============================================================================
     
     # 转换为 pandas Series 或 DataFrame（可选）
-    result_series = pd.Series(result)
-    result_series.index = etf_data.columns
-    return result_series
+    #result_series = pd.Series(result)
+    #result_series.index = etf_data.columns
+    #entries_exits_t.index = entries_exits_t.index.strftime('%Y-%m-%d')
+    # Step 1: 按日期分组，保留每一天的最后一条记录
     
-if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
-        dwd_portfolio_base = pd.read_sql("dwd_info_nrtd_portfolio_base", con=conn.engine)
-    dwd_portfolio_base = dwd_portfolio_base[~(dwd_portfolio_base.prev_close=='-')]
-    
-    etf_dict = dict(zip(dwd_portfolio_base['asset_code'], dwd_portfolio_base['code_name']))
+    entries_exits_t.index = pd.MultiIndex.from_arrays(
+    [entries_exits_t.index.strftime('%F'),  # 日期部分
+     entries_exits_t.index.strftime('%F %T')], # 时间部分
+    names=['date', 'time'])  # MultiIndex 的名称
 
-    strategy_params_list = [{'klt': 5,'window_fast': 5,'window_slow': 13, 'window_signal':5,},
-                            {'klt': 15,'window_fast': 5,'window_slow': 13, 'window_signal':5,},
+    global entries_exits_t1
+    entries_exits_t1=entries_exits_t
+    last_entries_per_day = entries_exits_t.groupby(entries_exits_t.index.get_level_values('date')).tail(1)
+
+    # Step 2: 将 index 格式修改为 %F %T
+    #last_entries_per_day.index = last_entries_per_day.index.strftime('%Y-%m-%d %H:%M:%S')
+
+    return last_entries_per_day.T#.tail(1)
+
+def keep_levels_by_name(df, level_names):
+    new_columns = pd.MultiIndex.from_arrays([df.columns.get_level_values(name) for name in level_names])
+    new_columns.names = level_names
+    return new_columns
+
+if __name__ == '__main__':
+# =============================================================================
+#     with utils_database.engine_conn('postgre') as conn:
+#         dwd_portfolio_base = pd.read_sql("dwd_info_nrtd_portfolio_base", con=conn.engine)
+#     dwd_portfolio_base = dwd_portfolio_base[~(dwd_portfolio_base.prev_close=='-')]
+#     etf_dict = dict(zip(dwd_portfolio_base['asset_code'], dwd_portfolio_base['code_name']))
+# 
+# =============================================================================
+    strategy_params_list = [{'klt': 5,'window_fast': 5,'window_slow': 13, 'window_signal':5,},#6,13,4
+                            {'klt': 15,'window_fast': 5,'window_slow': 13, 'window_signal':5,},#9,16,5
                             {'klt': 30,'window_fast': 5,'window_slow': 13, 'window_signal':5,},
                             {'klt': 60,'window_fast': 8,'window_slow': 21, 'window_signal':7,},
                             {'klt': 101,'window_fast': 12,'window_slow': 26, 'window_signal':9,},
@@ -127,19 +165,56 @@ if __name__ == '__main__':
     
     
     # Calculate MACD histogram for all ETFs and time frequencies
-    macd_entries_exits_raw_df = strategy_params_pd.groupby('klt').apply(pipeline)
-    macd_entries_exits_df = macd_entries_exits_raw_df
-    macd_entries_exits_df.index = macd_entries_exits_df.index.map(freq_dict)
-    #macd_entries_exits_df = macd_entries_exits_df.sort_index(ascending=True)
-    etf_sum = macd_entries_exits_df.sum()
+    #macd_entries_exits_raw_df = strategy_params_pd.groupby('klt').apply(pipeline)
+    entries_exits_raw = strategy_params_pd.groupby('klt').apply(pipeline)
+    entries_exits = entries_exits_raw.fillna(0)
+    # entries_exits.columns.names=['klt', 'signal_type', 'macd_fast_window', 'macd_slow_window', 'macd_signal_window', 'macd_macd_ewm', 'macd_signal_ewm', 'full_code']
+    entries_exits=entries_exits.T
+    #entries_exits.index = pd.to_datetime(entries_exits.index)
+
+    date = '2024-09-30'
+    # 筛选出列名为 'entries' 的数据
+    entries_df = entries_exits.loc[entries_exits.index.get_level_values('date') == date, pd.IndexSlice[:, 'entries']]
+    entries_df.columns = keep_levels_by_name(entries_df, ['klt', 'full_code'])
     
-    macd_entries_exits_df = macd_entries_exits_df.T
-    macd_entries_exits_df['sum'] = etf_sum
-    macd_entries_exits_df = macd_entries_exits_df.sort_values(by='sum', ascending=False)
-    del macd_entries_exits_df['sum']
-    macd_entries_exits_df.index = macd_entries_exits_df.index.map(etf_dict)
-    macd_entries_exits_df = macd_entries_exits_df.replace({1:'买入', -1:'卖出', 0:''})
-    macd_entries_exits_df.to_csv(f'{path}/_file/macd_entries_exits.csv')
+    exits_df = entries_exits.loc[entries_exits.index.get_level_values('date') == date, pd.IndexSlice[:, 'exits']]
+    exits_df.columns = keep_levels_by_name(exits_df, ['klt', 'full_code'])
+    #entries_df = entries_df.applymap(lambda x: 1 if x is True else 0)
+    #exits_df = exits_df.applymap(lambda x: -1 if x is True else 0)
+
+# =============================================================================
+#     result = [
+#         1 if entry else -1 if exit else 0
+#         for entry, exit in zip(entries_df, exits_df)
+#     ]
+# =============================================================================
+    entries_exits_df = entries_df.astype(int) - exits_df.astype(int)
+    
+    entries_exits_df.columns
+    entries_exits_df.values[0].reshape(7,14)
+    
+    #((entries_exits.columns.get_level_values('klt') == 101)&(entries_exits.columns.get_level_values('signal_type') == 'exits'))
+    #entries_exits.xs(103, level='klt')
+    
+    #entries_exits_df['sum'] = entries_exits_df.sum(axis=1)
+    
+    #entries_exits_df.iloc[-1,entries_exits_df.columns.get_level_values('klt') == 5]
+    #entries_exits_df.iloc[:,entries_exits_df.columns.get_level_values('klt') == 101]
+
+# =============================================================================
+#     macd_entries_exits_df = macd_entries_exits_raw_df
+#     macd_entries_exits_df.index = macd_entries_exits_df.index.map(freq_dict)
+#     #macd_entries_exits_df = macd_entries_exits_df.sort_index(ascending=True)
+#     etf_sum = macd_entries_exits_df.sum()
+#     
+#     macd_entries_exits_df = macd_entries_exits_df.T
+#     macd_entries_exits_df['sum'] = etf_sum
+#     macd_entries_exits_df = macd_entries_exits_df.sort_values(by='sum', ascending=False)
+#     del macd_entries_exits_df['sum']
+#     macd_entries_exits_df.index = macd_entries_exits_df.index.map(etf_dict)
+#     macd_entries_exits_df = macd_entries_exits_df.replace({1:'买入', -1:'卖出', 0:''})
+#     macd_entries_exits_df.to_csv(f'{path}/_file/macd_entries_exits.csv')
+# =============================================================================
     
 # =============================================================================
 #     # macd

@@ -4,11 +4,15 @@ Created on Fri Sep 20 10:30:03 2024
 
 @author: awei
 数据\文件管理(utils_data)
+
+schema
 """
 import argparse
 import os
 from datetime import datetime, timedelta
+from io import StringIO
 
+import numpy as np
 import pandas as pd
 
 from __init__ import path
@@ -16,24 +20,123 @@ from utils import utils_time, utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+import csv
 
-def output_database(df, filename, chunksize=1000_000, if_exists='append', dtype=None, index=False):
+def map_dtype_to_postgres(pandas_dtype):
     """
-    :param conn:连接方式
+    将 pandas 数据类型映射到 PostgreSQL 数据类型
+    :param pandas_dtype: pandas 数据类型
+    :return: 对应的 PostgreSQL 数据类型
     """
-    if not df.empty:
-        df['insert_timestamp'] = datetime.now().strftime("%F %T")
-        logger.success('Writing to database started.')
+    dtype_map = {
+        'int64': 'BIGINT',
+        'float64': 'float8',#'DOUBLE PRECISION',
+        'object': 'TEXT',
+        'bool': 'BOOLEAN',
+        'datetime64[ns]': 'TIMESTAMP',
+        'datetime64[ns, UTC]': 'TIMESTAMP'
+    }
+    return dtype_map.get(str(pandas_dtype), 'TEXT')  # 默认返回 TEXT 类型
+
+def output_database_large(df, filename, if_exists='append'):
+    conn = utils_database.psycopg2_conn()
+    cursor = conn.cursor()
+    # Step 2: 如果 if_exists 为 'replace'，先删除表再重新创建
+    if if_exists == 'replace':
+        logger.info(f"Table {filename} exists, dropping and recreating it.")
+        cursor.execute(f"DROP TABLE IF EXISTS {filename};")
+        conn.commit()
+     
+    df[df.select_dtypes(include=['float']).columns] = df.select_dtypes(include=['float']).fillna(0)
+    df['insert_timestamp'] = datetime.now().strftime("%F %T")
+    
+    # Step 1: 确保表存在，如果表不存在则创建
+    cursor.execute(f"""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = '{filename}'
+        );
+    """)
+    table_exists = cursor.fetchone()[0]
+    
+    if not table_exists:
+        # 动态生成创建表的 SQL 语句
+        #columns = ', '.join([f"{col} {dtype}" for col, dtype in zip(df.columns, ['TEXT']*len(df.columns))])
+        columns = ', '.join([f"{col} {map_dtype_to_postgres(df[col].dtype.name)}" for col in df.columns])
+        logger.info(columns)
+        create_table_query = f"""
+            CREATE TABLE {filename} (
+                {columns}
+            );
+        """
+        cursor.execute(create_table_query)
+        conn.commit()
+    
+    # Step 2: 确保字段一致，如果有缺失的列，添加 NULL 值
+    # 获取目标表的列名
+    cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{filename}' ORDER BY ordinal_position;")
+    existing_columns = [col[0] for col in cursor.fetchall()]
+    
+    # 将 DataFrame 的列与表的列进行对比，添加缺失列
+    missing_columns = set(existing_columns) - set(df.columns)
+    for col in missing_columns:
+        df[col] = np.nan  # 为缺失的列添加空值（NULL）
+    
+    # 重新排列 DataFrame 列的顺序，确保顺序与表中的列一致
+    df = df[existing_columns]
+    
+    # Step 3: 将 DataFrame 转换为 CSV 格式并写入数据库
+    csv_buffer = StringIO()
+    #df = df.where(pd.notnull(df), None)  # Replace NaN with None to treat as NULL
+    df.to_csv(csv_buffer,
+              index=False,
+              #quoting=csv.QUOTE_MINIMAL,
+              #escapechar='\\',
+              header=False
+              )
+    csv_buffer.seek(0)
+    
+    # 使用 COPY 命令将数据写入数据库
+    cursor.copy_from(csv_buffer, filename, sep=',')
+    conn.commit()
+    
+    # 关闭连接
+    cursor.close()
+    conn.close()
+    
+def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dtype=None, index=False, method="multi"):
+    try:
+        logger.info('Writing to database started.')
         with utils_database.engine_conn('postgre') as conn:
             df.to_sql(filename,
                       con=conn.engine,
                       index=index,
                       if_exists=if_exists,
                       chunksize=chunksize,
-                      dtype=dtype)
+                      dtype=dtype,
+                      method=method
+                      )
         logger.success('Writing to database conclusion-succeeded.')
+    except Exception as e:
+        logger.error(f'Writing to database conclusion-failed: {e}')
+
+def output_database(df, **kwargs):
+    """
+    :param conn:连接方式
+    """
+    if not df.empty:
+        df['insert_timestamp'] = datetime.now().strftime("%F %T")
+        len_df = df.shape[0]
+        logger.info(f'The DataFrame has {len_df} rows.')
+        chunk_size = 50_000
+        for start in range(0, len_df, chunk_size):
+            df_chunk = df.iloc[start: start+chunk_size]
+            if start!=0:
+                kwargs['if_exists']='append'
+            output_database_mini(df_chunk, **kwargs)
     else:
-        logger.info('Writing to database conclusion-failed.')
+        logger.warning('DataFrame is empty.')
 
 def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_format='csv', filepath=None):
     filepath = filepath if filepath else f"{path}/data/{filename}.{file_format}"
@@ -45,7 +148,7 @@ def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_forma
         df.to_csv(filepath, encoding=encoding, index=False)
     else:
         ...
-            
+
 def maximum_date(table_name, field_name='date', sql=None):
     try:
         with utils_database.engine_conn('postgre') as conn:
@@ -59,10 +162,15 @@ def maximum_date(table_name, field_name='date', sql=None):
         logger.error('Exception in querying database maximum date')
         max_date = '1990-01-01'
     finally:
-        next_day = datetime.strptime(max_date, '%Y-%m-%d') + timedelta(days=1)
-        date_start = next_day.strftime('%Y-%m-%d')
-        logger.info(f'date_start: {date_start}')
-        return date_start
+        logger.info(f'max_date: {max_date}')
+        return max_date
+
+def maximum_date_next(table_name, field_name='date', sql=None):
+    max_date = maximum_date(table_name, field_name=field_name, sql=sql)
+    next_day = datetime.strptime(max_date, '%Y-%m-%d') + timedelta(days=1)
+    date_start = next_day.strftime('%Y-%m-%d')
+    logger.info(f'date_start: {date_start}')
+    return date_start
 
 def feather_file_merge(date_start, date_end):
     date_binary_pair_list = utils_time.date_binary_list(date_start, date_end)
@@ -125,6 +233,23 @@ def text_to_text_pd(texts):
     text_pd.xxzjbh = text_pd.xxzjbh.astype(str)
     return text_pd
 
+def table_in_database(filename):
+    with utils_database.engine_conn('postgre') as conn:
+        table_exists = pd.read_sql( """SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = '{filename}');""", con=conn.engine).iloc[0, 0]
+    if not table_exists:
+        return True
+    else:
+        return False
+
+def local_matrix(df, field, window = 5, direction='max'):
+    return df[field].rolling(window, min_periods=1).max()
+
+# data = pd.DataFrame({'high': np.random.randn(20).cumsum() + 10})
+# local_matrix(data,field='high')
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--date_start', type=str, default='2023-01-01', help='进行回测的起始时间')
@@ -151,9 +276,9 @@ if __name__ == '__main__':
 # 常用短语句
 # score_pd.groupby(['ws']).sum()#按照分词累加
 # df.A.unique()#唯一值
-# df.A.value_counts()#频率
+# df.A.value_counts()#频率2
 # person_pd.duplicated('word',keep='first')#判断第一个
-# person_pd.drop_duplicates('word',keep='first') 保存第一个
+# person_pd.drop_duplicates('word', keep='first') 保存第一个
 # (datetime.now()+timedelta(days=1)).strftime('%Y%m%d')#明天
 # .str.contains
 # [x for tem in list_2 for x in tem]#二维转换为一维
@@ -169,5 +294,5 @@ if __name__ == '__main__':
 # with open(path_file,'r',encoding='utf-8') as load_f:
 #     load_dict = json.load(load_f)
 # 键值对：key_value_dict = dict(zip(df['KeyColumn'], df['ValueColumn']))
-#df['date_column'] = pd.to_datetime(df['date_column'])
-#df['year_column'] = df['date_column'].dt.year
+# df['date_column'] = pd.to_datetime(df['date_column'])
+# df['year_column'] = df['date_column'].dt.year
