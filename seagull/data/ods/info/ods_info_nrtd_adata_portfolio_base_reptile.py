@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Aug  7 02:35:13 2024
-
-@author: awei
-
+@Date: 2024/8/7 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: base.py
+@Description:
 获取所有场内ETF当前信息(ods_info_nrtd_adata_portfolio_base_reptile)
 重写adata的adata.fund.info.all_etf_exchange_traded_info()接口，额外新增获取ETF的市场名称
 因为是爬虫数据，所以无法获取到历史的etf数据

@@ -7,9 +7,9 @@ Created on Mon Oct 21 00:43:31 2024
 """
 import pandas as pd
 
-from __init__ import path
 from utils import utils_database, utils_data
-from data import ods_info_incr_efinance_trading_day
+from data.ods.base import ods_info_incr_efinance_trading_day
+
 
 class TradingDayAlignment(ods_info_incr_efinance_trading_day.TradingDay):
     def __init__(self):

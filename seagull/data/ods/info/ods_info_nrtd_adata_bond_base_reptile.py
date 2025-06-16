@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 27 00:14:36 2024
-
-@author: awei
+@Date: 2024/8/27 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: base.py
+@Description:
 https://github.com/1nchaos/adata/blob/ba93ab86af7256407db069668e84b54b5fd6dbd7/adata/bond/info/bond_code.py#L36
 获取所有A股市场的可转换债券代码信息	(data_ods_info_incr_adata_bond_base_reptile)
 # bond.info.all_convert_code()

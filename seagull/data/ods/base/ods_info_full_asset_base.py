@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug 22 14:33:30 2024
-
-@author: awei
-(data_ods_info_full_asset_base)
+@Date: 2024/8/22 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: data_ods_info_full_asset_base.py
+@Description:
 """
 exchange = ccxt.binance({
     "enableRateLimit": True,

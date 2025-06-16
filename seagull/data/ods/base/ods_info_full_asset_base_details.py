@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb 23 01:45:25 2024
-
-@author: awei
-投资品种明细(ods_info_full_asset_base_details)
+@Date: 2024/5/26 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: ods_info_full_asset_base_details.py
+@Description: 投资品种明细
 """
 import pandas as pd
 from datetime import datetime
@@ -15,8 +16,8 @@ ASSET_TABLE_NAME = 'ods_info_full_asset_base_details'
 
 
 if __name__ == '__main__':
-    #exchange：表示交易所，可以存储交易所的名称，如"北交所"。
-    #board_type：表示板块类型，可以存储板块的名称，如"主板"、"创业板"、"科创板"、"新三板"等。
+    # exchange：表示交易所，可以存储交易所的名称，如"北交所"。
+    # board_type：表示板块类型，可以存储板块的名称，如"主板"、"创业板"、"科创板"、"新三板"等。
     data = [['stock', '主板', 0.1, ''],
             ['stock', '创业板', 0.2, ''],
             ['stock', '科创板', 0.2, ''],
