@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../07_open_source_important/KunQuant-main/.idea/KunQuant-main.iml" filepath="$PROJECT_DIR$/../../07_open_source_important/KunQuant-main/.idea/KunQuant-main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/seagull.iml" filepath="$PROJECT_DIR$/.idea/seagull.iml" />
     </modules>
   </component>
