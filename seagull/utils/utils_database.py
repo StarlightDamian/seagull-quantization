@@ -17,15 +17,14 @@ schema
 """
 import os
 from urllib import parse
-from sqlalchemy import create_engine, inspect
 from datetime import datetime, timedelta
-import psycopg2
 
+from sqlalchemy import create_engine, inspect
+import psycopg2
 import logger
 import pandas as pd
 
-from __init__ import path
-from utils import utils_arguments as arg
+from seagull import settings
 
 
 class DatabaseConnection:
@@ -85,7 +84,7 @@ class DatabaseConnection:
         
 def database_maximum_date(table_name, field_name):
     try:
-        with engine_conn('postgre') as conn:
+        with engine_conn('POSTGRES') as conn:
             max_date_df = pd.read_sql(f"SELECT max({field_name}) FROM {table_name}", con=conn.engine)
         max_date = max_date_df.values[0][0]
         logger.info(f'max_date: {max_date}')
@@ -100,113 +99,70 @@ def database_maximum_date(table_name, field_name):
 
         
 def psycopg2_conn():
+    try:
+        user = getattr(settings, "POSTGRES_USER")
+        password = getattr(settings, "POSTGRES_PASSWORD")
+        password = parse.quote_plus(str(password))  # 处理密码中带有@，被create_engine误分割导致的BUG
+        host = getattr(settings, "POSTGRES_HOST")
+        port = getattr(settings, "POSTGRES_PORT")
+        database = getattr(settings, "POSTGRES_DATABASE")
+    except AttributeError as e:
+        raise RuntimeError(f"No such database config: {e}")
+
     # 创建数据库连接
     conn = psycopg2.connect(
-        dbname='postgres', 
-        user='postgres', 
-        password='zyw8253688',
-        host='127.0.0.1', 
-        port='5432'
+        dbname=database,
+        user=user,
+        password=password,
+        host=host,
+        port=port
     )
     return conn
 
-def engine_url(type_database):
-    user = arg.conf(f'{type_database}_user')
-    password = arg.conf(f'{type_database}_password')
-    password = parse.quote_plus(str(password))  # 处理密码中带有@，被create_engine误分割导致的BUG
-    host = arg.conf(f'{type_database}_host')
-    port = arg.conf(f'{type_database}_port')
-    database = arg.conf(f'{type_database}_database')
-    database_dict = {'hive': 'hive', 'postgre': 'postgresql', 'oracle': 'oracle', 'mysql': 'mysql+pymysql'}
-    database_name = database_dict.get(f"{type_database}")
+
+def engine_url(database_type):
+    try:
+        user = getattr(settings, f"{database_type}_USER")
+        password = getattr(settings, f"{database_type}_PASSWORD")
+        password = parse.quote_plus(str(password))  # 处理密码中带有@，被create_engine误分割导致的BUG
+        host = getattr(settings, f"{database_type}_HOST")
+        port = getattr(settings, f"{database_type}_PORT")
+        database = getattr(settings, f"{database_type}_DATABASE")
+    except AttributeError as e:
+        raise RuntimeError(f"No such database config: {e}")
+
+    database_dict = {'POSTGRES': 'postgresql',
+                     'ORACLE': 'oracle',
+                     'MYSQL': 'mysql+pymysql'}
+    database_name = database_dict.get(f"{database_type}")
     user_password_host_port_database_str = f"{user}:{password}@{host}:{port}/{database}"
 
-    if type_database == 'hive':
-        auth = arg.conf('hive_auth')
-        db_url = f"{database_name}://{user_password_host_port_database_str}?auth={auth}"
-    elif type_database in ['postgre', 'oracle', 'mysql']:
+    if database_type == 'HIVE':
+        auth = getattr(config, "HIVE_AUTH")
+        db_url = f"hive://{user}:{password}@{host}:{port}/{database}?auth={auth}"
+    elif database_type in ['POSTGRES', 'ORACLE', 'MYSQL']:
         db_url = f"{database_name}://{user_password_host_port_database_str}"
-    return  db_url
+    return db_url
+
 
 def table_exists(tablename):
-    db_url = engine_url('postgre')
+    db_url = engine_url('POSTGRES')
     engine = create_engine(db_url)
     inspector = inspect(engine)
     return inspector.has_table(tablename)
 
-def engine_conn(type_database):
+
+def engine_conn(database_type):
     """
     功能：连接数据库
     备注：输出至数据库：to_csv()  if_exists:['append','replace','fail']#追加、删除原表后新增、啥都不干抛出一个 ValueError
     """
-    #print(f"当前数据库：{type_database}")
-    user = arg.conf(f'{type_database}_user')
-    password = arg.conf(f'{type_database}_password')
-    password = parse.quote_plus(str(password))  # 处理密码中带有@，被create_engine误分割导致的BUG
-    host = arg.conf(f'{type_database}_host')
-    port = arg.conf(f'{type_database}_port')
-    database = arg.conf(f'{type_database}_database')
-    database_dict = {'hive': 'hive', 'postgre': 'postgresql', 'oracle': 'oracle', 'mysql': 'mysql+pymysql'}
-    database_name = database_dict.get(f"{type_database}")
-    user_password_host_port_database_str = f"{user}:{password}@{host}:{port}/{database}"
-
-    if type_database == 'hive':
-        auth = arg.conf('hive_auth')
-        db_url = f"{database_name}://{user_password_host_port_database_str}?auth={auth}"
-    elif type_database in ['postgre', 'oracle', 'mysql']:
-        db_url = f"{database_name}://{user_password_host_port_database_str}"
-    # print(db_url)
+    db_url = engine_url(database_type)
     return DatabaseConnection(db_url)
 
-if __name__ == '__main__':
-    # print(path)
-    
-    # Data exploration
-    with engine_conn('postgre') as conn:
-        table_name = 'ods_ohlc_incr_efinance_stock_bj_daily'
-        count_field = '日期'
-        #data = pd.read_sql("SELECT * FROM history_a_stock_k_data limit 10", con=conn.engine)  # Use conn_pg.engine
-        data = pd.read_sql(f"SELECT {count_field}, COUNT(*) AS data_count FROM {table_name} GROUP BY {count_field} ORDER BY {count_field}", con=conn.engine)
-        print(data)
-    
-    print('The amount of data:', data.data_count.sum())
 
-    
-        
-        
-    #data.to_csv(f'{path}/data/history_a_stock_k_data_count_date.csv')
-    
-    #from base import base_utils
-    #data['primaryKey'] = (data['date']+data['code']).apply(base_utils.md5_str) # md5（日期、时间、代码）
-    #from sqlalchemy import Float, Numeric, String
-# =============================================================================
-#     data.to_sql('history_a_stock_k_data', con=conn.engine, index=False, if_exists='replace',
-#                             dtype={
-#                                 'primaryKey': String,
-#                                 'date': String,
-#                                 'code': String,
-#                                 'code_name': String,
-#                                 'open': Float,
-#                                 'high': Float,
-#                                 'low': Float,
-#                                 'close': Float,
-#                                 'preclose': Float,
-#                                 'volume': Numeric,
-#                                 'amount': Numeric,
-#                                 'adjustflag': String,
-#                                 'turn': Float,
-#                                 'tradestatus': String,
-#                                 'pctChg': Float,
-#                                 'peTTM': Float,
-#                                 'psTTM': Float,
-#                                 'pcfNcfTTM': Float,
-#                                 'pbMRQ': Float,
-#                                 'isST': String,
-#                             })
-# =============================================================================
-    # conn_pg = engine_conn('postgre')
-    # data = pd.read_sql("SELECT * FROM warning_hot_word_mx limit 10",con=conn_pg)
-    
-    #writer = pd.ExcelWriter(f'{path}/data/chongfuzisha_jjd_20220401_20220715.xlsx')
-    #data.to_excel(writer, sheet_name='20220401_20220714重复自杀接警单', index=False)
-    #writer.save()
+if __name__ == '__main__':
+    print(settings.PATH)
+    with engine_conn('POSTGRES') as pg_conn:
+        data = pd.read_sql(f"SELECT * FROM ods_ohlc_incr_efinance_stock_minute_1 limit 10", con=pg_conn.engine)
+        print(data)

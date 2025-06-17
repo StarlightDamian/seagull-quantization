@@ -244,6 +244,11 @@ def table_in_database(filename):
     else:
         return False
 
+    #writer = pd.ExcelWriter(f'{path}/data/chongfuzisha_jjd_20220401_20220715.xlsx')
+    #data.to_excel(writer, sheet_name='20220401_20220714重复自杀接警单', index=False)
+    #writer.save()
+
+
 def local_matrix(df, field, window = 5, direction='max'):
     return df[field].rolling(window, min_periods=1).max()
 
