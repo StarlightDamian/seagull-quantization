@@ -16,3 +16,7 @@ print(df)
 
 utils_data.output_database(df,
                            filename='ods_info_full_adata_fund_base')
+
+import adata
+df = adata.fund.info.all_etf_exchange_traded_info()
+print(df)

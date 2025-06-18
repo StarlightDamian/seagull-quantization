@@ -3,10 +3,10 @@
 @Date: 2024/8/27 13:07
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: base.py
+@File: snap_adata_bond.py
 @Description:
 https://github.com/1nchaos/adata/blob/ba93ab86af7256407db069668e84b54b5fd6dbd7/adata/bond/info/bond_code.py#L36
-获取所有A股市场的可转换债券代码信息	(data_ods_info_incr_adata_bond_base_reptile)
+获取所有A股市场的可转换债券代码信息	(ods_info_snap_adata_bond)
 # bond.info.all_convert_code()
 bond-conversion
 不能开国外VPN获取数据
