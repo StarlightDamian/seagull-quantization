@@ -16,7 +16,7 @@ import pandas as pd
 #from base import base_data_loading
 
 
-from __init__ import path
+from seagull.settings import PATH
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--date_end', type=str, default='2023-02-01', help='进行回测的结束时间')
     args = parser.parse_args()
     
-    stock_industry_df = pd.read_csv(f'{path}/data/stock_industry.csv', encoding='gb18030')
+    stock_industry_df = pd.read_csv(f'{PATH}/data/stock_industry.csv', encoding='gb18030')
     plate_df = stock_industry_df[stock_industry_df.industry.isin(['计算机'])]
     
     # day_df

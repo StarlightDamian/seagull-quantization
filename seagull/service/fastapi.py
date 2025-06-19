@@ -13,15 +13,15 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_server
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_server
 
 app = FastAPI()
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(current_file_path, "../html"))
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 # Sample DataFrame
 # =============================================================================
@@ -31,7 +31,7 @@ logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 #     'score': [85, 90, 99]
 # })
 # =============================================================================
-with utils_database.engine_conn('postgre') as conn:
+with utils_database.engine_conn("POSTGRES") as conn:
     df = pd.read_sql("dwd_info_nrtd_portfolio_base", con=conn.engine)
 
 @app.get("/data", response_class=HTMLResponse)

@@ -16,14 +16,14 @@ import torch
 # import numpy as np
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from trade import trade_eval
 from base import base_connect_database, base_utils
 from rl import rl_sac
-from utils import utils_log  # utils_database, utils_data, 
+from seagull.utils import utils_log  # utils_database, utils_data,
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
@@ -162,7 +162,7 @@ class SACAgentTrain(rl_sac.SACAgent):
 
                 feature_df = pd.merge(feature_df, self.all_stock[['code', 'held_volume']], on='code')
                 feature_action_df = pd.concat([feature_df, action_df], axis=1)
-                #feature_action_df.to_csv(f'{path}/data/feature_action_df_test3.csv')
+                #feature_action_df.to_csv(f'{PATH}/data/feature_action_df_test3.csv')
                 
                 #feature_action_df = feature_action_df[~(feature_action_df.close==0.0)]  # Exclude non-transaction data
                 #positions_pct = feature_action_df.positions_pct.mean()  #Dynamic position ratio (close to the dynamic position position, more inclined to sell at a higher price, buy at a lower price, place more orders, trade less, control positions)ll
@@ -295,7 +295,7 @@ class SACAgentTrain(rl_sac.SACAgent):
             
             trading_model_df = pd.DataFrame(trading_model_list)
             #trade_share_register_df = pd.DataFrame(trade_share_register_list)
-            with base_connect_database.engine_conn('postgre') as conn:
+            with base_connect_database.engine_conn("POSTGRES") as conn:
                 if dataset_type=='train':
                     trading_model_df.to_sql(TRADE_MODEL_TABLE_NAME, con=conn.engine, index=False, if_exists='append')
                 if dataset_type=='test':
@@ -324,7 +324,7 @@ def __apply_completion(state_subtable, all_stock):
     return merged_state
 
 def train_process(date_start='2020-01-01', date_end='2022-01-01'):
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         sql = f"SELECT * FROM {RE_ENVIRONMENT} WHERE date >= '{date_start}' AND date < '{date_end}'"#rl_environment
         backtest_raw_df = pd.read_sql(sql, con=conn.engine)
     
@@ -334,7 +334,7 @@ def train_process(date_start='2020-01-01', date_end='2022-01-01'):
     #backtest_raw_df.index = backtest_raw_df['code'] + '_' + backtest_raw_df['date']
     #backtest_raw_df = backtest_raw_df.sort_values(by='date',ascending=True).reset_index(drop=True)
     
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
 # =============================================================================
 #         date_end = datetime.now()
 #         date_start = date_end - timedelta(days=182)  # 距今半年有数据
@@ -391,7 +391,7 @@ if __name__ == '__main__':
     
 # =============================================================================
 #     # Retrieve stock ticker training round
-#     with base_connect_database.engine_conn('postgre') as conn:
+#     with base_connect_database.engine_conn("POSTGRES") as conn:
 #         all_stock = pd.read_sql("SELECT * FROM all_stock", con=conn.engine)
 #         
 #         all_stock['insert_timestamp'] = datetime.now().strftime('%F %T')

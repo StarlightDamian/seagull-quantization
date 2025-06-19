@@ -5,7 +5,7 @@ Created on Tue May 28 10:46:07 2024
 @author: awei
 (data_api_realtime)
 """
-from __init__ import path
+from seagull.settings import PATH
 import data_api_efinance
 import pprint
 

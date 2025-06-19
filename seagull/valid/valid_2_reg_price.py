@@ -11,7 +11,7 @@ import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import randint
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_2_stock_pick
 from base import base_connect_database
 from valid import valid_0_lightgbm
@@ -19,7 +19,7 @@ from test_ import test_2_stock_pick
 
 TASK_NAME = 'price_high'
 VALID_TABLE_NAME = 'valid_2_stock_pick'
-#MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/lightgbm_regression_stock_pick.joblib'
+#MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_regression_stock_pick.joblib'
 TARGET_NAMES = ['rear_low_rate', 'rear_high_rate']
 
 class validStockPick(valid_0_lightgbm.lightgbmValid):
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     print(f'Start time for backtesting: {args.date_start}\nEnd time for backtesting: {args.date_end}')
     
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM das_wide_incr_train WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
 
     print(history_day_df)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #valid_stock_pick.grid_search(history_day_df)
     
     #prediction_df = valid_stock_pick.test_pipline(history_day_df)
-    #prediction_df.to_csv(f'{path}/data/prediction_df.csv',index=False)
+    #prediction_df.to_csv(f'{PATH}/data/prediction_df.csv',index=False)
 
 
 

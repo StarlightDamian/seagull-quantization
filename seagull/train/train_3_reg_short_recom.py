@@ -12,15 +12,15 @@ import lightgbm as lgb
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import randint
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_1_lightgbm_regression
 from base import base_connect_database, base_trading_day, base_utils
 
 #EVAL_TABLE_NAME = 'eval_train'
 TRAIN_TABLE_NAME = 'train_3_short_term_recommend'
 TARGET_REAL_NAMES = ['rear_next_rise_pct_real', 'rear_next_fall_pct_real', 'rear_next_pct_real']
-#MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
-PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{path}/data/train_short_term_recommend.csv'
+#MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
+PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/data/train_short_term_recommend.csv'
 
 
 class trainShortTermRecommend(train_1_lightgbm_regression.lightgbmRegressionTrain):
@@ -56,7 +56,7 @@ class trainShortTermRecommend(train_1_lightgbm_regression.lightgbmRegressionTrai
         
 def feature_engineering_short_term_recommend(date_start, date_end):
     # Load date range data
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)
         
         test_stock_pick_df = pd.read_sql(f"SELECT * FROM test_1_stock_pick WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)

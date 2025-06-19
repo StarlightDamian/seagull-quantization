@@ -13,11 +13,11 @@ import talib
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def winsorize(df, window=50, n_lower=3, n_upper=3):
     """
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     full_code_list = ['159895.sz']
     for full_code in full_code_list:
         print(full_code)
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             raw_df = pd.read_sql(f"select primary_key, date,high, low, close from dwd_ohlc_incr_stock_daily where full_code='{full_code}'", con=conn.engine)
         
         raw_df = raw_df.drop_duplicates('primary_key', keep='first')
@@ -152,7 +152,7 @@ if __name__ == '__main__':
                                                )
         orders = portfolio.orders.records_readable
         
-        orders.to_csv(f'{path}/data/orders_records_readable2.csv', index=False)
+        orders.to_csv(f'{PATH}/data/orders_records_readable2.csv', index=False)
         
         
         # 4. 计算相关的绩效指标
@@ -160,9 +160,9 @@ if __name__ == '__main__':
         # trades_records_readable
         
         # 5. 输出回测结果到 HTML 文件
-        # portfolio.stats.to_html(f"{path}/seagull/html/backtest_report.html")
+        # portfolio.stats.to_html(f"{PATH}/seagull/html/backtest_report.html")
         fig = portfolio.plot()  # .figure
-        fig.write_html(f"{path}/html/{full_code}.html")
+        fig.write_html(f"{PATH}/html/{full_code}.html")
         logger.info(portfolio.stats(settings=dict(freq='d',
                                                   year_freq='243 days')))
         

@@ -6,9 +6,9 @@ Created on Sun Mar  3 13:46:02 2024
 """
 
 import os
-from __init__ import path
+from seagull.settings import PATH
 
-directory_path = f'{path}/data/history_a_stock_5_min/2022-01-01_2022-10-10/'
+directory_path = f'{PATH}/data/history_a_stock_5_min/2022-01-01_2022-10-10/'
 
 # 获取指定目录下的所有文件
 all_files = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]

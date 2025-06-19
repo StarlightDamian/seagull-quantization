@@ -70,7 +70,7 @@ if __name__ == '__main__':
         date_start_prev = trading_day_alignment.shift_day(date_start=date_start, date_num=100)
         
         #raw_df = pipeline(date_start=date_start_prev, date_end=date_end)
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             df = pd.read_sql(f"""SELECT
                                      * 
                                  FROM

@@ -14,8 +14,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.linear_model import HuberRegressor
 
-from __init__ import path
-from utils import utils_database, utils_character, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_character, utils_log
 
 def dataset_1(subtable):
     subtable[['prev_close']] = subtable[['close']].shift(1)
@@ -25,10 +25,10 @@ def dataset_1(subtable):
     return subtable
 
 def dataset(date_start, date_end):
-    #with utils_database.engine_conn('postgre') as conn:
+    #with utils_database.engine_conn("POSTGRES") as conn:
     #    df = pd.read_sql(f"SELECT * FROM dwd_freq_incr_stock_daily where date between '{date_start}' and '{date_end}'",
     #                           con=conn.engine)
-    df = pd.read_csv(f'{path}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
+    df = pd.read_csv(f'{PATH}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
 # =============================================================================
 #     df = df[['primary_key', 'date', 'time', 'board_type', 'full_code', 'asset_code',
 #            'market_code', 'code_name', 'price_limit_pct', 'open', 'high', 'low',
@@ -61,11 +61,11 @@ def custom_loss(y_pred, dataset):
 if __name__ == '__main__':
 
         
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         index_df = pd.read_sql("dwd_part_full_index_base", con=conn.engine)
         index_df = index_df[index_df["index"]=='hs300']
 # =============================================================================
-#     data = pd.read_csv(f'{path}/data/test_603893.csv')
+#     data = pd.read_csv(f'{PATH}/data/test_603893.csv')
 #     #data['high'] = data['high'] / data['close']
 #     columns_to_divide = ['high', 'low', 'open', 'close']
 #     data[columns_to_divide] = data[columns_to_divide].div(data['preclose'], axis=0)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     
     date_start = '2020-01-01'
     date_end = '2021-01-01'
-    df = pd.read_csv(f'{path}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
+    df = pd.read_csv(f'{PATH}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
     df = df[df.full_code.isin(index_df.full_code)]  #603893.sh, 002230.sz,
     #df = df.groupby('full_code').apply(dataset_1)#.reset_index(drop=True)
     df[['prev_close']] = df[['close']].shift(1)
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     result['next_high_bool'] = np.where(result['y_test'] >= result['y_pred'], 1, None)
     result = result.round(4)
     print(result)
-    result.to_csv(f'{path}/data/test_result_xgboost.csv',index=False)
+    result.to_csv(f'{PATH}/data/test_result_xgboost.csv',index=False)
     
     
     result_bool = result[result.next_high_bool==1]

@@ -8,7 +8,7 @@ Created on Thu Aug 24 16:04:00 2023
 from sklearn.multioutput import MultiOutputRegressor
 import lightgbm as lgb
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_0_lightgbm
 
 

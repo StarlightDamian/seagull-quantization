@@ -4,15 +4,14 @@
 @Author: Damian
 @Email: zengyuwei1995@163.com
 @File: full_asset_details.py
-@Description: 投资品种明细(ods_base_full_asset_details)
+@Description: 投资品种明细(ods/base/full_asset_details)
+@Update cycle: permanent
 """
 import pandas as pd
-from datetime import datetime
 
-from __init__ import path
-from utils import utils_data
+from seagull.utils import utils_data
 
-ASSET_TABLE_NAME = 'ods_info_full_asset_base_details'
+ASSET_DETAILS_TABLE_NAME = 'ods_base_full_asset_details'
 
 
 if __name__ == '__main__':
@@ -27,7 +26,9 @@ if __name__ == '__main__':
             ['stock', 'ETF', 0.1, ''],
             ['stock', '指数', 0.1, ''],
             ]
-    asset_varietie_df = pd.DataFrame(data, columns=['asset', 'board_type','price_limit_rate','remark'])
-    asset_varietie_df['insert_timestamp'] = datetime.now().strftime("%F %T")
-    utils_data.output_database(asset_varietie_df, filename=ASSET_TABLE_NAME, if_exists='replace')
+    asset_details_df = pd.DataFrame(data, columns=['asset', 'board_type', 'price_limit_rate', 'remark'])
+    asset_details_df[['country_region', 'country_region_cn']] = 'China', '中国'
+    asset_details_df = asset_details_df[['country_region', 'country_region_cn', 'asset', 'board_type',
+                                         'price_limit_rate', 'remark']]
+    utils_data.output_database(asset_details_df, filename=ASSET_DETAILS_TABLE_NAME, if_exists='replace')
 

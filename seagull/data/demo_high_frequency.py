@@ -114,12 +114,12 @@ import numpy as np
 import pandas as pd
 # from joblib import Parallel, delayed
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data, utils_character, utils_thread, utils_time
-from data import utils_api_baostock
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data, utils_character, utils_thread, utils_time
+from seagull.data import utils_api_baostock
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 def calculate_liquidity(day_df):
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     logger.info(f"""task: dwd_feat_incr_high_frequency_5minute
                     date_start: {args.date_start}
                     date_end: {args.date_end}""")
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         high_frequency_df = pd.read_sql(f"""
                     SELECT
                         primary_key
@@ -203,10 +203,10 @@ if __name__ == '__main__':
                       (high_frequency_df._20pct_5min_low==0)|
                       (high_frequency_df._80pct_5min_high==0)|
                       (high_frequency_df._90pct_5min_high==0))]
-    #with utils_database.engine_conn('postgre') as conn:
+    #with utils_database.engine_conn("POSTGRES") as conn:
         #pd.read_sql("dwd_feat_incr_high_frequency_5minute", con=conn.engine)
 # =============================================================================
-#     raw_df = pd.read_csv(f'{path}/data/asset_5min_df.csv')
+#     raw_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
 #     df = raw_df[(raw_df['date']=='2023-03-28')&(raw_df['full_code']=='600183.sh')]
 #     
 #     # 流动性
@@ -217,8 +217,8 @@ if __name__ == '__main__':
 #     df['momentum'] = df['close'].pct_change(n_periods)
 #     df['reversal'] = -df['momentum']
 # =============================================================================
-    #asset_5min_df = pd.read_csv(f'{path}/data/asset_5min_df.csv')
+    #asset_5min_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
 
-    #asset_5min_df.to_csv(f'{path}/data/asset_5min_df.csv',index=False)
-    #asset_5min_df = pd.read_csv(f'{path}/data/asset_5min_df.csv')
+    #asset_5min_df.to_csv(f'{PATH}/data/asset_5min_df.csv',index=False)
+    #asset_5min_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
     #pipeline(asset_5min_df)

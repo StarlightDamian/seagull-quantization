@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 
 def apply_amount(subtable):
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('--date_end', type=str, default='2023-12-01', help='End time for backtesting')
     args = parser.parse_args()
     
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_sql = f"SELECT * FROM history_a_stock_k_data WHERE date >= '{args.date_start}' AND date < '{args.date_end}' and code='sz.002230' "
         history_df = pd.read_sql(history_sql, con=conn.engine)
         

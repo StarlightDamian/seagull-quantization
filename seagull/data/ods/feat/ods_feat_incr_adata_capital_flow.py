@@ -14,8 +14,8 @@ from requests.exceptions import JSONDecodeError
 import adata
 import pandas as pd
 
-from __init__ import path
-from utils import utils_data, utils_database, utils_thread
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database, utils_thread
 
 
 def _apply_stock_capital_flow_1(subtable):
@@ -46,7 +46,7 @@ def _apply_stock_capital_flow_1(subtable):
 
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
         ods_capital_flow = pd.read_sql("ods_feat_incr_adata_capital_flow", con=conn.engine)

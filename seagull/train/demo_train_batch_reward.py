@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from lightgbm import LGBMRegressor
 import lightgbm as lgb
 
-from __init__ import path
+from seagull.settings import PATH
 
 
 class BatchRewardTrainer:
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     #np.random.seed(42)
     #X = np.random.rand(1000, 10)
     #y = np.sum(X, axis=1) + np.random.normal(0, 0.1, 1000)
-    data = pd.read_csv(f'{path}/data/test_603893.csv')
+    data = pd.read_csv(f'{PATH}/data/test_603893.csv')
     #data['high'] = data['high'] / data['close']
     columns_to_divide = ['high', 'low', 'open', 'close']
     data[columns_to_divide] = data[columns_to_divide].div(data['preclose'], axis=0)
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 #     print(result)
 #     result['next_high_bool'] = np.where(result['y_test'] >= result['y_pred'], 1, None)
 # 
-#     result.to_csv(f'{path}/data/test_result_reward2.csv',index=False)
+#     result.to_csv(f'{PATH}/data/test_result_reward2.csv',index=False)
 # 
 #     result_bool = result[result.next_high_bool==1]
 #     y_test,y_pred,next_high_bool = result_bool.mean()

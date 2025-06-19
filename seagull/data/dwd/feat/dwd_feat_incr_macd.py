@@ -12,17 +12,17 @@ from datetime import datetime
 
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data
 from feature import macd
 from finance import finance_trading_day
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 def pipeline(date_start, date_end):
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         stock_daily_df = pd.read_sql(f"""
             select 
                 full_code,

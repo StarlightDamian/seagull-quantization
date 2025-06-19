@@ -15,8 +15,8 @@ from torchmetrics import AUC
 import tensorboardX
 import argparse
 import pandas as pd
-from __init__ import path
-from utils import utils_database, utils_character, utils_log, utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_character, utils_log, utils_math
 
 class CustomDataset(Dataset):
     def __init__(self, features, labels):
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                     date_end: {args.date_end}""")
 
     # 获取日期段数据
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         df = pd.read_sql(f"SELECT * FROM dwd_freq_incr_stock_daily WHERE date BETWEEN '{args.date_start}' AND '{args.date_end}'", con=conn.engine)
 
     features = ['open_rate', 'high_rate', 'low_rate', 'close_rate', 'volume',

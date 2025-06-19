@@ -7,9 +7,9 @@ baostock行业分类(ods_flag_full_baostock_stock_label)
 """
 import baostock as bs
 
-from __init__ import path
-from utils import utils_data 
-from data import utils_api_baostock
+from seagull.settings import PATH
+from seagull.utils import utils_data
+from seagull.data import utils_api_baostock
 
 
 def query_stock_industry():

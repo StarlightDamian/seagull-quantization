@@ -21,25 +21,25 @@ from sklearn.metrics import fbeta_score, make_scorer
 #import warnings
 
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_thread,utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_thread,utils_math
 from feature import vwap, max_drawdown
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def rmse(y_true, y_pred):
     return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-    #rew_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    #rew_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     #raw_df = rew_df.groupby('full_code').apply(vwap.daily_vwap, window=10)
     #raw_df = raw_df.rename(columns={'y_vwap_rate': 'y_10d_vwap_rate'})
-    #raw_df.reset_index(drop=True).to_feather(f'{path}/data/das_wide_incr_train_10d_vwap.feather')         
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train_10d_vwap.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
     #raw_df = raw_df.groupby('full_code').apply(max_drawdown.calculate_max_drawdown, column_name='10d_max_dd', window=10)
-    #raw_df.reset_index(drop=True).to_feather(f'{path}/data/das_wide_incr_train_10d_vwap_max_dd.feather')     
-    #raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
+    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
 
     # 数据处理
    # alpha_features = ['alpha001', 'alpha002', 'alpha003', 'alpha004', 'alpha005', 'alpha006', 'alpha007', 'alpha008', 'alpha009', 'alpha010', 'alpha011', 'alpha012', 'alpha013', 'alpha014', 'alpha015', 'alpha016', 'alpha017', 'alpha018', 'alpha019', 'alpha020', 'alpha021', 'alpha022', 'alpha023', 'alpha024', 'alpha025', 'alpha026', 'alpha027', 'alpha028', 'alpha029', 'alpha030', 'alpha031', 'alpha032', 'alpha033', 'alpha034', 'alpha035', 'alpha036', 'alpha037', 'alpha038', 'alpha039', 'alpha040', 'alpha041', 'alpha042', 'alpha043', 'alpha044', 'alpha045', 'alpha046', 'alpha047', 'alpha049', 'alpha050', 'alpha051', 'alpha052', 'alpha053', 'alpha054', 'alpha055', 'alpha057', 'alpha060', 'alpha061', 'alpha062', 'alpha064', 'alpha065', 'alpha066', 'alpha068', 'alpha071', 'alpha072', 'alpha073', 'alpha074', 'alpha075', 'alpha077', 'alpha078', 'alpha081', 'alpha083', 'alpha084', 'alpha085', 'alpha086', 'alpha088', 'alpha092', 'alpha094', 'alpha095', 'alpha096', 'alpha098', 'alpha099', 'alpha101']
@@ -206,6 +206,6 @@ if __name__ == '__main__':
     result_reg.columns=['y_real','y_pred']
     result_reg = result_reg.round(4)
     result_reg = result_reg.sort_values(by='y_pred' ,ascending=False)
-    result_reg.to_csv(f'{path}/data/test_reg_10d_max_dd.csv', index=False)
+    result_reg.to_csv(f'{PATH}/data/test_reg_10d_max_dd.csv', index=False)
     
     #rmse(y_val.values, y_val_pred)#0.053320363282936774

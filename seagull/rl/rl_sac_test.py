@@ -15,7 +15,7 @@ import math
 import pandas as pd
 
 
-from __init__ import path
+from seagull.settings import PATH
 from trade import trade_model_eval
 from reinforcement_learning import rl_sac_train
 from base import base_connect_database, base_utils
@@ -64,7 +64,7 @@ def __apply_completion(state_subtable, all_stock):
     return merged_state
 
 def train_process(date_start='2020-01-01', date_end='2022-01-01'):
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         sql = f"SELECT * FROM {RE_ENVIRONMENT} WHERE date >= '{date_start}' AND date < '{date_end}'"
         backtest_raw_df = pd.read_sql(sql, con=conn.engine)
     
@@ -73,7 +73,7 @@ def train_process(date_start='2020-01-01', date_end='2022-01-01'):
     backtest_raw_df = backtest_raw_df.drop_duplicates(['date','code'], keep='first') # 处理测试导致的重复数据污染
     #backtest_raw_df.index = backtest_raw_df['code'] + '_' + backtest_raw_df['date']
     #backtest_raw_df = backtest_raw_df.sort_values(by='date',ascending=True).reset_index(drop=True)
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
 # =============================================================================
 #         date_end = datetime.now()
 #         date_start = date_end - timedelta(days=182)  # 距今半年有数据
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     
 # =============================================================================
 #     # Retrieve stock ticker training round
-#     with base_connect_database.engine_conn('postgre') as conn:
+#     with base_connect_database.engine_conn("POSTGRES") as conn:
 #         all_stock = pd.read_sql("SELECT * FROM all_stock", con=conn.engine)
 #         
 #         all_stock['insert_timestamp'] = datetime.now().strftime('%F %T')
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     
 # =============================================================================
 # def train_process(date_start='2020-01-01', date_end='2022-01-01'):
-#     with base_connect_database.engine_conn('postgre') as conn:
+#     with base_connect_database.engine_conn("POSTGRES") as conn:
 #         sql = f"SELECT * FROM prediction_stock_price_test WHERE date >= '{date_start}' AND date < '{date_end}'"#2020-01-02, 2024-01-02
 #         backtest_df = pd.read_sql(sql, con=conn.engine)
 #     
@@ -322,7 +322,7 @@ if __name__ == '__main__':
 #         transaction_order_df = pd.DataFrame(transaction_order_list)
 #         #trading_model_df = pd.DataFrame(trading_model_list)
 #         #trade_share_register_df = pd.DataFrame(trade_share_register_list)
-#         with base_connect_database.engine_conn('postgre') as conn:
+#         with base_connect_database.engine_conn("POSTGRES") as conn:
 #             print('transaction_order_df',transaction_order_df)
 #             transaction_order_df.to_sql(TRADE_ORDER_TABLE_NAME, con=conn.engine, index=False, if_exists='append')  # append
 #             #trading_model_df.to_sql(TRADE_MODEL_TABLE_NAME, con=conn.engine, index=False, if_exists='replace')

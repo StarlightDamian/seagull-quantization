@@ -10,11 +10,11 @@ import os
 import pandas as pd
 import efinance as ef
 
-from __init__ import path
-from utils import utils_database, utils_data, utils_thread, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_data, utils_thread, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 def _apply_stock_capital_flow_1(sub):
@@ -27,7 +27,7 @@ def _apply_stock_capital_flow_1(sub):
         logger.error(f'{stock_code} {e}')
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
         #ods_capital_flow = pd.read_sql("ods_feat_incr_adata_capital_flow", con=conn.engine)

@@ -9,8 +9,8 @@ Created on Wed Oct 30 20:44:49 2024
 """
 import adata
 
-from __init__ import path
-from utils import utils_data, utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database
 
 ods_adata_stock_lifting = adata.sentiment.stock_lifting_last_month()
 utils_data.output_database(ods_adata_stock_lifting,

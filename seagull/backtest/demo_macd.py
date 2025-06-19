@@ -17,11 +17,11 @@ import os
 import pandas as pd
 
 import vectorbt as vbt
-from __init__ import path
-from utils import utils_database, utils_log, utils_character, utils_math  #, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_character, utils_math  #, utils_data
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def vbt_macd(data):
     macd = vbt.MACD.run(
@@ -97,7 +97,7 @@ def diff_hist(df):
 
 if __name__ == '__main__':
     full_code_tuple = ('399101.sz', '399102.sz', '000300.sh', '000001.sh', '399106.sz')
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         stock_daily_df = pd.read_sql(f"""
             select
                 full_code,

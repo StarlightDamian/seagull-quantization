@@ -11,8 +11,8 @@ from requests.exceptions import JSONDecodeError
 import adata
 import pandas as pd
 
-from __init__ import path
-from utils import utils_data, utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database
 
 
 def _apply_stock_dividend_1(subtable):
@@ -35,7 +35,7 @@ def _apply_stock_dividend_1(subtable):
         print(f"An error occurred: {e}")
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
         ods_dividend = pd.read_sql("ods_acct_incr_adata_dividend", con=conn.engine)

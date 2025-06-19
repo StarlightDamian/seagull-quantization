@@ -7,8 +7,8 @@ Created on Wed Oct 30 23:56:34 2024
 """
 
 import adata
-from __init__ import path
-from utils import utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_data
 
 def _apply_hot_1(subtable):
     stock_code = subtable.name
@@ -16,7 +16,7 @@ def _apply_hot_1(subtable):
 
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
         ods_capital_flow = pd.read_sql("ods_feat_incr_adata_capital_flow", con=conn.engine)

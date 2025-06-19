@@ -40,12 +40,12 @@ import numpy as np
 import pandas as pd
 # from joblib import Parallel, delayed
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data, utils_character, utils_thread, utils_time
-from data import utils_api_baostock
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data, utils_character, utils_thread, utils_time
+from seagull.data import utils_api_baostock
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def calculate_high_frequency(day_df, buy_pct=[10, 20], sell_pct=[80, 90]):
     day_df = day_df.reset_index(drop=True)
@@ -125,7 +125,7 @@ def dwd_baostock_minute(subtable):
     logger.info(f'date_start: {date_start} | date_end:{date_end}')
     
     # 获取日期段数据
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         asset_5min_df = pd.read_sql(f"SELECT date, time, code, high, low, close, volume FROM ods_ohlc_incr_baostock_stock_sh_sz_minute WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)
     logger.info(f'asset_5min_df.shape: {asset_5min_df.shape}')
     

@@ -20,11 +20,11 @@ import torch.optim as optim
 import numpy as np
 from tqdm import tqdm
 
-from __init__ import path
-from utils import utils_database, utils_character, utils_log, utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_character, utils_log, utils_math
 import lightgbm_base
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 # Define the MLP model class in PyTorch
 class AutoEncoder(nn.Module):
@@ -94,7 +94,7 @@ logger.info(f"""task: feature_engineering
                 date_end: {args.date_end}""")
 
 # 获取日期段数据
-with utils_database.engine_conn('postgre') as conn:
+with utils_database.engine_conn("POSTGRES") as conn:
     df = pd.read_sql(f"SELECT * FROM dwd_freq_incr_stock_daily WHERE date BETWEEN '{args.date_start}' AND '{args.date_end}'", con=conn.engine)
 
 features = ['open_rate', 'high_rate', 'low_rate', 'close_rate', 'volume',

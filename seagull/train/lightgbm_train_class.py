@@ -18,13 +18,13 @@ from sklearn.metrics import classification_report, fbeta_score, confusion_matrix
 #import joblib
 
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 import lightgbm_base
 import rolling_cv
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 #board_primary_key
 #df.drop_duplicates('board_primary_key',keep='first')[['board_type','is_limit_up_prev','is_limit_down_prev']]
@@ -49,13 +49,13 @@ if __name__ == '__main__':
 #     parser.add_argument('--date_end', type=str, default='2024-06-01', help='End time for backtesting')
 #     args = parser.parse_args()
 #     
-#     with utils_database.engine_conn('postgre') as conn:
+#     with utils_database.engine_conn("POSTGRES") as conn:
 #         raw_df = pd.read_sql(f"SELECT * FROM das_wide_incr_train WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
 #         # raw_df = pd.read_sql("select * from das_wide_incr_train where board_type='主板'", con=conn.engine)
 #         # raw_df = pd.read_sql("select *  from das_wide_incr_train where board_type not in ('北交所','ETF') ", con=conn.engine)
 #         
 # =============================================================================
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     
     # 清洗脏数据
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&(raw_df.low >= raw_df.limit_down)]

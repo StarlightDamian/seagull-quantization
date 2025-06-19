@@ -13,8 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.linear_model import HuberRegressor
 
-from __init__ import path
-from utils import utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_database
 
 
 # 定义自定义Huber损失
@@ -30,13 +30,13 @@ def custom_huber_loss(y_pred, dataset):
     return grad, hess
 
 def dataset():
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         # dwd_freq_incr_stock_daily
         data = pd.read_sql("select * from ods_freq_incr_baostock_stock_sh_sz_daily where date BETWEEN '2022-01-01' AND '2023-01-01'and code='sh.601166'", con=conn.engine)
         #data[['high', 'low', 'open', 'close','preclose']] = data[['high', 'low', 'open', 'close','preclose']].astype(float)
         
         
-    #data = pd.read_csv(f'{path}/data/test_603893.csv')
+    #data = pd.read_csv(f'{PATH}/data/test_603893.csv')
     #data['high'] = data['high'] / data['close']
     columns_to_divide = ['high', 'low', 'open', 'close']
     data[['open', 'high', 'low', 'close', 'volume',
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     print(result)
     result['next_high_bool'] = np.where(result['y_test'] >= result['y_pred'], 1, None)
 
-    result.to_csv(f'{path}/data/test_result_reward2.csv',index=False)
+    result.to_csv(f'{PATH}/data/test_result_reward2.csv',index=False)
 
     result_bool = result[result.next_high_bool==1]
     y_test_mean, y_pred_mean,next_high_bool = result_bool.mean()

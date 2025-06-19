@@ -17,11 +17,11 @@ from sklearn.metrics import fbeta_score, make_scorer
 #import warnings
 
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_thread,utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_thread,utils_math
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 #warnings.filterwarnings('ignore', category=UserWarning, module='lightgbm')
 
@@ -79,7 +79,7 @@ def winsorize(df, n=3):
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     
 # =============================================================================
 #     alpha_features=['alpha098'
@@ -366,7 +366,7 @@ if __name__ == '__main__':
 #     feature_df["feature"] = model.feature_name_   
 #     feature_df["importance"] = model.feature_importances_
 #     feature_df = feature_df.sort_values(by='importance', ascending=False)
-#     feature_df.to_csv(f'{path}/data/feature_df.csv', index=False)
+#     feature_df.to_csv(f'{PATH}/data/feature_df.csv', index=False)
 #     feature_importance_df = feature_df[feature_df.importance>5].feature.values
 # =============================================================================
     

@@ -42,7 +42,7 @@ def start_vpn_with_admin(config_file):
     except subprocess.CalledProcessError as e:
         print("Failed to start VPN:", e)
 # 启动 VPN，假设使用 OpenVPN 配置文件
-vpn_config = "f'{path}/1708358592002.yml'"
+vpn_config = "f'{PATH}/1708358592002.yml'"
 start_vpn_with_admin(vpn_config)
 
 start_vpn(vpn_config)

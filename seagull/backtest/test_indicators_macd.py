@@ -10,8 +10,8 @@ import efinance as ef
 import pandas as pd
 
 # import numpy as np
-from __init__ import path
-from utils import utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_database
 # ETF dictionary
 etf_dict = {
     '510300': '沪深300ETF',
@@ -147,7 +147,7 @@ def keep_levels_by_name(df, level_names):
 
 if __name__ == '__main__':
 # =============================================================================
-#     with utils_database.engine_conn('postgre') as conn:
+#     with utils_database.engine_conn("POSTGRES") as conn:
 #         dwd_portfolio_base = pd.read_sql("dwd_info_nrtd_portfolio_base", con=conn.engine)
 #     dwd_portfolio_base = dwd_portfolio_base[~(dwd_portfolio_base.prev_close=='-')]
 #     etf_dict = dict(zip(dwd_portfolio_base['asset_code'], dwd_portfolio_base['code_name']))
@@ -213,7 +213,7 @@ if __name__ == '__main__':
 #     del macd_entries_exits_df['sum']
 #     macd_entries_exits_df.index = macd_entries_exits_df.index.map(etf_dict)
 #     macd_entries_exits_df = macd_entries_exits_df.replace({1:'买入', -1:'卖出', 0:''})
-#     macd_entries_exits_df.to_csv(f'{path}/_file/macd_entries_exits.csv')
+#     macd_entries_exits_df.to_csv(f'{PATH}/_file/macd_entries_exits.csv')
 # =============================================================================
     
 # =============================================================================
@@ -222,7 +222,7 @@ if __name__ == '__main__':
 #     macd_results = macd_results.round(3)
 #     macd_results.columns = macd_results.columns.get_level_values('code_name')
 #     macd_results.columns.name = 'macd能量柱'
-#     macd_results.to_csv(f'{path}/_file/etf_freq_macd.csv')
+#     macd_results.to_csv(f'{PATH}/_file/etf_freq_macd.csv')
 #     # Display the results
 #     print(macd_results)
 # =============================================================================

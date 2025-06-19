@@ -39,17 +39,17 @@ from loguru import logger
 
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_data, utils_character
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_data, utils_character
 
-#logger.add(f"{path}/log/data_plate.log", rotation="10 MB", retention="10 days")
+#logger.add(f"{PATH}/log/data_plate.log", rotation="10 MB", retention="10 days")
 
 class dwdData():
     def __init__(self):
         ...
     
     def dwd_freq_full_portfolio_daily_backtest(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             portfolio_daily_df = pd.read_sql("dwd_freq_incr_portfolio_daily", con=conn.engine)
             #portfolio_daily_df = pd.read_sql("select * from dwd_freq_incr_portfolio_daily where date between '2019-01-01' and '2023-01-01'", con=conn.engine)
         portfolio_daily_df = portfolio_daily_df[['date','full_code', 'close']]
@@ -61,7 +61,7 @@ class dwdData():
         self.dwd_freq_full_portfolio_daily_backtest()
     
     def dwd_info_nrtd_portfolio_base(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             portfolio_base_df = pd.read_sql('ods_info_nrtd_adata_portfolio_base', con=conn.engine)
             
         portfolio_base_df = portfolio_base_df.rename(columns={'fund_code': 'asset_code',
@@ -75,7 +75,7 @@ class dwdData():
         utils_data.output_database(portfolio_base_df, filename='dwd_info_nrtd_portfolio_base', if_exists='replace')
         
     def dwd_info_nrtd_bond_base(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             bond_base_df = pd.read_sql('ods_info_nrtd_adata_bond_base', con=conn.engine)
             
             bond_base_df = bond_base_df.rename(columns={'bond_code': 'bond_asset_code',
@@ -105,7 +105,7 @@ class dwdData():
 
     def dwd_freq_incr_portfolio_daily(self):
         # 清洗efinance的get_quote_history()接口数据，用于生产全球股票数据
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             portfolio_daily_df = pd.read_sql('ods_freq_incr_efinance_portfolio_daily', con=conn.engine)
             portfolio_base_df = pd.read_sql('dwd_info_nrtd_portfolio_base', con=conn.engine)
         portfolio_base_df = portfolio_base_df[['market_code','full_code','asset_code']]
@@ -156,7 +156,7 @@ class dwdData():
             filename = 'dwd_allstocks_basic'
             
         elif data_type == '证券标签':
-            with utils_database.engine_conn('postgre') as conn:
+            with utils_database.engine_conn("POSTGRES") as conn:
                 result = pd.read_sql('ods_api_baostock_stock_industry', con=conn.engine)
             result = result.rename(columns={'tradeStatus': 'trade_status'})
             filename = 'dwd_stock_label'

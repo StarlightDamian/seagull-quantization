@@ -27,12 +27,12 @@ import numpy as np
 #%matplotlib inline
 from numba import config, set_num_threads
 
-from __init__ import path
-from utils import utils_log, utils_character, utils_database, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_log, utils_character, utils_database, utils_data
 from data.dwd import dwdData
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 num_threads = 8  # for example, if you have an 8-core CPU
 config.NUMBA_NUM_THREADS = num_threads
@@ -279,7 +279,7 @@ class backtestVectorbt:
     def dataset(self, symbols, date_start='2020-01-01', date_end='2022-01-01', column_price='Close'):
         if not utils_data.table_in_database('dwd_ohlc_full_portfolio_daily_backtest_eff'):
             self.dwd_freq_full_portfolio_daily_backtest()
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             portfolio_daily_df = pd.read_sql(f"SELECT * FROM dwd_ohlc_full_portfolio_daily_backtest_eff WHERE date BETWEEN '{date_start}' AND '{date_end}'", con=conn.engine)
             #portfolio_daily_df = pd.read_sql('dwd_freq_full_portfolio_daily_backtest', con=conn.engine)
         portfolio_daily_df.columns.name = 'symbol'

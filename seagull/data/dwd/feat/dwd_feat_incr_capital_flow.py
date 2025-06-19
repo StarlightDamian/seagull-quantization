@@ -20,19 +20,19 @@ import os
 
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data, utils_math
-from data import ods_info_incr_adata_stock_base_api
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data, utils_math
+from seagull.data import ods_info_incr_adata_stock_base_api
 from data.dwd.feat import dwd_feat_incr_macd
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def pipeline(date_start, date_end):
     ...
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         capital_flow_df = pd.read_sql("ods_feat_incr_adata_capital_flow", con=conn.engine)
     
     capital_flow_df = capital_flow_df.rename(columns={'stock_code': 'asset_code',

@@ -17,11 +17,11 @@ from sklearn.metrics import fbeta_score, make_scorer
 #import warnings
 
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_thread,utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_thread,utils_math
 from feature import vwap
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 #warnings.filterwarnings('ignore', category=UserWarning, module='lightgbm')
 
@@ -79,10 +79,10 @@ def winsorize(df, n=3):
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     raw_df = raw_df.groupby('full_code').apply(vwap.vwap_pipeline, column_name='y_10d_vwap',window=5)
-    #raw_df.reset_index(drop=True).to_feather(f'{path}/data/das_wide_incr_train_10d_vwap.feather')         
-    #raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train_10d_vwap.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
+    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
 # =============================================================================
 #     alpha_features=['alpha098'
 # ,'alpha096'
@@ -338,7 +338,7 @@ if __name__ == '__main__':
     result_reg = pd.DataFrame([y_val.values, y_val_pred]).T
     result_reg.columns=['y_real','y_pred']
     result_reg = result_reg.round(4)
-    result_reg.to_csv(f'{path}/data/test_reg_5d_vwap.csv', index=False)
+    result_reg.to_csv(f'{PATH}/data/test_reg_5d_vwap.csv', index=False)
     
     # result_reg.loc[result_reg.y_pred>1.05,'y_real'].prod()
     
@@ -383,7 +383,7 @@ if __name__ == '__main__':
 #     feature_df["feature"] = model.feature_name_   
 #     feature_df["importance"] = model.feature_importances_
 #     feature_df = feature_df.sort_values(by='importance', ascending=False)
-#     feature_df.to_csv(f'{path}/data/feature_df.csv', index=False)
+#     feature_df.to_csv(f'{PATH}/data/feature_df.csv', index=False)
 #     feature_importance_df = feature_df[feature_df.importance>5].feature.values
 # =============================================================================
     

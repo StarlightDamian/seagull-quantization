@@ -40,13 +40,13 @@ multioutput_regressor.fit(X_train, y_train)
 # # Save each LightGBM model to TXT
 # path = 'E:/03_software_engineering/github/quantitative-finance/checkpoint'
 # for i, estimator in enumerate(multioutput_regressor.estimators_):
-#     model_path = f'{path}/model_{i}.txt'
+#     model_path = f'{PATH}/model_{i}.txt'
 #     estimator.booster_.save_model(model_path)
 # 
 # # Load each LightGBM model back
 # loaded_estimators = []
 # for i in range(len(multioutput_regressor.estimators_)):
-#     model_path = f'{path}/model_{i}.txt'
+#     model_path = f'{PATH}/model_{i}.txt'
 #     loaded_model = lgb.Booster(model_file=model_path)
 #     loaded_estimators.append(loaded_model)
 # 
@@ -66,10 +66,10 @@ import joblib
 
 # Save model and metadata
 model_metadata = {'feature_names': ['amount', 'close', 'date_diff', 'date_week_Friday', 'date_week_Monday']}
-joblib.dump((multioutput_regressor, model_metadata), f'{path}/checkpoint/multioutput_test_regressor_model.joblib')
+joblib.dump((multioutput_regressor, model_metadata), f'{PATH}/checkpoint/multioutput_test_regressor_model.joblib')
 
 # Load model and metadata
-multioutput_regressor1, loaded_metadata = joblib.load(f'{path}/checkpoint/multioutput_test_regressor_model.joblib')
+multioutput_regressor1, loaded_metadata = joblib.load(f'{PATH}/checkpoint/multioutput_test_regressor_model.joblib')
 
 # =============================================================================
 # from sklearn.multioutput import MultiOutputRegressor
@@ -110,7 +110,7 @@ multioutput_regressor1, loaded_metadata = joblib.load(f'{path}/checkpoint/multio
 # 
 # # Save the MultiOutputRegressor to a file
 # path = 'E:/03_software_engineering/github/quantitative-finance'
-# MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/multioutput_regressor_model.joblib'
+# MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/multioutput_regressor_model.joblib'
 # joblib.dump(multioutput_regressor, MULTIOUTPUT_MODEL_PATH)
 # 
 # # Load the MultiOutputRegressor back from the file
@@ -138,7 +138,7 @@ multioutput_regressor1, loaded_metadata = joblib.load(f'{path}/checkpoint/multio
 # =============================================================================
 # # Save the model
 # path = 'E:/03_software_engineering/github/quantitative-finance/checkpoint'
-# LGBM_MODEL_PATH = f'{path}/test.txt'
+# LGBM_MODEL_PATH = f'{PATH}/test.txt'
 # multioutput_regressor.estimators_[0].booster_.save_model(LGBM_MODEL_PATH)
 # 
 # # Load the model back
@@ -192,7 +192,7 @@ multioutput_regressor1, loaded_metadata = joblib.load(f'{path}/checkpoint/multio
 # # Fit the model to the training data
 # multioutput_regressor.fit(X_train, y_train)
 # path='E:\\03_software_engineering\\github\\quantitative-finance'
-# LGBM_MODEL_PATH = f'{path}/checkpoint/test.txt'
+# LGBM_MODEL_PATH = f'{PATH}/checkpoint/test.txt'
 # multioutput_regressor.estimators_[0].booster_.save_model(LGBM_MODEL_PATH)
 # multioutput_regressor = lgb.Booster(model_file=LGBM_MODEL_PATH)
 # # Make predictions on the test data

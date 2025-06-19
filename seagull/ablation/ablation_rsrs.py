@@ -12,12 +12,12 @@ import vectorbt as vbt
 import pandas as pd
 import numpy as np
 
-from __init__ import path
-from utils import utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_log
 from backtest import vectorbt_macd, analyze
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 # 定义RSRS计算函数
 def calculate_rsrs_matrix(highs, lows, window=18):
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 # import vectorbt as vbt
 # import numpy as np
 # import pandas as pd
-# from __init__ import path
+# from seagull.settings import PATH
 # 
 # symbols = ["ADA-USD", "ETH-USD"]
 # 
@@ -163,5 +163,5 @@ if __name__ == '__main__':
 # 
 #     # 生成图表并保存为HTML
 #     fig = stock_portfolio.plot()  # 生成图表
-#     fig.write_html(f"{path}/seagull/html/{symbol}.html") 
+#     fig.write_html(f"{PATH}/seagull/html/{symbol}.html") 
 # =============================================================================

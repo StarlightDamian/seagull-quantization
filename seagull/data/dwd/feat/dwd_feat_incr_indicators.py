@@ -18,8 +18,8 @@ from concurrent.futures import ThreadPoolExecutor
 import talib
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_data
 from finance import finance_trading_day
 
 def indicators(df):
@@ -98,7 +98,7 @@ def indicators(df):
     return df
 
 def pipeline(date_start, date_end):
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         df = pd.read_sql(f"""
                          SELECT
                              primary_key

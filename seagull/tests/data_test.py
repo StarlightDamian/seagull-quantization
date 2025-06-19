@@ -6,11 +6,11 @@ Created on Thu May 30 10:36:16 2024
 
 """
 import pandas as pd
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database, base_utils
 import baostock as bs
 bs.login()
-#with base_connect_database.engine_conn('postgre') as conn:
+#with base_connect_database.engine_conn("POSTGRES") as conn:
 #    stock_df = pd.read_sql("dwd_a_stock_day", con=conn.engine)
 df = bs.query_history_k_data_plus('sh.600176',fields='date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,peTTM,psTTM,pcfNcfTTM,pbMRQ,isST')
 bs.logout()
@@ -19,7 +19,7 @@ bs.logout()
 # 去掉前面的“sh.”、“sz.”、“bj.”
 df1['code'] = df1['code'].str.replace(r'^[a-z]{2}\.', '', regex=True)
 
-with base_connect_database.engine_conn('postgre') as conn:
+with base_connect_database.engine_conn("POSTGRES") as conn:
     max_date = pd.read_sql("SELECT max(date) FROM ods_a_stock_day", con=conn.engine)
     
 # =============================================================================

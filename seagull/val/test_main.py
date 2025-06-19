@@ -10,16 +10,16 @@ import argparse
 
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 #from tests_ import test_0_lightgbm
 
 from tests_ import test_2_class_base_index, test_2_reg_price
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
-PATH_CSV = f'{path}/data/test_main.csv'
+PATH_CSV = f'{PATH}/data/test_main.csv'
 
 
 class TestMainLightgbm:
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     """)
     
     # dataset
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         asset_df = pd.read_sql(f"SELECT * FROM das_wide_incr_train WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     asset_df.drop_duplicates('primary_key', keep='first', inplace=True)
     

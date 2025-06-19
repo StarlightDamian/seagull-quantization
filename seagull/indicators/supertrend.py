@@ -13,11 +13,11 @@ import talib
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 import pandas as pd
 import numpy as np
 import talib
@@ -83,7 +83,7 @@ def calculate_supertrend(df, period=14, multiplier=3):
 
 if __name__ == '__main__':
 
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         raw_df = pd.read_sql("select primary_key, date,high,low, close from dwd_ohlc_incr_stock_daily where full_code='510300.sh'", con=conn.engine)
     
     raw_df = raw_df.drop_duplicates('primary_key', keep='first')
@@ -105,7 +105,7 @@ if __name__ == '__main__':
                                            slippage=0.001,
                                            )
     fig = portfolio.plot()  # .figure
-    fig.write_html(f"{path}/html/portfolio_plot2.html")
+    fig.write_html(f"{PATH}/html/portfolio_plot2.html")
     logger.info(portfolio.stats(settings=dict(freq='d',
                                               year_freq='243 days')))
     

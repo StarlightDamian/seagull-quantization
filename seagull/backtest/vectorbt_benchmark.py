@@ -8,7 +8,7 @@ backtest_vectorbt_base
 
 import vectorbt as vbt
 
-from __init__ import path
+from seagull.settings import PATH
 from backtest_vectorbt import backtestVectorbt
 
 

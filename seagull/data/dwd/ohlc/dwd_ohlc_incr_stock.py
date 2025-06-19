@@ -18,18 +18,18 @@ import argparse
 #from sqlalchemy.types import Boolean
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from sqlalchemy import Float, Numeric, String  #, Integer
 
-from utils import utils_database, utils_character, utils_log, utils_data, utils_thread
-from data import utils_api_baostock
+from seagull.utils import utils_database, utils_character, utils_log, utils_data, utils_thread
+from seagull.data import utils_api_baostock
 from data.ods.ohlc import ods_ohlc_incr_baostock_stock_sh_sz_api
 from finance import finance_limit
 from finance.finance_trading_day import TradingDayAlignment
 from feature import vwap, max_drawdown
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def bar_high(raw_df, window=10):
     raw_df = raw_df.sort_values(by='date')
@@ -88,7 +88,7 @@ class DwdStock(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIncrBaostockStockShSzAp
         self.adj_type = adj_type  # adjustment_type as adj_type in ['None', 'pre', 'post']
         
         self.trading_day_alignment = TradingDayAlignment()
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             dwd_all_stock_df = pd.read_sql("select full_code, code_name, board_type, price_limit_rate from dwd_info_incr_stock_base", con=conn.engine)  # 获取指数、股票数据
             self.dwd_all_stock_df = dwd_all_stock_df.drop_duplicates('full_code', keep='first')
             
@@ -185,7 +185,7 @@ class DwdStock(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIncrBaostockStockShSzAp
         return portfolio_daily_df
     
     def stock_minute(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             baostock_stock_sh_sz_minute_df = pd.read_sql("ods_ohlc_incr_baostock_stock_sh_sz_minute", con=conn.engine)
         clean_stock_sh_sz_df = self.clean_baostock_query_history_k_data_plus(baostock_stock_sh_sz_minute_df)
         
@@ -205,7 +205,7 @@ class DwdStock(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIncrBaostockStockShSzAp
                                         })
 
     def stock_daily_full(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             # 沪深
             sql=f"""
                 select
@@ -352,7 +352,7 @@ class DwdStock(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIncrBaostockStockShSzAp
     def stock_daily_incr(self, df, date_start):
         prev_date = self.trading_day_alignment.shift_day(date_num=1)
         date = (prev_date, date_start)
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             # 沪深
             sql=f"""
                 select

@@ -10,9 +10,9 @@ import os
 import adata
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_data, utils_log
-from data import utils_api_baostock, utils_api_adata
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_data, utils_log
+from seagull.data import utils_api_baostock, utils_api_adata
 
 class DwdLabel:
     def __init__(self):
@@ -30,7 +30,7 @@ class DwdLabel:
         
 if __name__ == '__main__':
     
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         baostock_stock_label_df = pd.read_sql("ods_flag_full_baostock_stock_label", con=conn.engine)#stock_label_df
         adata_stock_label_df = pd.read_sql("ods_flag_full_adata_stock_label", con=conn.engine)#61163
         

@@ -9,11 +9,11 @@ import os
 
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 def filter_valid_data(raw_df, threshold_ratio=0.7):
@@ -49,7 +49,7 @@ def filter_valid_data(raw_df, threshold_ratio=0.7):
 
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         raw_df = pd.read_sql("dwd_ohlc_full_portfolio_daily_backtest", con=conn.engine)
     
     # 调用函数，设置有效数据比例为 0.7
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 #                                filename='dwd_ohlc_full_portfolio_daily_backtest_eff',
 #                                if_exists='replace')
 # =============================================================================
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         result_df.to_sql('dwd_ohlc_full_portfolio_daily_backtest_eff',
                   con=conn.engine,
                   index=False,

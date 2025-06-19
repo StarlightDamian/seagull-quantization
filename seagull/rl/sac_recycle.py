@@ -55,7 +55,7 @@ sac_recycle
 # import gym
 # import pandas as pd
 # 
-# from __init__ import path
+# from seagull.settings import PATH
 # from trade import trade_eval
 # from base import base_connect_database, base_utils
 # 
@@ -177,15 +177,15 @@ sac_recycle
 #         #if not os.path.exists('models'):
 #         #    os.makedirs('models')
 # 
-#         actor_path = f'{path}/checkpoint/sac_actor/{primary_key}.pth'
-#         critic_path = f'{path}/checkpoint/sac_critic/{primary_key}.pth'
+#         actor_path = f'{PATH}/checkpoint/sac_actor/{primary_key}.pth'
+#         critic_path = f'{PATH}/checkpoint/sac_critic/{primary_key}.pth'
 # 
 #         torch.save(self.actor.state_dict(), actor_path)
 #         torch.save(self.critic.state_dict(), critic_path)
 #         
 #     def load_model(self, primary_key):
-#         actor_path = f'{path}/checkpoint/sac_actor/{primary_key}.pth'
-#         critic_path = f'{path}/checkpoint/sac_critic/{primary_key}.pth'
+#         actor_path = f'{PATH}/checkpoint/sac_actor/{primary_key}.pth'
+#         critic_path = f'{PATH}/checkpoint/sac_critic/{primary_key}.pth'
 #     
 #         self.actor.load_state_dict(torch.load(actor_path))
 #         self.critic.load_state_dict(torch.load(critic_path))

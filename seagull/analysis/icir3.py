@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import statsmodels.api as sm
-from __init__ import path
+from seagull.settings import PATH
 
 class FactorAnalyzer:
     def __init__(self):
@@ -110,7 +110,7 @@ class FactorAnalyzer:
 # 使用示例
 if __name__ == "__main__":
     # 假设数据
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     dates = pd.date_range('2020-01-01', '2023-12-31', freq='M')
     stocks = [f'stock_{i}' for i in range(100)]
     

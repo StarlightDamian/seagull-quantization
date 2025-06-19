@@ -16,11 +16,11 @@ import argparse
 import pandas as pd
 import numpy as np
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_math, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_math, utils_data
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 #def relative_price(df):
     # 这种操作通常被称为 去市场化（De-Marketization）或者 剔除市场趋势。
@@ -99,7 +99,7 @@ if __name__ == '__main__':
                     date_end: {args.date_end}""")
     
     # 获取日期段数据
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         df = pd.read_sql(f"SELECT * FROM dwd_ohlc_incr_stock_daily WHERE date BETWEEN '{args.date_start}' AND '{args.date_end}'", con=conn.engine)
         label_df = pd.read_sql("dwd_tags_full_label", con=conn.engine)
         macd_df = pd.read_sql(f"""

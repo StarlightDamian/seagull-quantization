@@ -14,12 +14,12 @@ import pandas as pd
 #import seaborn as sns
 #import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_log, utils_character
+from seagull.settings import PATH
+from seagull.utils import utils_log, utils_character
 from backtest import vectorbt_macd, analyze
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 class ablationMacd(vectorbt_macd.backtestVectorbtMacd, analyze.backtestAnalyze):
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 #     # 生成图表并保存为HTML
 #     stock_portfolio = portfolio[symbol]
 #     fig = stock_portfolio.plot()  # 生成图表
-#     fig.write_html(f"{path}/seagull/html/{symbol}_portfolio_plot.html")  # 保存为HTML文件
+#     fig.write_html(f"{PATH}/seagull/html/{symbol}_portfolio_plot.html")  # 保存为HTML文件
 # =============================================================================
 # =============================================================================
 # 2025-02-07 10:41:19.463 | INFO     | backtest.analyze:pipeline:156 -       date_start   date_end  period  start_value  end_value  total_return  \

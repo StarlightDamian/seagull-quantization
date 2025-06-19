@@ -9,7 +9,7 @@ import argparse
 
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_0_lightgbm, train_2_price_limit, train_2_stock_pick, train_3_short_term_recommend
 from base import base_connect_database
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 #     print(f'Start time for training: {args.date_start}\nend time of training: {args.date_end}')
 #     
 #     # Load date range data
-#     with base_connect_database.engine_conn('postgre') as conn:
+#     with base_connect_database.engine_conn("POSTGRES") as conn:
 #         history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
 #     
 #     

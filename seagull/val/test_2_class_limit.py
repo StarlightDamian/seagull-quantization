@@ -9,12 +9,12 @@ import argparse
 
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 from test_ import test_0_lightgbm
 TASK_NAME = 'price_limit'
 TEST_TABLE_NAME = 'test_2_price_limit'
-#MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/lightgbm_classification_price_limit.joblib'
+#MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_classification_price_limit.joblib'
 TARGET_PRED_NAMES = ['rear_price_limit_pred']
 
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     print(f'Start time for backtesting: {args.date_start}\nEnd time for backtesting: {args.date_end}')
     
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
     print(history_day_df)

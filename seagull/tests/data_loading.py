@@ -10,7 +10,7 @@ import argparse
 
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_utils
 
 
@@ -23,7 +23,7 @@ def re_get_row_data(rs):
 
 def feather_file_merge(date_start, date_end):
     date_binary_pair_list = base_utils.date_binary_list(date_start, date_end)
-    feather_files = [f'{path}/data/day/{date_binary_pair[0]}.feather' for date_binary_pair in date_binary_pair_list]
+    feather_files = [f'{PATH}/data/day/{date_binary_pair[0]}.feather' for date_binary_pair in date_binary_pair_list]
     #print(feather_files)
     dfs = [pd.read_feather(file) for file in feather_files if os.path.exists(file)]
     feather_df = pd.concat(dfs, ignore_index=True)

@@ -11,11 +11,11 @@ from loguru import logger
 
 import baostock as bs
 
-from __init__ import path
-from data import data_ods_a_stock_k
+from seagull.settings import PATH
+from seagull.data import data_ods_a_stock_k
 #from data.ods import odsData
 #ods_data = odsData()
-from data import data_ods_ohlc_incr_baostock_stock_sh_sz_cycle
+from seagull.data import data_ods_ohlc_incr_baostock_stock_sh_sz_cycle
 def custom_date(date=None):
     """
     功能：Directly execute daily tasks for the day

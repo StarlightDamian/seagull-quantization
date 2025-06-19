@@ -14,7 +14,7 @@ import lightgbm as lgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
-from __init__ import path
+from seagull.settings import PATH
 
 import numpy as np
 
@@ -128,7 +128,7 @@ params = {
 # }
 # =============================================================================
 # 生成示例数据
-data = pd.read_csv(f'{path}/data/test_603893.csv')
+data = pd.read_csv(f'{PATH}/data/test_603893.csv')
 #data['high'] = data['high'] / data['close']
 columns_to_divide = ['high', 'low', 'open', 'close']
 data[['high_pct', 'low_pct', 'open_pct', 'close_pct']] = data[columns_to_divide].div(data['preclose'], axis=0)
@@ -198,7 +198,7 @@ result.columns = ['y_test','y_pred']
 print(result)
 result['next_high_bool'] = np.where(result['y_test'] >= result['y_pred'], 1, None)
 
-result.to_csv(f'{path}/data/test_result_reward2.csv',index=False)
+result.to_csv(f'{PATH}/data/test_result_reward2.csv',index=False)
 
 result_bool = result[result.next_high_bool==1]
 y_test,y_pred,next_high_bool = result_bool.mean()

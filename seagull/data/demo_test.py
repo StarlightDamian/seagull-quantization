@@ -5,7 +5,7 @@ Created on Wed Feb 12 22:12:38 2025
 @author: awei
 demo_test
 """
-from __init__ import path
+from seagull.settings import PATH
 
 import pandas as pd
 from feature import vwap, max_drawdown
@@ -54,15 +54,15 @@ def n_day_pred(raw_df, window=10, freq='d'):
     
     
 if __name__ == '__main__':
-    from utils import utils_database
+    from seagull.utils import utils_database
     
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         raw_df = pd.read_sql('select date, full_code, high, low, close, volume from "dwd_ohlc_incr_stock_daily-bak" limit 100000', con=conn.engine)
         
     # 计算每个日期的最大回撤，使用窗口10天
     window=3
     raw_df = n_day_pred(raw_df, window=window, freq='d')
-    raw_df.to_csv(f'{path}/data/test_vwap_drawdown_rate.csv',index=False)
+    raw_df.to_csv(f'{PATH}/data/test_vwap_drawdown_rate.csv',index=False)
     # raw_df[['y_3d_vwap_rate','y_3d_max_dd','y_3d_vwap_drawdown_rate']]
     # raw_df[f'y_{window}d_vwap_drawdown_rate'] = raw_df[f'y_{window}d_vwap_rate'] / raw_df[f'y_{window}d_max_dd']
     # raw_df[f'y_3d_vwap_drawdown_rate'] = raw_df[f'y_3d_vwap_rate'] / raw_df[f'y_3d_max_dd']

@@ -209,7 +209,7 @@ bs.logout()
 # 
 # import pandas as pd
 # 
-# from __init__ import path
+# from seagull.settings import PATH
 # from base import base_connect_database
 # 
 # HISTORY_TABLE_NAME = 'history_a_stock_k_data'
@@ -220,7 +220,7 @@ bs.logout()
 #     args = parser.parse_args()
 # 
 #     # Data exploration
-#     with base_connect_database.engine_conn('postgre') as conn:
+#     with base_connect_database.engine_conn("POSTGRES") as conn:
 #         sql = f"""SELECT date, code, amount
 #                 FROM {HISTORY_TABLE_NAME}
 #                 WHERE code IN ('sh.000001', 'sz.399101', 'sz.399102', 'sz.399106');

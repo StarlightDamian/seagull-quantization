@@ -13,7 +13,7 @@ import numpy as np
 import gym
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 
 # Define the actor and critic neural networks using PyTorch
 class DDPGActor(nn.Module):
@@ -173,14 +173,14 @@ for episode in range(100):
 # =============================================================================
 
 # Save the trained models
-torch.save(agent.actor.state_dict(), f'{path}/checkpoint/actor_model.pth')
-torch.save(agent.critic.state_dict(), f'{path}/checkpoint/critic_model.pth')
+torch.save(agent.actor.state_dict(), f'{PATH}/checkpoint/actor_model.pth')
+torch.save(agent.critic.state_dict(), f'{PATH}/checkpoint/critic_model.pth')
 
 # Load the saved models
 loaded_actor = DDPGActor(state_dim, action_dim)
 loaded_critic = DDPGCritic(state_dim, action_dim)
-loaded_actor.load_state_dict(torch.load(f'{path}/checkpoint/actor_model.pth'))
-loaded_critic.load_state_dict(torch.load(f'{path}/checkpoint/critic_model.pth'))
+loaded_actor.load_state_dict(torch.load(f'{PATH}/checkpoint/actor_model.pth'))
+loaded_critic.load_state_dict(torch.load(f'{PATH}/checkpoint/critic_model.pth'))
 
 # Use the loaded models for prediction on real data
 real_data = data.head(100)  # pd.read_csv('real_stock_data.csv')  # Replace 'real_stock_data.csv' with your actual stock data file

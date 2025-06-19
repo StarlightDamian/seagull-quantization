@@ -7,7 +7,7 @@ Created on Mon Oct 21 00:43:31 2024
 """
 import pandas as pd
 
-from utils import utils_database, utils_data
+from seagull.utils import utils_database, utils_data
 from data.ods.base import ods_info_incr_efinance_trading_day
 
 
@@ -15,7 +15,7 @@ class TradingDayAlignment(ods_info_incr_efinance_trading_day.TradingDay):
     def __init__(self):
         if not utils_data.table_in_database('dwd_info_incr_trading_day'):
             self.pipeline()
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             trading_day_df = pd.read_sql('dwd_info_incr_trading_day', con=conn.engine)
         self.trading_day_df = trading_day_df[(trading_day_df.trade_status=='1')|(trading_day_df.trade_status==1)]
         

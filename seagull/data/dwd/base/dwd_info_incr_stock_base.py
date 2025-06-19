@@ -15,14 +15,14 @@ exchange：表示交易所，可以存储交易所的名称，如"北交所"。
 """
 import pandas as pd
 
-from __init__ import path
-from utils import utils_data, utils_database
-from data import utils_api_baostock
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database
+from seagull.data import utils_api_baostock
 
 
 def dwd_stock_base(ASSET_TABLE_NAME='ods_info_full_asset_base_details',
                    DWD_STOCK_BASE_TABLE_NAME='dwd_info_incr_stock_base'):
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         date_max = utils_data.maximum_date('ods_info_incr_baostock_trade_stock')
         # ods_info_incr_baostock_trade_stock.columns = ['code', 'tradeStatus', 'code_name', 'date', 'insert_timestamp']
         trade_stock_df = pd.read_sql(f"SELECT * FROM ods_info_incr_baostock_trade_stock WHERE date='{date_max}'", con=conn.engine)
@@ -58,7 +58,7 @@ def dwd_stock_base(ASSET_TABLE_NAME='ods_info_full_asset_base_details',
     trade_stock_df['settlement_cycle'] = 1  # A股默认T+1
     
     trade_stock_df = trade_stock_df[['full_code', 'asset_code', 'market_code', 'code_name', 'board_type', 'price_limit_rate', 'trade_status', 'insert_timestamp']]
-    #trade_stock_df.to_csv(f'{path}/data/{DWD_STOCK_BASE_TABLE_NAME}.csv', index=False)
+    #trade_stock_df.to_csv(f'{PATH}/data/{DWD_STOCK_BASE_TABLE_NAME}.csv', index=False)
     utils_data.output_database(trade_stock_df, filename=DWD_STOCK_BASE_TABLE_NAME, if_exists='replace')
     return trade_stock_df
 

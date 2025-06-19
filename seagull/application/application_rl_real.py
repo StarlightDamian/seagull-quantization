@@ -12,7 +12,7 @@ import argparse
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from __init__ import path
+from seagull.settings import PATH
 from reinforcement_learning import rl_sac_test
 from base import base_connect_database, base_arguments, base_trading_day
 
@@ -22,12 +22,12 @@ scaler_0_1 = MinMaxScaler(feature_range=(0, 1))
 RE_ENVIRONMENT = 'rl_environment'
 
 def excel():
-    writer = pd.ExcelWriter(f'{path}/wechat/output_stock_forecast.xlsx')
+    writer = pd.ExcelWriter(f'{PATH}/wechat/output_stock_forecast.xlsx')
     output_prediction_df.to_excel(writer, sheet_name='Sheet1', index=False)
     writer.save()
     
 def prediction_target_date(target_date):
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         prediction_merge_df = pd.read_sql(f"SELECT * FROM {RE_ENVIRONMENT} WHERE date = '{target_date}'", con=conn.engine)
         stock_industry = pd.read_sql('stock_industry', con=conn.engine)
     prediction_merge_df = prediction_merge_df.drop_duplicates(['primary_key'], keep='first')
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                  })
     
     target_date_replace = args.target_date.replace('-', '')
-    output_prediction_df.to_csv(f'{path}/wechat/俞老师量化_{target_date_replace}.csv', index=False)
+    output_prediction_df.to_csv(f'{PATH}/wechat/俞老师量化_{target_date_replace}.csv', index=False)
     
     trading_day = base_trading_day.tradingDay()
     trading_day_pre_dict = trading_day.specified_trading_day_after()
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     
     for user, code_name_list in base_arguments.argparse_user_dict.items():
         output_personal = output_prediction_df.loc[output_prediction_df['公司名称'].isin(code_name_list)]
-        output_personal.to_csv(f'{path}/wechat/俞老师量化_{user}_{target_date_replace}.csv')
+        output_personal.to_csv(f'{PATH}/wechat/俞老师量化_{user}_{target_date_replace}.csv')
         
         
 def trade_order_details():

@@ -42,15 +42,15 @@ def pool():
 
 
 if __name__ == '__main__':
-    from __init__ import path
-    from utils import utils_database
+    from seagull.settings import PATH
+    from seagull.utils import utils_database
     
     def prev_close(df: pd.DataFrame) -> pd.DataFrame:
         # df = df.sort_values(by='date', ascending=True)
         df[['prev_close']] = df[['close']].shift(1)
         return df
     
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         #etf_df = pd.read_sql("select * from dwd_ohlc_incr_stock_daily where board_type='ETF'", con=conn.engine)
         etf_df = pd.read_sql("ods_ohlc_incr_efinance_portfolio_daily", con=conn.engine)
         bj_df = pd.read_sql("ods_ohlc_incr_efinance_stock_bj_daily", con=conn.engine)

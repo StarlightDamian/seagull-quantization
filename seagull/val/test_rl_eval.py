@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
@@ -22,7 +22,7 @@ TRADE_ORDER_TABLE_NAME = 'trade_order_details'
 def backtesting_rl(code, code_name, date_start, date_end):
     plt.figure(figsize=(10, 6), dpi=600)
     # Data exploration
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         #data = pd.read_sql("SELECT * FROM history_a_stock_k_data limit 10", con=conn.engine)  # Use conn_pg.engine
         trade_order_details = pd.read_sql(f"SELECT * FROM {TRADE_ORDER_TABLE_NAME} WHERE dataset_type='test' ", con=conn.engine)
         print(trade_order_details)

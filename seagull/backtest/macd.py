@@ -13,8 +13,8 @@ import pandas as pd
 #import seaborn as sns
 #import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_log
 from backtest import vectorbt_base
 
 class backtestVectorbtMacd(vectorbt_base.backtestVectorbt):

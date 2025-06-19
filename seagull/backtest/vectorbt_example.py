@@ -10,12 +10,12 @@ import numpy as np
 import vectorbt as vbt
 import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_database
 
 date_start='2019-01-01'
 date_end='2023-01-01'
-with utils_database.engine_conn('postgre') as conn:
+with utils_database.engine_conn("POSTGRES") as conn:
     #data = pd.read_sql("dwd_freq_full_portfolio_daily_backtest", con=conn.engine)
     data = pd.read_sql(f"SELECT * FROM dwd_ohlc_full_portfolio_daily_backtest WHERE date BETWEEN '{date_start}' AND '{date_end}'", con=conn.engine)
 
@@ -82,14 +82,14 @@ print(metrics_base_df['Annualized Return [%]'])
 trades_records_readable_strategy_df = portfolio_strategy.trades.records_readable
 #https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/portfolio/base.py#L3622
 orders_records_readable_strategy_df = portfolio_strategy.orders.records_readable
-trades_records_readable_strategy_df.to_csv(f'{path}/data/trades_records_readable.csv',index=False)
-orders_records_readable_strategy_df.to_csv(f'{path}/data/orders_records_readable.csv',index=False)
+trades_records_readable_strategy_df.to_csv(f'{PATH}/data/trades_records_readable.csv',index=False)
+orders_records_readable_strategy_df.to_csv(f'{PATH}/data/orders_records_readable.csv',index=False)
 #['Exit Trade Id', 'Column', 'Size', 'Entry Timestamp', 'Avg Entry Price',
 #       'Entry Fees', 'Exit Timestamp', 'Avg Exit Price', 'Exit Fees', 'PnL',
 #       'Return', 'Direction', 'Status', 'Position Id']
 
 fig = portfolio_strategy[(12, 26, 9, False, False, 'SH.512690')].plot()
-fig.write_html(f"{path}/plt/portfolio_strategy.html")
+fig.write_html(f"{PATH}/plt/portfolio_strategy.html")
 
 # 分别计算每年的
 portfolio = vbt.Portfolio.from_holding(

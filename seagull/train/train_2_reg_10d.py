@@ -26,13 +26,13 @@ import numpy as np
 import pandas as pd
 
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_1_lightgbm_regression
 from feature import feature_engineering_main
-from utils import utils_database, utils_log
+from seagull.utils import utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 TARGET_NAMES = ['next_high_rate',
                 'next_low_rate',
@@ -43,7 +43,7 @@ TARGET_NAMES = ['next_high_rate',
                 'y_10d_low_rate',
                 ]
 
-PATH_CSV = f'{path}/data/train_price.csv'
+PATH_CSV = f'{PATH}/data/train_price.csv'
 
 
 class TrainPrice(train_1_lightgbm_regression.LightgbmRegressionTrain):
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     """)
     
     # dataset
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         asset_df = pd.read_sql(f"SELECT * FROM das_wide_incr_train WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
     asset_df.drop_duplicates('primary_key', keep='first', inplace=True)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # asset_df.loc[asset_df.next_high_rate.idxmax(),['close','high','next_high_rate','price_limit_rate']]
     
     asset_df.sort_values(by='date', ascending=True, inplace=True, ignore_index=True)
-    #asset_df.reset_index(drop=True).to_feather(f'{path}/data/das_wide_incr_train_20230103_20241220.feather')
+    #asset_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
     train_price = TrainPrice()
     valid_raw_df = train_price.train_board_pipeline(asset_df, keep_train_model=True)
     

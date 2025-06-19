@@ -19,15 +19,15 @@ import efinance as ef
 import baostock as bs
 import pandas as pd
 
-from __init__ import path
-from data import (data_loading,
+from seagull.settings import PATH
+from seagull.data import (data_loading,
                   ods_part_baostock_index_api,
                   ods_info_incr_baostock_trade_stock_api)
-from utils import utils_database, utils_log, utils_data
+from seagull.utils import utils_database, utils_log, utils_data
 
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 class odsData():
@@ -81,7 +81,7 @@ class odsData():
         utils_data.output_database(result, filename, dtype)
     
     def ods_efinance_portfolio(self, data_type):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             etf_code_df = pd.read_sql('ods_info_nrtd_adata_portfolio_base', con=conn.engine)
         if data_type == 'ETF日频':
             etf_dict = ef.stock.get_quote_history(etf_code_df.fund_code)

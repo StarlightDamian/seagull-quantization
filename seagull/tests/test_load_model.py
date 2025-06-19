@@ -30,13 +30,13 @@ model = lgb.train(params, train_data, valid_sets=[valid_data], early_stopping_ro
 # =============================================================================
 # import pandas as pd
 # import joblib
-# from __init__ import path
-# MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
+# from seagull.settings import PATH
+# MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
 # multioutput_model_path = MULTIOUTPUT_MODEL_PATH
 # model_multioutput, model_metadata = joblib.load(multioutput_model_path)
 # 
-# x_train = pd.read_csv(f'{path}/data/train_short_term_recommend_x_train.csv')
-# y_train = pd.read_csv(f'{path}/data/train_short_term_recommend_y_train.csv').values
+# x_train = pd.read_csv(f'{PATH}/data/train_short_term_recommend_x_train.csv')
+# y_train = pd.read_csv(f'{PATH}/data/train_short_term_recommend_y_train.csv').values
 # model_multioutput.fit(x_train, y_train)
 # y_pred = model_multioutput.predict(x_test)
 # mae = mean_absolute_error(y_test, y_pred)

@@ -7,8 +7,8 @@ Created on Wed Oct 30 23:47:02 2024
 """
 import adata
 
-from __init__ import path
-from utils import utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_data
 
 securities_margin_daily_df = adata.sentiment.securities_margin(start_date='1990-01-01')
 utils_data.output_database(securities_margin_daily_df,

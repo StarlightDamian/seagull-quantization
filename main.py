@@ -8,7 +8,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 from application import application_daily, application_rl_real
 from tests import test_board
@@ -21,7 +21,7 @@ class dailyPipline:
         application_daily.custom_date()
 
     def pipline_feature_engineering_fredict(date_start, date_end='2029-01-01'):
-        with base_connect_database.engine_conn('postgre') as conn:
+        with base_connect_database.engine_conn("POSTGRES") as conn:
             history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)
         
         print(history_day_df)

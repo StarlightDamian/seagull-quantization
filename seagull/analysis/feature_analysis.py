@@ -11,12 +11,12 @@ import os
 import pandas as pd
 import numpy as np
 
-from __init__ import path
+from seagull.settings import PATH
 from analysis import icir3
-from utils import utils_log, utils_thread
+from seagull.utils import utils_log, utils_thread
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def calculate_close_rate(df: pd.DataFrame) -> pd.DataFrame:
     # df = df.sort_values(by='date', ascending=True)
@@ -40,7 +40,7 @@ def standardize(data):
     return (data - data.mean()) / data.std()
     
 if __name__ == "__main__":
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
     
     
     df = raw_df.loc[raw_df.date=='2023-01-09',['alpha041','alpha042']]

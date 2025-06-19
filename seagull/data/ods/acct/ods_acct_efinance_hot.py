@@ -7,14 +7,14 @@ Created on Thu Oct 31 00:29:31 2024
 """
 import efinance as ef
 import pandas as pd
-from __init__ import path
-from utils import utils_data, utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database
 
 
 if __name__ == '__main__':
     start_date = '1990-01-20' # 开始日期
     end_date = '2024-10-31' # 结束日期
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
         ods_capital_flow = pd.read_sql("ods_feat_incr_adata_capital_flow", con=conn.engine)

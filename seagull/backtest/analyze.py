@@ -15,11 +15,11 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_log, utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_log, utils_database
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 pd.set_option('display.max_rows', 20)  
 pd.set_option('display.max_columns', 20)  
@@ -132,14 +132,14 @@ class backtestAnalyze:
         portfolio_d = portfolio_d[['代码','时频','基准_年化收益 [%]', '策略_年化收益 [%]', '基准_最大回撤 [%]', '策略_最大回撤 [%]',
                                    '基准_夏普比', '策略_夏普比', '基准_sortino风险比', '策略_sortino风险比',
                                    '基准_胜率','策略_胜率', '基准_盈亏比', '策略_盈亏比','基准_总分','策略_总分']]
-        portfolio_d.to_csv(f'{path}/data/portfolio_d.csv', index=False)
+        portfolio_d.to_csv(f'{PATH}/data/portfolio_d.csv', index=False)
         
 
 
     
     def pipeline(self, comparison_experiment):
         ## dataset
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             bacetest_raw_df = pd.read_sql(f"select * from ads_info_incr_backtest where comparison_experiment in ('{comparison_experiment}', 'base')", con=conn.engine)#ads_info_incr_bacetest_signal
         bacetest_df = bacetest_raw_df.drop_duplicates('primary_key', keep='first') # 去重
         bacetest_df = bacetest_df[~bacetest_df.score.isnull()]

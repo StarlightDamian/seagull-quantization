@@ -15,11 +15,11 @@ from sklearn.model_selection import TimeSeriesSplit
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_thread, utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_thread, utils_math
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logger.info(device)
@@ -78,8 +78,8 @@ def init_weights(m):
             nn.init.zeros_(m.bias)
             
 if __name__ == '__main__':
-    #raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train_20230103_20241220.feather')
+    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
     # 清洗脏数据
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&(raw_df.low >= raw_df.limit_down)]
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&
@@ -281,7 +281,7 @@ if __name__ == '__main__':
     y_val_pred = y_val_pred_tensor.cpu().detach().numpy()
     #y_val_pred_series = pd.Series(y_val_pred.flatten(), index=y_val.index, name='predicted_next_high_rate')
     #result_df = pd.concat([y_val, y_val_pred_series], axis=1)
-    #result_df.to_csv(f'{path}/data/mmlp_reg.csv',index=False)
+    #result_df.to_csv(f'{PATH}/data/mmlp_reg.csv',index=False)
     
     y_val_pred = pd.DataFrame(y_val_pred,columns=TARGET_NAMES)
     y_val = y_val.reset_index(drop=True)

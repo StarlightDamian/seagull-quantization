@@ -12,17 +12,17 @@ import pandas as pd
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 if __name__ == '__main__':
     # data = vbt.YFData.download('AAPL', start='2018-01-01', end='2022-12-31')
     # price = data.get('Close')  # 获取收盘价
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         raw_df = pd.read_sql("select primary_key, date, close from dwd_ohlc_incr_stock_daily where full_code='510300.sh'", con=conn.engine)
     
     raw_df = raw_df.drop_duplicates('primary_key', keep='first')
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                                            )
     orders = portfolio.orders.records_readable
     
-    orders.to_csv(f'{path}/data/orders_records_readable2.csv', index=False)
+    orders.to_csv(f'{PATH}/data/orders_records_readable2.csv', index=False)
     
     
     # 4. 计算相关的绩效指标
@@ -118,9 +118,9 @@ if __name__ == '__main__':
     # trades_records_readable
     
     # 5. 输出回测结果到 HTML 文件
-    # portfolio.stats.to_html(f"{path}/seagull/html/backtest_report.html")
+    # portfolio.stats.to_html(f"{PATH}/seagull/html/backtest_report.html")
     fig = portfolio.plot()  # .figure
-    fig.write_html(f"{path}/seagull/html/portfolio_plot2.html")
+    fig.write_html(f"{PATH}/seagull/html/portfolio_plot2.html")
     logger.info(portfolio.stats(settings=dict(freq='22d',
                                               year_freq='243 days')))
     

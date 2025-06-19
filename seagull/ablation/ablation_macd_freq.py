@@ -15,12 +15,12 @@ import efinance as ef
 #import seaborn as sns
 #import matplotlib.pyplot as plt
 
-from __init__ import path
-from utils import utils_log, utils_database  # , utils_data, utils_character
+from seagull.settings import PATH
+from seagull.utils import utils_log, utils_database  # , utils_data, utils_character
 from backtest import vectorbt_macd, analyze
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 class ablationMacd(vectorbt_macd.backtestVectorbtMacd, analyze.backtestAnalyze):
@@ -103,7 +103,7 @@ class ablationMacd(vectorbt_macd.backtestVectorbtMacd, analyze.backtestAnalyze):
         #date_start='20190101'
         #date_end='20230101'
         klt=5
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             dwd_portfolio_base = pd.read_sql("dwd_info_nrtd_portfolio_base", con=conn.engine)
         dwd_portfolio_base = dwd_portfolio_base[~(dwd_portfolio_base.prev_close=='-')]
         etf_dict = dict(zip(dwd_portfolio_base['asset_code'], dwd_portfolio_base['code_name']))

@@ -66,7 +66,7 @@ class DatabaseConnection:
             connection.execute(create_table_sql)
         
         # 3. 将 DataFrame 写入 CSV 文件
-        csv_file = f'{path}/cache/{table_name}.csv'
+        csv_file = f'{PATH}/cache/{table_name}.csv'
         data_df.to_csv(csv_file, index=False, sep='\t')
 
         # 4. 使用 COPY 命令将数据导入 PostgreSQL

@@ -10,7 +10,7 @@ import argparse
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database, base_trading_day
 from application import application_rl_real
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     prediction_df = prediction_merge_df[['code', 'code_name','industry','close','vote_index','rear_open_pred', 'rear_low_pred', 'rear_high_pred', 'rear_close_pred']]#, 'rear_close_pct_pred','rear_next_pct_pred'
     
     #print(trading_day_next)
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date = '{trading_day_next}'", con=conn.engine)
         if history_day_df.empty:
             print('历史数据为空')
@@ -67,4 +67,4 @@ if __name__ == '__main__':
         'rear_close_pred': '预测_收盘价',
         'rear_close_pct_real': '涨跌幅',
         })
-    prediction_rename_df.to_csv(f'{path}/wechat/复盘_{target_date_replace}.csv', index=False)
+    prediction_rename_df.to_csv(f'{PATH}/wechat/复盘_{target_date_replace}.csv', index=False)

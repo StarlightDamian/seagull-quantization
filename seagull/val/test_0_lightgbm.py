@@ -13,12 +13,12 @@ import joblib
 import pandas as pd
 #from sklearn.utils import Bunch
 
-from __init__ import path
-from utils import utils_database, utils_log#, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log#, utils_data
 from train import train_0_lightgbm
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 class lightgbmTest(train_0_lightgbm.LightgbmTrain):
     def __init__(self):
@@ -74,7 +74,7 @@ class lightgbmTest(train_0_lightgbm.LightgbmTrain):
     
     def test_board_pipline(self, daily_df):
         print('task_name',self.task_name)
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             board_model_df = pd.read_sql(f"""
                                       SELECT
                                           primary_key

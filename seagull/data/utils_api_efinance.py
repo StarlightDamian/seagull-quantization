@@ -12,13 +12,13 @@ from datetime import datetime
 import efinance as ef
 import pandas as pd
 
-from __init__ import path
-from utils import utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_database
 
 
 def efinance_codelist2stock(code_arr=None):
     if not code_arr:
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             etf_code_df = pd.read_sql('ods_info_nrtd_adata_portfolio_base', con=conn.engine)
         code_arr = etf_code_df.fund_code
     etf_dict = ef.stock.get_quote_history(code_arr)

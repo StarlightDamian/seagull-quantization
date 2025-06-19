@@ -10,7 +10,7 @@ import efinance as ef
 import pandas as pd
 
 # import numpy as np
-from __init__ import path
+from seagull.settings import PATH
 # ETF dictionary
 etf_dict = {
     '510300': '沪深300ETF',
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     macd_results = macd_results.round(4)
     macd_results.columns = macd_results.columns.get_level_values('code_name')
     macd_results.columns.name = 'macd能量柱'
-    macd_results.to_csv(f'{path}/_file/etf_freq_macd.csv')
+    macd_results.to_csv(f'{PATH}/_file/etf_freq_macd.csv')
     # Display the results
     print(macd_results)
     
@@ -91,4 +91,4 @@ if __name__ == '__main__':
     rsi_results = rsi_results.round(4)
     rsi_results.columns = rsi_results.columns.get_level_values('code_name')
     rsi_results.columns.name = 'rsi'
-    rsi_results.to_csv(f'{path}/_file/etf_freq_rsi.csv')
+    rsi_results.to_csv(f'{PATH}/_file/etf_freq_rsi.csv')

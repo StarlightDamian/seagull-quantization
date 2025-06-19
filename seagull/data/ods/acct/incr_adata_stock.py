@@ -3,7 +3,7 @@
 @Date: 2024/10/16 13:07
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: incr_adata_stock.py
+@File: stock_incr_adata.py
 @Description:(ods_info_incr_adata_finance)
 """
 import adata
@@ -12,12 +12,12 @@ import adata
 import os
 import argparse
 
-from __init__ import path
-from data import data_utils, data_ods_info_incr_baostock_trade_stock_api
+from seagull.settings import PATH
+from seagull.data import data_utils, data_ods_info_incr_baostock_trade_stock_api
 from base import base_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = base_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = base_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 class odsBaostockStockBaseApi:

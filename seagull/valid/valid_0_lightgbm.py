@@ -13,15 +13,15 @@ import joblib
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_0_lightgbm
-from utils import utils_database, utils_log, utils_data
+from seagull.utils import utils_database, utils_log, utils_data
 
 VALID_TABLE_NAME = 'valid_model'
 VALID_DETAILS_TABLE_NAME = 'valid_model_details'
 TEST_SIZE = 0
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 class LightgbmValid(train_0_lightgbm.LightgbmTrain):
     def __init__(self, target_names=None):
@@ -56,8 +56,8 @@ class LightgbmValid(train_0_lightgbm.LightgbmTrain):
     def _apply_mae_rmse(self, handle_df):
         y_test = handle_df[self.target_real_names].values
         y_pred = handle_df[self.target_names].values
-        #pd.DataFrame(y_test).to_csv(f'{path}/data/y_test.csv',index=False)
-        #pd.DataFrame(y_pred).to_csv(f'{path}/data/y_pred.csv',index=False)
+        #pd.DataFrame(y_test).to_csv(f'{PATH}/data/y_test.csv',index=False)
+        #pd.DataFrame(y_pred).to_csv(f'{PATH}/data/y_pred.csv',index=False)
         mae = mean_absolute_error(y_test, y_pred)
         mse = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)
@@ -112,7 +112,7 @@ class LightgbmValid(train_0_lightgbm.LightgbmTrain):
         self.keep_train_model = False
         logger.info(f'daily_df_shape: {daily_df.shape}')
         
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             board_model_df = pd.read_sql(f"""
                                       SELECT
                                           primary_key

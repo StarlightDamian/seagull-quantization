@@ -13,12 +13,12 @@ from sklearn.metrics import classification_report, fbeta_score, confusion_matrix
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
 
-from __init__ import path
-from utils import utils_database, utils_log
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log
 import lightgbm_base
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 def custom_loss(y_pred, y_true):
     #y_true = dataset.get_label()
@@ -31,7 +31,7 @@ def custom_loss(y_pred, y_true):
     return grad, hess
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ohlc_df = pd.read_sql('das_wide_incr_train', con=conn.engine)
         # ohlc_df = pd.read_sql("select * from das_wide_incr_train where board_type='主板'", con=conn.engine)
         # ohlc_df = pd.read_sql("select *  from das_wide_incr_train where board_type not in ('北交所','ETF') ", con=conn.engine)

@@ -8,11 +8,11 @@ import argparse
 
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_1_lightgbm_regression, train_1_lightgbm_classification
 from base import base_connect_database
 
-PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{path}/data/stock_pick_lightgbm.csv'
+PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/data/stock_pick_lightgbm.csv'
 
 class stockPickTrain:
     def __init__(self):
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     
     # Load date range data
     #history_day_df = data_loading.feather_file_merge(args.date_start, args.date_end)
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
     stock_pick_train = stockPickTrain()

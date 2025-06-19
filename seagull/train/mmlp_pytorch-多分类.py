@@ -50,11 +50,11 @@ import lightgbm as lgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader, TensorDataset
-from __init__ import path
-from utils import utils_database, utils_character, utils_log, utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_character, utils_log, utils_math
 import lightgbm_base
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     
     
     # 获取日期段数据
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         df = pd.read_sql(f"SELECT * FROM dwd_freq_incr_stock_daily WHERE date BETWEEN '{args.date_start}' AND '{args.date_end}'", con=conn.engine)
         label_df = pd.read_sql("dwd_tags_full_label", con=conn.engine)
         macd_df = pd.read_sql(f"""
@@ -218,7 +218,7 @@ if __name__ == '__main__':
 #     })
 # =============================================================================
 
-    #df = pd.read_csv(f'{path}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
+    #df = pd.read_csv(f'{PATH}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
     df[['prev_close']] = df[['close']].shift(1)
     df[['high_rate', 'low_rate', 'open_rate', 'close_rate','avg_price_rate']] = df[['high', 'low', 'open', 'close','avg_price']].div(df['prev_close'], axis=0)
     df[['next_high_rate', 'next_low_rate', 'next_close_rate']] = df[['high_rate', 'low_rate', 'close_rate']].shift(-1)

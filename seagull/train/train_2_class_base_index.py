@@ -9,15 +9,15 @@ import os
 import argparse
 import pandas as pd
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_1_lightgbm_classification
-from utils import utils_database, utils_log
+from seagull.utils import utils_database, utils_log
 
 TARGET_NAMES = ['next_based_index_class']
-PATH_CSV = f'{path}/data/train_class_base_index.csv'
+PATH_CSV = f'{PATH}/data/train_class_base_index.csv'
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 class TrainBaseIndex(train_1_lightgbm_classification.LightgbmClassificationTrain):
     def __init__(self):
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     """)
     
     # dataset
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         asset_df = pd.read_sql(f"SELECT * FROM das_wide_incr_train WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     asset_df.drop_duplicates('primary_key', keep='first', inplace=True)
     

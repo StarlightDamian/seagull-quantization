@@ -38,7 +38,7 @@ def test_connection(server, port, password, cipher):
     return False
 
 # 读取配置文件
-with open(f'{path}/1708358592002.yml', 'r', encoding='utf-8') as file:
+with open(f'{PATH}/1708358592002.yml', 'r', encoding='utf-8') as file:
     config = yaml.safe_load(file)
 
 # 遍历代理列表
@@ -72,7 +72,7 @@ print("测试完成")
 #     return False
 # 
 # # 读取配置文件
-# with open(f'{path}/1708358592002.yml', 'r', encoding='utf-8') as file:
+# with open(f'{PATH}/1708358592002.yml', 'r', encoding='utf-8') as file:
 #     config = yaml.safe_load(file)
 # 
 # # 遍历代理列表

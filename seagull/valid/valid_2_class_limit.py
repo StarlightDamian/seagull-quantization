@@ -11,7 +11,7 @@ import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import randint
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 from test_ import test_2_stock_pick, test_2_short_term_recommend
 from valid import valid_0_lightgbm
@@ -19,7 +19,7 @@ from train import train_3_short_term_recommend
 
 TASK_NAME = 'short_term_recommend'
 VALID_TABLE_NAME = 'valid_3_short_term_recommend'
-#MULTIOUTPUT_MODEL_PATH = f'{path}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
+#MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
 TARGET_PRED_NAMES = ['rear_next_pct_pred']
 TARGET_REAL_NAMES = ['rear_next_pct_real']
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     print(f'Start time for backtesting: {args.date_start}\nEnd time for backtesting: {args.date_end}')
     
-    #with base_connect_database.engine_conn('postgre') as conn:
+    #with base_connect_database.engine_conn("POSTGRES") as conn:
     #    history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
     history_day_df = train_3_short_term_recommend.feature_engineering_short_term_recommend(args.date_start, args.date_end)
@@ -108,8 +108,8 @@ if __name__ == '__main__':
 #     eval_short_term_recommend = evalShortTermRecommend()
 #     eval_df, eval_details_df = eval_short_term_recommend.eval_pipline(handle_df)
 #     
-#     eval_details_df.to_csv(f'{path}/data/eval_details_df.csv',index=False)
-#     #eval_df.to_csv(f'{path}/data/backtest_2_stock_pick.csv',index=False)
+#     eval_details_df.to_csv(f'{PATH}/data/eval_details_df.csv',index=False)
+#     #eval_df.to_csv(f'{PATH}/data/backtest_2_stock_pick.csv',index=False)
 #     #eval_stock_pick(eval_df)
 # 
 # 

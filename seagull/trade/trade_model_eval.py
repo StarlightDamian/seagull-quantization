@@ -12,7 +12,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_connect_database
 
 
@@ -22,7 +22,7 @@ TRADE_MODEL_TABLE_NAME = 'trade_model'
 plt.figure(figsize=(10, 6), dpi=600)
 
 def annualized_income_max_primary_key():
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         trade_model_df = pd.read_sql(f"SELECT * FROM {TRADE_MODEL_TABLE_NAME}", con=conn.engine)
     annualized_income_max = trade_model_df.annualized_income.max()
     primary_key = trade_model_df.loc[trade_model_df.annualized_income==annualized_income_max, 'primary_key_order'].values[0]
@@ -31,11 +31,11 @@ def annualized_income_max_primary_key():
 
 def rl_first_model_analyze(code):
     primary_key = annualized_income_max_primary_key(code)
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         trade_order_details_df = pd.read_sql(f"SELECT * FROM {TRADE_ORDER_TABLE_NAME}", con=conn.engine)
     print(f'primary_key: {primary_key}')
     rl_first_model_analyze = trade_order_details_df[trade_order_details_df.primary_key==primary_key]
-    rl_first_model_analyze.to_csv(f'{path}/data/rl_first_model_analyze.csv', index=False)
+    rl_first_model_analyze.to_csv(f'{PATH}/data/rl_first_model_analyze.csv', index=False)
 
 def trade_primary_key(code):
     parser = argparse.ArgumentParser()
@@ -44,18 +44,18 @@ def trade_primary_key(code):
     args = parser.parse_args()
     
     primary_key = annualized_income_max_primary_key(code)
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         backtest_sql = f"SELECT * FROM prediction_stock_price_test WHERE date >= '{args.date_start}' AND date < '{args.date_end}' and code='sz.002230' "
         backtest_df = pd.read_sql(backtest_sql, con=conn.engine)
         
         trade_share_register_df = pd.read_sql(f"SELECT * FROM {TRADE_ORDER_TABLE_NAME}", con=conn.engine)
     
     trade_primary_key_df = trade_share_register_df[trade_share_register_df.primary_key==primary_key]
-    trade_primary_key_df.to_csv(f"{path}/data/trade_primary_key_df.csv", index=False)
+    trade_primary_key_df.to_csv(f"{PATH}/data/trade_primary_key_df.csv", index=False)
 
 if __name__ == '__main__':
-    with base_connect_database.engine_conn('postgre') as conn:
-    #conn = base_connect_database.engine_conn('postgre')
+    with base_connect_database.engine_conn("POSTGRES") as conn:
+    #conn = base_connect_database.engine_conn("POSTGRES")
         trade_model_df = pd.read_sql(f"SELECT * FROM trade_model", con=conn.engine)
         
     # Loop through unique primary_key values

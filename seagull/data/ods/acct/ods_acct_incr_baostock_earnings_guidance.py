@@ -12,15 +12,15 @@ import baostock as bs
 import pandas as pd
 from datetime import datetime
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_data
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 class odsBaostockEarningsForecastApi:
     def __init__(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             self.ods_stock_base_df = pd.read_sql("ods_info_incr_baostock_stock_base", con=conn.engine)# 获取指数、股票数据
     
     def earnings_forecast_1(self, substring,
@@ -55,7 +55,7 @@ class odsBaostockEarningsForecastApi:
         utils_data.output_database(earnings_forecast_df, 'ods_info_incr_baostock_earnings_forecast')
         
     def output_csv(self):
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             earnings_forecast_df = pd.read_sql("ods_info_incr_baostock_earnings_forecast", con=conn.engine)
             ods_stock_base_df = pd.read_sql("ods_info_incr_baostock_stock_base", con=conn.engine)# 获取指数、股票数据
         
@@ -78,7 +78,7 @@ class odsBaostockEarningsForecastApi:
             'profitForcastChgPctDwn': '预告归母净利润增长下限[%]',
             })
         earnings_forecast_df = earnings_forecast_df[['证券代码','证券名称','业绩预告发布日期', '业绩预告统计日期', '业绩预告类型', '业绩预告摘要', '预告归母净利润增长上限[%]', '预告归母净利润增长下限[%]']]
-        earnings_forecast_df.to_csv(f'{path}/data/earnings_forecast.csv', index=False)
+        earnings_forecast_df.to_csv(f'{PATH}/data/earnings_forecast.csv', index=False)
         
         
 if __name__ == '__main__':

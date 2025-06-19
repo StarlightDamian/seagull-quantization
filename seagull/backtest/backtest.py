@@ -13,18 +13,18 @@ import backtrader as bt
 import backtrader.strategies as btstrats
 import backtrader.analyzers as btanalyzers
 
-from __init__ import path
-from utils import utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_database
 
 
 
 # =============================================================================
 # date_start, date_end = '1900-01-01', '2024-05-01'
-# with base_connect_database.engine_conn('postgre') as conn:
+# with base_connect_database.engine_conn("POSTGRES") as conn:
 #     history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)
 # 
 # stock_hfq_df = history_day_df[history_day_df.code=='sh.600000']
-# stock_hfq_df.to_csv(f'{path}/data/stock_hfq_df.csv',index=False)
+# stock_hfq_df.to_csv(f'{PATH}/data/stock_hfq_df.csv',index=False)
 # #stock_hfq_df = pd.read_excel("./data/sh600000.xlsx",index_col='date',parse_dates=True)
 # =============================================================================
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
     
     #获取数据
-    stock_hfq_df = pd.read_csv(f'{path}/data/stock_hfq_df.csv')
+    stock_hfq_df = pd.read_csv(f'{PATH}/data/stock_hfq_df.csv')
     stock_hfq_df.index=pd.to_datetime(stock_hfq_df.date)
     start_date = datetime(2020, 1, 1)  # 回测开始时间
     end_date = datetime(2024, 1, 1)  # 回测结束时间

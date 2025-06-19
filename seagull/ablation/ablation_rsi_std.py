@@ -13,12 +13,12 @@ import numpy as np
 import vectorbt as vbt
 import pandas as pd
 
-from __init__ import path
-from utils import utils_log, utils_character
+from seagull.settings import PATH
+from seagull.utils import utils_log, utils_character
 from backtest import vectorbt_macd, analyze
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 # =============================================================================
 # def winsorize(df, window=50):
@@ -125,8 +125,8 @@ if __name__ == '__main__':
     # output
     eval_columns = ['full_code','ann_return','max_dd','calmar_ratio',
                     'total_closed_trades','win_rate','profit_loss_ratio']
-    base_df[eval_columns].to_csv(f'{path}/data/eval_base.csv', index=False)
-    strategy_df[eval_columns].to_csv(f'{path}/data/eval_strategy.csv', index=False)
+    base_df[eval_columns].to_csv(f'{PATH}/data/eval_base.csv', index=False)
+    strategy_df[eval_columns].to_csv(f'{PATH}/data/eval_strategy.csv', index=False)
     
 # =============================================================================
 # 2025-02-07 14:57:33.179 | INFO     | backtest.analyze:pipeline:156 -       date_start   date_end  period  start_value  end_value  total_return  \

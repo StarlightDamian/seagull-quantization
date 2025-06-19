@@ -8,8 +8,8 @@ adata的财务预报数据(ods_acct_incr_adata_earnings_guidance_api)
 import adata
 import pandas as pd
 
-from __init__ import path
-from utils import utils_data, utils_database
+from seagull.settings import PATH
+from seagull.utils import utils_data, utils_database
 
 
 def _apply_stock_earnings_guidance_1(subtable):
@@ -20,7 +20,7 @@ def _apply_stock_earnings_guidance_1(subtable):
 
 
 if __name__ == '__main__':
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         ods_adata_stock_base = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
         
     ods_adata_stock_earnings_guidance = ods_adata_stock_base.groupby('stock_code').apply(_apply_stock_earnings_guidance_1)

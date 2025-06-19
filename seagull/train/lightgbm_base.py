@@ -22,11 +22,11 @@ from lightgbm import LGBMRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import fbeta_score, make_scorer
 
-from __init__ import path
-from utils import utils_database, utils_character, utils_log, utils_math
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_character, utils_log, utils_math
 from rolling_cv import RollingCV
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 

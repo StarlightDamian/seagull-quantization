@@ -12,12 +12,12 @@ import pandas as pd
 import numpy as np
 from joblib import Parallel, delayed
 
-from __init__ import path
+from seagull.settings import PATH
 from analysis import icir
-from utils import utils_log, utils_thread, utils_data, utils_database, utils_math
+from seagull.utils import utils_log, utils_thread, utils_data, utils_database, utils_math
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 #class FactorAnalyzer:
 #    def __init__(self):
@@ -120,7 +120,7 @@ def analyze_factors_parallel_joblib(features, factor_df, price_data, num_workers
 
 
 if __name__ == "__main__":
-    raw_df = pd.read_feather(f'{path}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
 
     raw_df['date'] = pd.to_datetime(raw_df['date']).dt.tz_localize('UTC')
     alpha_features = ['alpha001', 'alpha002', 'alpha003', 'alpha004', 'alpha005', 'alpha006', 'alpha007', 'alpha008', 'alpha009', 'alpha010', 'alpha011', 'alpha012', 'alpha013', 'alpha014', 'alpha015', 'alpha016', 'alpha017', 'alpha018', 'alpha019', 'alpha020', 'alpha021', 'alpha022', 'alpha023', 'alpha024', 'alpha025', 'alpha026', 'alpha027', 'alpha028', 'alpha029', 'alpha030', 'alpha031', 'alpha032', 'alpha033', 'alpha034', 'alpha035', 'alpha036', 'alpha037', 'alpha038', 'alpha039', 'alpha040', 'alpha041', 'alpha042', 'alpha043', 'alpha044', 'alpha045', 'alpha046', 'alpha047', 'alpha049', 'alpha050', 'alpha051', 'alpha052', 'alpha053', 'alpha054', 'alpha055', 'alpha057', 'alpha060', 'alpha061', 'alpha062', 'alpha064', 'alpha065', 'alpha066', 'alpha068', 'alpha071', 'alpha072', 'alpha073', 'alpha074', 'alpha075', 'alpha077', 'alpha078', 'alpha081', 'alpha083', 'alpha084', 'alpha085', 'alpha086', 'alpha088', 'alpha092', 'alpha094', 'alpha095', 'alpha096', 'alpha098', 'alpha099', 'alpha101']
@@ -163,7 +163,7 @@ if __name__ == "__main__":
 #             icir_df_1['feature_name'] = feature_name
 #             icir_df_1['ir'] = ''
 #             icir_df_1['remark'] = '标准化'
-#             with utils_database.engine_conn('postgre') as conn:
+#             with utils_database.engine_conn("POSTGRES") as conn:
 #                 utils_data.output_database(icir_df_1,
 #                                            filename='ads_info_incr_icir')
 #         except Exception as e:

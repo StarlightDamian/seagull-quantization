@@ -16,12 +16,12 @@ from sklearn.model_selection import train_test_split
 import lightgbm as lgb
 from sklearn.multioutput import MultiOutputRegressor
 
-from __init__ import path
+from seagull.settings import PATH
 from feature import feature_engineering_main
-from utils import utils_database, utils_character, utils_log, utils_data
+from seagull.utils import utils_database, utils_character, utils_log, utils_data
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 TEST_SIZE = 0.15 #数据集分割中测试集占比
 TRAIN_MODEL_TABLE_NAME = 'ads_info_incr_train_model'#'train_model'
@@ -131,7 +131,7 @@ class LightgbmTrain(feature_engineering_main.FeatureEngineering):
             'task_name': self.task_name,
             'board_type': self.board_type,
             'price_limit_rate': self.price_limit_rate,
-            'model_path': f'{path}/checkpoint/lightgbm/{primary_key}.joblib',
+            'model_path': f'{PATH}/checkpoint/lightgbm/{primary_key}.joblib',
             'date_start': self.date_start,
             'date_end': self.date_end,
             'num_rows': self.num_rows,
@@ -140,7 +140,7 @@ class LightgbmTrain(feature_engineering_main.FeatureEngineering):
         train_model_pd = pd.json_normalize(train_model_dict)
         train_model_pd['insert_timestamp'] = datetime.now().strftime('%F %T')
         
-        with utils_database.engine_conn('postgre') as conn:
+        with utils_database.engine_conn("POSTGRES") as conn:
             train_model_pd.to_sql(self.train_model_table_name, con=conn.engine, index=False, if_exists='append')
             
         # save_model
@@ -282,7 +282,7 @@ class LightgbmTrain(feature_engineering_main.FeatureEngineering):
 #                        }
 #         y_eval_df = pd.DataFrame([y_eval_dict], columns=y_eval_dict.keys())
 #         
-#         with base_connect_database.engine_conn('postgre') as conn:
+#         with base_connect_database.engine_conn("POSTGRES") as conn:
 #             y_eval_df.to_sql(EVAL_TABLE_NAME, con=conn.engine, index=False, if_exists='append')
 #         return y_result
 # =============================================================================

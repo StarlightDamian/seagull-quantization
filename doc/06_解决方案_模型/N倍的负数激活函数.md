@@ -13,14 +13,14 @@ import pandas as pd
 from sklearn.multioutput import MultiOutputRegressor
 import lightgbm as lgb
 
-from __init__ import path
+from seagull.settings import PATH
 from train import train_1_lightgbm_regression
 from feature_engineering import feature_engineering_main
 from base import base_connect_database
 
 TRAIN_TABLE_NAME = 'train_2_stock_pick'
 TARGET_REAL_NAMES = ['rear_low_pct_real', 'rear_high_pct_real', 'rear_diff_pct_real', 'rear_open_pct_real', 'rear_close_pct_real']
-TRAIN_CSV_PATH = f'{path}/data/train_neg_x_activation.csv'
+TRAIN_CSV_PATH = f'{PATH}/data/train_neg_x_activation.csv'
 
 
 class trainNegXActivation(train_1_lightgbm_regression.lightgbmRegressionTrain):
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     print(f'Start time for training: {args.date_start}\nend time of training: {args.date_end}')
     
     # Load date range data
-    with base_connect_database.engine_conn('postgre') as conn:
+    with base_connect_database.engine_conn("POSTGRES") as conn:
         history_day_df = pd.read_sql(f"SELECT * FROM dwd_a_stock_day WHERE date >= '{args.date_start}' AND date < '{args.date_end}'", con=conn.engine)
     
     history_day_df.drop_duplicates('primary_key',keep='first', inplace=True)

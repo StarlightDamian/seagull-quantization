@@ -14,12 +14,12 @@ import vectorbt as vbt
 import pandas as pd
 
 
-from __init__ import path
+from seagull.settings import PATH
 from base import base_log
 from backtest.backtest_vectorbt import backtestVectorbt
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = base_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = base_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
 class backtestVectorbtMovingAverage(backtestVectorbt):

@@ -18,16 +18,16 @@ print(df)
 # import pandas as pd
 # import efinance as ef  # efinance不能连国际VPN
 #
-# from __init__ import path
-# from utils import utils_database, utils_log, utils_data
+# from seagull.settings import PATH
+# from seagull.utils import utils_database, utils_log, utils_data
 #
-# with utils_database.engine_conn('postgre') as conn:
+# with utils_database.engine_conn("POSTGRES") as conn:
 #     minute = pd.read_sql("select distinct 股票代码 from ods_ohlc_incr_efinance_stock_minute", con=conn.engine)
 #     daily = pd.read_sql("select distinct 股票代码 from ods_ohlc_incr_efinance_stock_daily", con=conn.engine)
 # import pandas as pd
-# from __init__ import path
-# from utils import utils_database, utils_log, utils_data
-# with utils_database.engine_conn('postgre') as conn:
+# from seagull.settings import PATH
+# from seagull.utils import utils_database, utils_log, utils_data
+# with utils_database.engine_conn("POSTGRES") as conn:
 #     # self.dwd_stock_bj_base_df = pd.read_sql("select * from dwd_info_incr_stock_base where market_code='bj'", con=conn.engine)
 #     dwd_stock_base_df = pd.read_sql(
 #         "select * from dwd_info_incr_adata_stock_base", con=conn.engine)

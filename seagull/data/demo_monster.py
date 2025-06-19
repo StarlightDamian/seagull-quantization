@@ -13,12 +13,12 @@ import argparse
 import pandas as pd
 import numpy as np
 
-from __init__ import path
-from utils import utils_database, utils_log, utils_math, utils_data
+from seagull.settings import PATH
+from seagull.utils import utils_database, utils_log, utils_math, utils_data
 from finance import finance_limit
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
+logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -31,7 +31,7 @@ if __name__ == '__main__':
                     date_end: {args.date_end}""")
     
     # 获取日期段数据
-    with utils_database.engine_conn('postgre') as conn:
+    with utils_database.engine_conn("POSTGRES") as conn:
         #df = pd.read_sql(f"SELECT * FROM dwd_freq_incr_stock_daily_1 WHERE date BETWEEN '{args.date_start}' AND '{args.date_end}'", con=conn.engine)
         chunks = pd.read_sql("dwd_freq_incr_stock_daily_2", con=conn.engine, chunksize=1_000_000)
         #chunks = pd.read_sql("select * from dwd_freq_incr_stock_daily where board_type in ('北交所','ETF')", con=conn.engine)
