@@ -13,3 +13,6 @@ df.columns = ['交易所', '品种', '代码', '交易保证金比例', '涨跌�
 import akshare as ak
 futures_rule_df = ak.futures_rule(date="20250513")
 print(futures_rule_df)
+
+if __name__ == '__main__':
+    ...

@@ -20,3 +20,6 @@ utils_data.output_database(df,
 
 df = adata.fund.info.all_etf_exchange_traded_info()
 print(df)
+
+if __name__ == '__main__':
+    ...

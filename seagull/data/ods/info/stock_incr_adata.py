@@ -28,7 +28,7 @@ def dwd_info_incr_adata_stock_base():
                                                   'stock_code': 'asset_code',
                                                   })
     
-    #capital_flow_df = pd.merge(capital_flow_df, stock_base_df, on='asset_code')
+    # capital_flow_df = pd.merge(capital_flow_df, stock_base_df, on='asset_code')
     # 没有时间的把日期转化为字符时间格式，方便后续统一主键
     
     stock_base_df['market_code'] = stock_base_df['market_code'].str.lower()
@@ -62,7 +62,7 @@ def associated_primary_key(df):
                          df['freq'].astype(str) +
                          df['adj_type'].astype(str)
                          ).apply(utils_character.md5_str) # md5（时间、带后缀代码、频率、复权类型）
-    return df  #[['primary_key', 'full_code', 'asset_code', 'market_code', 'date', 'time', 'freq', 'adj_type']]
+    return df  # [['primary_key', 'full_code', 'asset_code', 'market_code', 'date', 'time', 'freq', 'adj_type']]
 
     
 def dwd_pipeline():
