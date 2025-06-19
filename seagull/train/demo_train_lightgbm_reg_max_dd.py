@@ -129,16 +129,16 @@ def _apply_full_code(df):
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-    #rew_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    #rew_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
     #raw_df = rew_df.groupby('full_code').apply(vwap.daily_vwap, window=10)
     #raw_df = raw_df.rename(columns={'y_vwap_rate': 'y_10d_vwap_rate'})
-    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap.feather')
     #raw_df = raw_df.groupby('full_code').apply(max_drawdown.calculate_max_drawdown, window=10)
     #raw_df = raw_df.rename(columns={'y_max_dd': 'y_10d_max_dd'})
-    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap_max_dd.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap_max_dd.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_20230103_20241220.feather')
 # =============================================================================
 #     parser = argparse.ArgumentParser()
 #     #parser.add_argument('--date_start', type=str, default='2019-01-01', help='When to start high frequency')
@@ -170,7 +170,7 @@ if __name__ == '__main__':
 #             (raw_df._90pct_5min_high.isnull())
 #             )]
 # =============================================================================
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train2.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train2.feather')
     #raw_df = raw_df[~raw_df['next_10pct_5min_low_rate'].isin([np.inf, -np.inf, np.nan])]
     #raw_df = raw_df.replace([np.inf, -np.inf], 1)
 
@@ -424,7 +424,7 @@ if __name__ == '__main__':
     result_reg.columns=['y_real','y_pred']
     result_reg = result_reg.round(4)
     result_reg = result_reg.sort_values(by='y_pred' ,ascending=False)
-    result_reg.to_csv(f'{PATH}/data/test_reg_10d_max_dd.csv', index=False)
+    result_reg.to_csv(f'{PATH}/_file/test_reg_10d_max_dd.csv', index=False)
     
     
     columns=['full_code','next_low_rate','next_high_rate','next_close_rate']
@@ -436,7 +436,7 @@ if __name__ == '__main__':
     
     columns=['next_low_rate','high_rate_predict','next_high_rate','next_close_rate']
     result_df[columns] = result_df[columns].round(3)
-   # result_df[['full_code','trade','next_low_rate','high_rate_predict','next_high_rate','next_close_rate']].reset_index(drop=True).to_csv(f'{PATH}/data/demo_100pct_high.csv',index=False)# high_rate_prod
+   # result_df[['full_code','trade','next_low_rate','high_rate_predict','next_high_rate','next_close_rate']].reset_index(drop=True).to_csv(f'{PATH}/_file/demo_100pct_high.csv',index=False)# high_rate_prod
     
    # rmse(y_val.values.flatten(), y_val_pred.flatten())
     # mean() 0.42457079841456646
@@ -492,7 +492,7 @@ if __name__ == '__main__':
 #     feature_df["feature"] = model.feature_name_   
 #     feature_df["importance"] = model.feature_importances_
 #     feature_df = feature_df.sort_values(by='importance', ascending=False)
-#     feature_df.to_csv(f'{PATH}/data/feature_df.csv', index=False)
+#     feature_df.to_csv(f'{PATH}/_file/feature_df.csv', index=False)
 #     feature_importance_df = feature_df[feature_df.importance>5].feature.values
 # =============================================================================
     

@@ -58,7 +58,7 @@ def dwd_stock_base(ASSET_TABLE_NAME='ods_info_full_asset_base_details',
     trade_stock_df['settlement_cycle'] = 1  # A股默认T+1
     
     trade_stock_df = trade_stock_df[['full_code', 'asset_code', 'market_code', 'code_name', 'board_type', 'price_limit_rate', 'trade_status', 'insert_timestamp']]
-    #trade_stock_df.to_csv(f'{PATH}/data/{DWD_STOCK_BASE_TABLE_NAME}.csv', index=False)
+    #trade_stock_df.to_csv(f'{PATH}/_file/{DWD_STOCK_BASE_TABLE_NAME}.csv', index=False)
     utils_data.output_database(trade_stock_df, filename=DWD_STOCK_BASE_TABLE_NAME, if_exists='replace')
     return trade_stock_df
 

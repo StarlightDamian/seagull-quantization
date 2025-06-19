@@ -12,7 +12,7 @@ from seagull.settings import PATH
 from train import train_1_lightgbm_regression, train_1_lightgbm_classification
 from base import base_connect_database
 
-PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/data/stock_pick_lightgbm.csv'
+PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/_file/stock_pick_lightgbm.csv'
 
 class stockPickTrain:
     def __init__(self):

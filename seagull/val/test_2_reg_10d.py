@@ -17,7 +17,7 @@ from tests_ import test_0_lightgbm
 
 TASK_NAME = 'reg_price'
 TEST_TABLE_NAME = 'test_2_reg_price'
-PATH_CSV = f'{PATH}/data/test_2_reg_price_20250221.csv'
+PATH_CSV = f'{PATH}/_file/test_2_reg_price_20250221.csv'
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')

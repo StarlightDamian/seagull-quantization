@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # 计算每个日期的最大回撤，使用窗口10天
     window=3
     raw_df = n_day_pred(raw_df, window=window, freq='d')
-    raw_df.to_csv(f'{PATH}/data/test_vwap_drawdown_rate.csv',index=False)
+    raw_df.to_csv(f'{PATH}/_file/test_vwap_drawdown_rate.csv',index=False)
     # raw_df[['y_3d_vwap_rate','y_3d_max_dd','y_3d_vwap_drawdown_rate']]
     # raw_df[f'y_{window}d_vwap_drawdown_rate'] = raw_df[f'y_{window}d_vwap_rate'] / raw_df[f'y_{window}d_max_dd']
     # raw_df[f'y_3d_vwap_drawdown_rate'] = raw_df[f'y_3d_vwap_rate'] / raw_df[f'y_3d_max_dd']

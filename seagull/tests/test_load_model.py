@@ -35,8 +35,8 @@ model = lgb.train(params, train_data, valid_sets=[valid_data], early_stopping_ro
 # multioutput_model_path = MULTIOUTPUT_MODEL_PATH
 # model_multioutput, model_metadata = joblib.load(multioutput_model_path)
 # 
-# x_train = pd.read_csv(f'{PATH}/data/train_short_term_recommend_x_train.csv')
-# y_train = pd.read_csv(f'{PATH}/data/train_short_term_recommend_y_train.csv').values
+# x_train = pd.read_csv(f'{PATH}/_file/train_short_term_recommend_x_train.csv')
+# y_train = pd.read_csv(f'{PATH}/_file/train_short_term_recommend_y_train.csv').values
 # model_multioutput.fit(x_train, y_train)
 # y_pred = model_multioutput.predict(x_test)
 # mae = mean_absolute_error(y_test, y_pred)

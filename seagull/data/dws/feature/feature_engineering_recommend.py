@@ -70,16 +70,16 @@ class stockRecommend:
 if __name__ == '__main__':
     #with base_connect_database.engine_conn("POSTGRES") as conn:
     #    history_day_df = pd.read_sql("SELECT * FROM history_a_stock_5_min", con=conn.engine)# WHERE date = '{now}'
-    #history_day_df = pd.read_feather(f'{PATH}/data/history_a_stock_5_min.feather').reset_index(drop=True)
+    #history_day_df = pd.read_feather(f'{PATH}/_file/history_a_stock_5_min.feather').reset_index(drop=True)
     
     #history_day_df = history_day_df[history_day_df.code.isin(['sh.600826', 'sh.600827', 'sh.600828'])]
     
     date = '2016-03-01_2017-01-01'#'2016-03-01_2017-01-01'#'2022-01-01_2022-10-10'
     get_day_data = data_history_a_stock_5_min.Get5MinData()
-    history_day_df = get_day_data.add_new_data(f'{PATH}/data/history_a_stock_5_min/{date}/')
+    history_day_df = get_day_data.add_new_data(f'{PATH}/_file/history_a_stock_5_min/{date}/')
     
     history_day_df[['low', 'high']] = history_day_df[['low', 'high']].astype(float)
     stock_recommend = stockRecommend()
     day_df = stock_recommend.pipline(history_day_df)
-    day_df.to_csv(f'{PATH}/data/history_a_stock_5_min/rise_df_{date}.csv', index=False)
+    day_df.to_csv(f'{PATH}/_file/history_a_stock_5_min/rise_df_{date}.csv', index=False)
     

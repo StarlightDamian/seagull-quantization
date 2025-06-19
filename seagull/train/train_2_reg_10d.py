@@ -43,7 +43,7 @@ TARGET_NAMES = ['next_high_rate',
                 'y_10d_low_rate',
                 ]
 
-PATH_CSV = f'{PATH}/data/train_price.csv'
+PATH_CSV = f'{PATH}/_file/train_price.csv'
 
 
 class TrainPrice(train_1_lightgbm_regression.LightgbmRegressionTrain):
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # asset_df.loc[asset_df.next_high_rate.idxmax(),['close','high','next_high_rate','price_limit_rate']]
     
     asset_df.sort_values(by='date', ascending=True, inplace=True, ignore_index=True)
-    #asset_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
+    #asset_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_20230103_20241220.feather')
     train_price = TrainPrice()
     valid_raw_df = train_price.train_board_pipeline(asset_df, keep_train_model=True)
     

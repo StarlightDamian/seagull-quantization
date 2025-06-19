@@ -43,7 +43,7 @@ TARGET_NAMES = ['next_high_rate',
                 #'y_10d_low_rate',
                 ]
 
-PATH_CSV = f'{PATH}/data/train_price.csv'
+PATH_CSV = f'{PATH}/_file/train_price.csv'
 
 
 class TrainPrice(train_1_lightgbm_regression.LightgbmRegressionTrain):

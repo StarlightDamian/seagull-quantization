@@ -108,8 +108,8 @@ if __name__ == '__main__':
 #     eval_short_term_recommend = evalShortTermRecommend()
 #     eval_df, eval_details_df = eval_short_term_recommend.eval_pipline(handle_df)
 #     
-#     eval_details_df.to_csv(f'{PATH}/data/eval_details_df.csv',index=False)
-#     #eval_df.to_csv(f'{PATH}/data/backtest_2_stock_pick.csv',index=False)
+#     eval_details_df.to_csv(f'{PATH}/_file/eval_details_df.csv',index=False)
+#     #eval_df.to_csv(f'{PATH}/_file/backtest_2_stock_pick.csv',index=False)
 #     #eval_stock_pick(eval_df)
 # 
 # 

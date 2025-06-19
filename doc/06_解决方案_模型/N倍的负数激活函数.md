@@ -20,7 +20,7 @@ from base import base_connect_database
 
 TRAIN_TABLE_NAME = 'train_2_stock_pick'
 TARGET_REAL_NAMES = ['rear_low_pct_real', 'rear_high_pct_real', 'rear_diff_pct_real', 'rear_open_pct_real', 'rear_close_pct_real']
-TRAIN_CSV_PATH = f'{PATH}/data/train_neg_x_activation.csv'
+TRAIN_CSV_PATH = f'{PATH}/_file/train_neg_x_activation.csv'
 
 
 class trainNegXActivation(train_1_lightgbm_regression.lightgbmRegressionTrain):

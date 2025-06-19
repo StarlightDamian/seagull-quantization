@@ -76,7 +76,7 @@ lgb_params_low = {
 #)
 
 # 生成示例数据
-data = pd.read_csv(f'{PATH}/data/test_603893.csv')
+data = pd.read_csv(f'{PATH}/_file/test_603893.csv')
 #data['high'] = data['high'] / data['close']
 columns_to_divide = ['high', 'low', 'open', 'close']
 data[columns_to_divide] = data[columns_to_divide].div(data['preclose'], axis=0)
@@ -162,7 +162,7 @@ result['next_low_bool'] = np.where(result['next_low_real'] <= result['next_low_p
 print(result)
 print(f"Mean Squared Error: {mse}")
 print(result.sum())
-#result.to_csv(f'{PATH}/data/test_result_multioutput.csv',index=False)
+#result.to_csv(f'{PATH}/_file/test_result_multioutput.csv',index=False)
 #Mean Squared Error: 0.0012499485110463058
 # =============================================================================
 # next_high_real    215.317793

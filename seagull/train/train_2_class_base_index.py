@@ -14,7 +14,7 @@ from train import train_1_lightgbm_classification
 from seagull.utils import utils_database, utils_log
 
 TARGET_NAMES = ['next_based_index_class']
-PATH_CSV = f'{PATH}/data/train_class_base_index.csv'
+PATH_CSV = f'{PATH}/_file/train_class_base_index.csv'
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')

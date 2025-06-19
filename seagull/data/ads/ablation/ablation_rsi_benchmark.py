@@ -152,7 +152,7 @@ if __name__ == '__main__':
                                                )
         orders = portfolio.orders.records_readable
         
-        orders.to_csv(f'{PATH}/data/orders_records_readable2.csv', index=False)
+        orders.to_csv(f'{PATH}/_file/orders_records_readable2.csv', index=False)
         
         
         # 4. 计算相关的绩效指标

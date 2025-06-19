@@ -162,7 +162,7 @@ class SACAgentTrain(rl_sac.SACAgent):
 
                 feature_df = pd.merge(feature_df, self.all_stock[['code', 'held_volume']], on='code')
                 feature_action_df = pd.concat([feature_df, action_df], axis=1)
-                #feature_action_df.to_csv(f'{PATH}/data/feature_action_df_test3.csv')
+                #feature_action_df.to_csv(f'{PATH}/_file/feature_action_df_test3.csv')
                 
                 #feature_action_df = feature_action_df[~(feature_action_df.close==0.0)]  # Exclude non-transaction data
                 #positions_pct = feature_action_df.positions_pct.mean()  #Dynamic position ratio (close to the dynamic position position, more inclined to sell at a higher price, buy at a lower price, place more orders, trade less, control positions)ll

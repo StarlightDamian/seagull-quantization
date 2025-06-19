@@ -20,7 +20,7 @@ logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 TASK_NAME = 'class_base_index'
 TEST_TABLE_NAME = 'test_2_class_base_index'
-PATH_CSV = f'{PATH}/data/test_2_class_base_index.csv'
+PATH_CSV = f'{PATH}/_file/test_2_class_base_index.csv'
 
 class TestClassBaseIndex(test_0_lightgbm.lightgbmTest):
     def __init__(self, multioutput_model_path=None):

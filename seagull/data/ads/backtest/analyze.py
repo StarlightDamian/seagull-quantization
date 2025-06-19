@@ -132,7 +132,7 @@ class backtestAnalyze:
         portfolio_d = portfolio_d[['代码','时频','基准_年化收益 [%]', '策略_年化收益 [%]', '基准_最大回撤 [%]', '策略_最大回撤 [%]',
                                    '基准_夏普比', '策略_夏普比', '基准_sortino风险比', '策略_sortino风险比',
                                    '基准_胜率','策略_胜率', '基准_盈亏比', '策略_盈亏比','基准_总分','策略_总分']]
-        portfolio_d.to_csv(f'{PATH}/data/portfolio_d.csv', index=False)
+        portfolio_d.to_csv(f'{PATH}/_file/portfolio_d.csv', index=False)
         
 
 

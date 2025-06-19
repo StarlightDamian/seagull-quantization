@@ -36,7 +36,7 @@ def dataset():
         #data[['high', 'low', 'open', 'close','preclose']] = data[['high', 'low', 'open', 'close','preclose']].astype(float)
         
         
-    #data = pd.read_csv(f'{PATH}/data/test_603893.csv')
+    #data = pd.read_csv(f'{PATH}/_file/test_603893.csv')
     #data['high'] = data['high'] / data['close']
     columns_to_divide = ['high', 'low', 'open', 'close']
     data[['open', 'high', 'low', 'close', 'volume',
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     print(result)
     result['next_high_bool'] = np.where(result['y_test'] >= result['y_pred'], 1, None)
 
-    result.to_csv(f'{PATH}/data/test_result_reward2.csv',index=False)
+    result.to_csv(f'{PATH}/_file/test_result_reward2.csv',index=False)
 
     result_bool = result[result.next_high_bool==1]
     y_test_mean, y_pred_mean,next_high_bool = result_bool.mean()

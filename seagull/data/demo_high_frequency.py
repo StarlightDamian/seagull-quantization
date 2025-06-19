@@ -206,7 +206,7 @@ if __name__ == '__main__':
     #with utils_database.engine_conn("POSTGRES") as conn:
         #pd.read_sql("dwd_feat_incr_high_frequency_5minute", con=conn.engine)
 # =============================================================================
-#     raw_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
+#     raw_df = pd.read_csv(f'{PATH}/_file/asset_5min_df.csv')
 #     df = raw_df[(raw_df['date']=='2023-03-28')&(raw_df['full_code']=='600183.sh')]
 #     
 #     # 流动性
@@ -217,8 +217,8 @@ if __name__ == '__main__':
 #     df['momentum'] = df['close'].pct_change(n_periods)
 #     df['reversal'] = -df['momentum']
 # =============================================================================
-    #asset_5min_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
+    #asset_5min_df = pd.read_csv(f'{PATH}/_file/asset_5min_df.csv')
 
-    #asset_5min_df.to_csv(f'{PATH}/data/asset_5min_df.csv',index=False)
-    #asset_5min_df = pd.read_csv(f'{PATH}/data/asset_5min_df.csv')
+    #asset_5min_df.to_csv(f'{PATH}/_file/asset_5min_df.csv',index=False)
+    #asset_5min_df = pd.read_csv(f'{PATH}/_file/asset_5min_df.csv')
     #pipeline(asset_5min_df)

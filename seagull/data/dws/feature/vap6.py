@@ -80,8 +80,8 @@ class ChipDistributionOptimized:
 
 if __name__ == "__main__":
     chip=ChipDistributionOptimized()
-    #data = a.run_all_calculations(f'{PATH}/data/test.csv')
-    chip.load_data(f'{PATH}/data/test.csv')
+    #data = a.run_all_calculations(f'{PATH}/_file/test.csv')
+    chip.load_data(f'{PATH}/_file/test.csv')
     chip.calculate_chip_distribution(minD=0.01, AC=1)
     chip.calculate_profit_range()
     chip.calculate_winner()

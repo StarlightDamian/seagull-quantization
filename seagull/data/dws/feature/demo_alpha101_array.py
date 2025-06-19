@@ -304,7 +304,7 @@ class AlphaCalculator:
          
     
 if __name__ == '__main__':
-    # raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_mini.feather')
+    # raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_mini.feather')
     # # ['date', 'full_code', 'open', 'close', 'high', 'low', 'volume','turnover', 'prev_close', 'close_rate', 'vwap']
     # # raw_df[['prev_close']] = raw_df[['close']].shift(1)
     # # raw_df[['close_rate']] = raw_df[['close']].div(raw_df['prev_close'], axis=0)
@@ -338,7 +338,7 @@ if __name__ == '__main__':
     df = df[['date', 'asset_code', 'open', 'close', 'high', 'low', 'volume', 'turnover', 'amount']]
     df = df.rename(columns={'asset_code': 'full_code'})
     df['amount'] = df['amount'].astype('int64')
-    df.to_feather(f'{PATH}/data/das_wide_incr_train_mini.feather')
+    df.to_feather(f'{PATH}/_file/das_wide_incr_train_mini.feather')
 
 
 

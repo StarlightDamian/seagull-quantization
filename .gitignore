@@ -33,7 +33,6 @@ _*
 *.html
 *.xlsx
 *.xml
-*.csv
 *.feather
 
 # PyInstaller

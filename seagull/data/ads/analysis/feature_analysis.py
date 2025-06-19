@@ -40,7 +40,7 @@ def standardize(data):
     return (data - data.mean()) / data.std()
     
 if __name__ == "__main__":
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
     
     
     df = raw_df.loc[raw_df.date=='2023-01-09',['alpha041','alpha042']]

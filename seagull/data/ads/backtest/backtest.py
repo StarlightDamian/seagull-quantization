@@ -24,8 +24,8 @@ from seagull.utils import utils_database
 #     history_day_df = pd.read_sql(f"SELECT * FROM history_a_stock_day WHERE date >= '{date_start}' AND date < '{date_end}'", con=conn.engine)
 # 
 # stock_hfq_df = history_day_df[history_day_df.code=='sh.600000']
-# stock_hfq_df.to_csv(f'{PATH}/data/stock_hfq_df.csv',index=False)
-# #stock_hfq_df = pd.read_excel("./data/sh600000.xlsx",index_col='date',parse_dates=True)
+# stock_hfq_df.to_csv(f'{PATH}/_file/stock_hfq_df.csv',index=False)
+# #stock_hfq_df = pd.read_excel("./_file/sh600000.xlsx",index_col='date',parse_dates=True)
 # =============================================================================
 
 #创建一个策略
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
     
     #获取数据
-    stock_hfq_df = pd.read_csv(f'{PATH}/data/stock_hfq_df.csv')
+    stock_hfq_df = pd.read_csv(f'{PATH}/_file/stock_hfq_df.csv')
     stock_hfq_df.index=pd.to_datetime(stock_hfq_df.date)
     start_date = datetime(2020, 1, 1)  # 回测开始时间
     end_date = datetime(2024, 1, 1)  # 回测结束时间

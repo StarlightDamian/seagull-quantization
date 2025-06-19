@@ -112,15 +112,15 @@ def huber_loss(y_true, y_pred, delta=1.0):
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-   # rew_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+   # rew_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
     #raw_df = rew_df.groupby('full_code').apply(vwap.vwap_pipeline, column_name='y_10d_vwap',window=10)
-    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap.feather')
     #raw_df = raw_df.groupby('full_code').apply(max_drawdown.calculate_max_drawdown, column_name='10d_max_dd', window=10)
-    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_10d_vwap_max_dd.feather')
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train2.feather')
+    #raw_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap_max_dd.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_10d_vwap_max_dd.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_20230103_20241220.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train2.feather')
 #    raw_df = raw_df[~raw_df['next_10pct_5min_low_rate'].isin([np.inf, -np.inf, np.nan])]
     #raw_df = raw_df.replace([np.inf, -np.inf], 1)
     # 数据处理
@@ -362,7 +362,7 @@ if __name__ == '__main__':
 #     result_reg = pd.DataFrame([y_val.values, y_val_pred]).T
 #     result_reg.columns=['y_real','y_pred']
 #     result_reg = result_reg.round(4)
-#     result_reg.to_csv(f'{PATH}/data/test_reg_10d_max_dd.csv', index=False)
+#     result_reg.to_csv(f'{PATH}/_file/test_reg_10d_max_dd.csv', index=False)
 # =============================================================================
     PRED_NAMES = [x+'_pred' for x in TARGET_NAMES]
     y_val_pred = pd.DataFrame(y_val_pred, columns=PRED_NAMES)#y_val.columns
@@ -378,7 +378,7 @@ if __name__ == '__main__':
     columns=['y_10d_vwap_rate_pred', 'y_10d_high_rate_pred', 'close','y_10d_vwap_rate',
            'next_low_rate', 'next_high_rate', 'next_close_rate', 'y_10d_high_rate']
     y_val_pred[columns]=y_val_pred[columns].round(3)
-    y_val_pred.to_csv(f'{PATH}/data/test_10d_high_rate.csv', index=False)
+    y_val_pred.to_csv(f'{PATH}/_file/test_10d_high_rate.csv', index=False)
     
     #rmse_values = y_val.apply(lambda col: rmse(col, y_val_pred[col.name]))
     #print(rmse_values)
@@ -438,7 +438,7 @@ if __name__ == '__main__':
 #     feature_df["feature"] = model.feature_name_   
 #     feature_df["importance"] = model.feature_importances_
 #     feature_df = feature_df.sort_values(by='importance', ascending=False)
-#     feature_df.to_csv(f'{PATH}/data/feature_df.csv', index=False)
+#     feature_df.to_csv(f'{PATH}/_file/feature_df.csv', index=False)
 #     feature_importance_df = feature_df[feature_df.importance>5].feature.values
 # =============================================================================
     

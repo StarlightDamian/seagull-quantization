@@ -104,6 +104,6 @@ if __name__ == '__main__':
     # 假设已经加载stock_data并准备好current_prices
     analyzer = ChipDistributionAnalyzer()
     chip_dist_df = analyzer.analyze_chip_distribution(stock_daily_df)
-    chip_dist_df.to_csv(f'{PATH}/data/chip_dist.csv', index=False)
+    chip_dist_df.to_csv(f'{PATH}/_file/chip_dist.csv', index=False)
     #results = analyzer.analyze_chip_distribution(chip_dist_df, current_prices)
     #print(results)

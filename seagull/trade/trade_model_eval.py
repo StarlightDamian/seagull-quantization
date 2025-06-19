@@ -35,7 +35,7 @@ def rl_first_model_analyze(code):
         trade_order_details_df = pd.read_sql(f"SELECT * FROM {TRADE_ORDER_TABLE_NAME}", con=conn.engine)
     print(f'primary_key: {primary_key}')
     rl_first_model_analyze = trade_order_details_df[trade_order_details_df.primary_key==primary_key]
-    rl_first_model_analyze.to_csv(f'{PATH}/data/rl_first_model_analyze.csv', index=False)
+    rl_first_model_analyze.to_csv(f'{PATH}/_file/rl_first_model_analyze.csv', index=False)
 
 def trade_primary_key(code):
     parser = argparse.ArgumentParser()
@@ -51,7 +51,7 @@ def trade_primary_key(code):
         trade_share_register_df = pd.read_sql(f"SELECT * FROM {TRADE_ORDER_TABLE_NAME}", con=conn.engine)
     
     trade_primary_key_df = trade_share_register_df[trade_share_register_df.primary_key==primary_key]
-    trade_primary_key_df.to_csv(f"{PATH}/data/trade_primary_key_df.csv", index=False)
+    trade_primary_key_df.to_csv(f"{PATH}/_file/trade_primary_key_df.csv", index=False)
 
 if __name__ == '__main__':
     with base_connect_database.engine_conn("POSTGRES") as conn:

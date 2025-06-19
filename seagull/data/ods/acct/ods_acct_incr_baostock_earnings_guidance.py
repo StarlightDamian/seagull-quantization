@@ -78,7 +78,7 @@ class odsBaostockEarningsForecastApi:
             'profitForcastChgPctDwn': '预告归母净利润增长下限[%]',
             })
         earnings_forecast_df = earnings_forecast_df[['证券代码','证券名称','业绩预告发布日期', '业绩预告统计日期', '业绩预告类型', '业绩预告摘要', '预告归母净利润增长上限[%]', '预告归母净利润增长下限[%]']]
-        earnings_forecast_df.to_csv(f'{PATH}/data/earnings_forecast.csv', index=False)
+        earnings_forecast_df.to_csv(f'{PATH}/_file/earnings_forecast.csv', index=False)
         
         
 if __name__ == '__main__':

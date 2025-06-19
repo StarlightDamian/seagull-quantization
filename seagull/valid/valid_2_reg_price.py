@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #valid_stock_pick.grid_search(history_day_df)
     
     #prediction_df = valid_stock_pick.test_pipline(history_day_df)
-    #prediction_df.to_csv(f'{PATH}/data/prediction_df.csv',index=False)
+    #prediction_df.to_csv(f'{PATH}/_file/prediction_df.csv',index=False)
 
 
 

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print(historical_price_df)
     
     trade_price_code = historical_price_df[historical_price_df.code=='sz.002230']
-    trade_price_code.to_csv(f'{PATH}/data/trade_price_code.csv', index=False)
+    trade_price_code.to_csv(f'{PATH}/_file/trade_price_code.csv', index=False)
     
 # =============================================================================
 #     print('Trading days:',len(historical_price_df.date.unique()))
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 #     day_price_sort_df = day_price_df.sort_values(by='rearDiffPctChgPred', ascending=False)
 #     
 #     day_price_sort_df = day_price_sort_df[~(day_price_sort_df.remarks=='limit_up')]#.reset_index(drop=True) 序号
-#     day_price_sort_df.head(10).to_csv(f'{PATH}/data/trade_price_day.csv', index=False)
+#     day_price_sort_df.head(10).to_csv(f'{PATH}/_file/trade_price_day.csv', index=False)
 # =============================================================================
     
     

@@ -23,6 +23,6 @@ if __name__ == '__main__':
     
     
     output_df = raw_df.loc[raw_df.date>='2024-10-01',['date','full_code','board_primary_key','open','high','low','close','volume','close_rate','turnover','vwap']]
-    output_df.reset_index(drop=True).to_feather(f'{PATH}/data/das_wide_incr_train_mini.feather')
+    output_df.reset_index(drop=True).to_feather(f'{PATH}/_file/das_wide_incr_train_mini.feather')
 
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')

@@ -56,8 +56,8 @@ class LightgbmValid(train_0_lightgbm.LightgbmTrain):
     def _apply_mae_rmse(self, handle_df):
         y_test = handle_df[self.target_real_names].values
         y_pred = handle_df[self.target_names].values
-        #pd.DataFrame(y_test).to_csv(f'{PATH}/data/y_test.csv',index=False)
-        #pd.DataFrame(y_pred).to_csv(f'{PATH}/data/y_pred.csv',index=False)
+        #pd.DataFrame(y_test).to_csv(f'{PATH}/_file/y_test.csv',index=False)
+        #pd.DataFrame(y_pred).to_csv(f'{PATH}/_file/y_pred.csv',index=False)
         mae = mean_absolute_error(y_test, y_pred)
         mse = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)

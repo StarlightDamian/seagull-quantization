@@ -205,7 +205,7 @@ class ChipDistribution():
 
 
 if __name__ == "__main__":
-    data = pd.read_csv(f'{PATH}/data/test.csv')
+    data = pd.read_csv(f'{PATH}/_file/test.csv')
     data.turnover = data.turnover/100
     low_1,high_1,volume_1,turnover_1,avg_price_1,date_1 = data.loc[0,['low','high','volume','turnover','avg_price','date']]
 

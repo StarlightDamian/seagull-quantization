@@ -55,7 +55,7 @@ if __name__ == '__main__':
 #         # raw_df = pd.read_sql("select *  from das_wide_incr_train where board_type not in ('北交所','ETF') ", con=conn.engine)
 #         
 # =============================================================================
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
     
     # 清洗脏数据
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&(raw_df.low >= raw_df.limit_down)]

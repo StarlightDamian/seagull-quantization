@@ -19,7 +19,7 @@ from tests_ import test_2_class_base_index, test_2_reg_price
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
-PATH_CSV = f'{PATH}/data/test_main.csv'
+PATH_CSV = f'{PATH}/_file/test_main.csv'
 
 
 class TestMainLightgbm:

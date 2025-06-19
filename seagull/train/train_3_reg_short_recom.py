@@ -20,7 +20,7 @@ from base import base_connect_database, base_trading_day, base_utils
 TRAIN_TABLE_NAME = 'train_3_short_term_recommend'
 TARGET_REAL_NAMES = ['rear_next_rise_pct_real', 'rear_next_fall_pct_real', 'rear_next_pct_real']
 #MULTIOUTPUT_MODEL_PATH = f'{PATH}/checkpoint/lightgbm_regression_short_term_recommend.joblib'
-PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/data/train_short_term_recommend.csv'
+PREDICTION_PRICE_OUTPUT_CSV_PATH = f'{PATH}/_file/train_short_term_recommend.csv'
 
 
 class trainShortTermRecommend(train_1_lightgbm_regression.lightgbmRegressionTrain):

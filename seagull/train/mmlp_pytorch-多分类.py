@@ -218,7 +218,7 @@ if __name__ == '__main__':
 #     })
 # =============================================================================
 
-    #df = pd.read_csv(f'{PATH}/data/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
+    #df = pd.read_csv(f'{PATH}/_file/test_dwd_freq_incr_stock_daily.csv', low_memory=False)
     df[['prev_close']] = df[['close']].shift(1)
     df[['high_rate', 'low_rate', 'open_rate', 'close_rate','avg_price_rate']] = df[['high', 'low', 'open', 'close','avg_price']].div(df['prev_close'], axis=0)
     df[['next_high_rate', 'next_low_rate', 'next_close_rate']] = df[['high_rate', 'low_rate', 'close_rate']].shift(-1)

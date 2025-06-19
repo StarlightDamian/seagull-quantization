@@ -50,5 +50,5 @@ if __name__ == '__main__':
     test_short_term_recommend = testShortTermRecommend()
     prediction_df = test_short_term_recommend.test_board_pipline(history_day_board_df)
     
-    #prediction_df.to_csv(f'{PATH}/data/backtest_2_stock_pick.csv',index=False)
+    #prediction_df.to_csv(f'{PATH}/_file/backtest_2_stock_pick.csv',index=False)
     #eval_stock_pick(prediction_df)

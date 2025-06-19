@@ -162,15 +162,15 @@ class evaluation:
         plt.bar(x, y)
         plt.legend(loc='best')
         if if_save:
-            if not os.path.exists(f"{os.getcwd()}/data/output/{self.factors}"):
-                os.mkdir(f"{os.getcwd()}/data/output/{self.factors}")
+            if not os.path.exists(f"{os.getcwd()}/_file/output/{self.factors}"):
+                os.mkdir(f"{os.getcwd()}/_file/output/{self.factors}")
 
             plt.savefig(
-                f"{os.getcwd()}/data/output/{self.factors}/{self.factors}.jpg")
+                f"{os.getcwd()}/_file/output/{self.factors}/{self.factors}.jpg")
             res = pd.concat([self.ICstat, self.REGstat, self.GROUPstat],
                             axis=1)
             res.to_csv(
-                f"{os.getcwd()}/data/output/{self.factors}/{self.factors}.csv",
+                f"{os.getcwd()}/_file/output/{self.factors}/{self.factors}.csv",
                 index=0)
 
         plt.show()
@@ -243,12 +243,12 @@ class multifactor:
     @classmethod
     def _factor_label(cls, name):
         if not os.path.exists(
-                f"/home/tradingking/python/factorevaluation/data/output/{name}"
+                f"/home/tradingking/python/factorevaluation/_file/output/{name}"
         ):
             print(f"{name}文件不存在")
             exit()
         df = pd.read_csv(
-            f"/home/tradingking/python/factorevaluation/data/output/{name}/{name}.csv"
+            f"/home/tradingking/python/factorevaluation/_file/output/{name}/{name}.csv"
         )
         label = df['因子方向'].iat[0]
         return label

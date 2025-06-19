@@ -78,8 +78,8 @@ def init_weights(m):
             nn.init.zeros_(m.bias)
             
 if __name__ == '__main__':
-    #raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train_20230103_20241220.feather')
+    #raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train_20230103_20241220.feather')
     # 清洗脏数据
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&(raw_df.low >= raw_df.limit_down)]
     raw_df = raw_df[(raw_df.high <= raw_df.limit_up)&
@@ -281,7 +281,7 @@ if __name__ == '__main__':
     y_val_pred = y_val_pred_tensor.cpu().detach().numpy()
     #y_val_pred_series = pd.Series(y_val_pred.flatten(), index=y_val.index, name='predicted_next_high_rate')
     #result_df = pd.concat([y_val, y_val_pred_series], axis=1)
-    #result_df.to_csv(f'{PATH}/data/mmlp_reg.csv',index=False)
+    #result_df.to_csv(f'{PATH}/_file/mmlp_reg.csv',index=False)
     
     y_val_pred = pd.DataFrame(y_val_pred,columns=TARGET_NAMES)
     y_val = y_val.reset_index(drop=True)

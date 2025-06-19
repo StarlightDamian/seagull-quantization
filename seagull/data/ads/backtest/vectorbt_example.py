@@ -82,8 +82,8 @@ print(metrics_base_df['Annualized Return [%]'])
 trades_records_readable_strategy_df = portfolio_strategy.trades.records_readable
 #https://github.com/polakowo/vectorbt/blob/54cbe7c5bff332b510d1075c5cf11d006c1b1846/vectorbt/portfolio/base.py#L3622
 orders_records_readable_strategy_df = portfolio_strategy.orders.records_readable
-trades_records_readable_strategy_df.to_csv(f'{PATH}/data/trades_records_readable.csv',index=False)
-orders_records_readable_strategy_df.to_csv(f'{PATH}/data/orders_records_readable.csv',index=False)
+trades_records_readable_strategy_df.to_csv(f'{PATH}/_file/trades_records_readable.csv',index=False)
+orders_records_readable_strategy_df.to_csv(f'{PATH}/_file/orders_records_readable.csv',index=False)
 #['Exit Trade Id', 'Column', 'Size', 'Entry Timestamp', 'Avg Entry Price',
 #       'Entry Fees', 'Exit Timestamp', 'Avg Exit Price', 'Exit Fees', 'PnL',
 #       'Return', 'Direction', 'Status', 'Position Id']

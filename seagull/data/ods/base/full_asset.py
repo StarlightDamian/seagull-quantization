@@ -15,5 +15,5 @@ from seagull.settings import PATH
 ASSET_TABLE_NAME = 'ods_base_full_asset'
 
 if __name__ == '__main__':
-    asset_df = pd.read_csv(f"{PATH}/data/ods_base_full_asset.csv", encoding="gb18030")
+    asset_df = pd.read_csv(f"{PATH}/_file/ods_base_full_asset.csv", encoding="gb18030")
     utils_data.output_database(asset_df, filename=ASSET_TABLE_NAME, if_exists='replace')

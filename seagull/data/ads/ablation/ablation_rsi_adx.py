@@ -97,8 +97,8 @@ if __name__ == '__main__':
     # output
     eval_columns = ['full_code','ann_return','max_dd','calmar_ratio',
                     'total_closed_trades','win_rate','profit_loss_ratio']
-    base_df[eval_columns].to_csv(f'{PATH}/data/eval_base.csv', index=False)
-    strategy_df[eval_columns].to_csv(f'{PATH}/data/eval_strategy.csv', index=False)
+    base_df[eval_columns].to_csv(f'{PATH}/_file/eval_base.csv', index=False)
+    strategy_df[eval_columns].to_csv(f'{PATH}/_file/eval_strategy.csv', index=False)
     
 # =============================================================================
 # import vectorbt as vbt

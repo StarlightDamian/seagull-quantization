@@ -34,15 +34,15 @@ if __name__ == "__main__":
     output_df = d_df.pivot_table(index='feature_name', columns='remark', values='mean_ic')
     output_df['max'] = output_df.idxmax(axis=1)
     output_df = output_df.round(5)
-    output_df.to_csv(f'{PATH}/data/analysis_ic.csv', index=True)
+    output_df.to_csv(f'{PATH}/_file/analysis_ic.csv', index=True)
     
     output_df = d_df.pivot_table(index='feature_name', columns='remark', values='ir')
     output_df['max'] = output_df.idxmax(axis=1)
     output_df = output_df.round(5)
-    output_df.to_csv(f'{PATH}/data/analysis_ir.csv', index=True)
+    output_df.to_csv(f'{PATH}/_file/analysis_ir.csv', index=True)
     
     output_df = abs_df.pivot_table(index='feature_name', columns='freq', values='mean_ic')
     output_df['max'] = output_df.idxmax(axis=1)
-    output_df.to_csv(f'{PATH}/data/analysis_freq.csv', index=True)
+    output_df.to_csv(f'{PATH}/_file/analysis_freq.csv', index=True)
     
     

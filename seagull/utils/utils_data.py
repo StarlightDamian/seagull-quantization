@@ -143,7 +143,7 @@ def output_database(df, **kwargs):
 
 
 def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_format='csv', filepath=None):
-    filepath = filepath if filepath else f"{PATH}/data/{filename}.{file_format}"
+    filepath = filepath if filepath else f"{PATH}/_file/{filename}.{file_format}"
     if if_exists=='overwrite':
             df.to_csv(filepath, encoding=encoding, index=False)
     elif os.path.exists(filename) and if_exists=='append':
@@ -181,7 +181,7 @@ def maximum_date_next(table_name, field_name='date', sql=None):
 
 def feather_file_merge(date_start, date_end):
     date_binary_pair_list = utils_time.date_binary_list(date_start, date_end)
-    feather_files = [f'{PATH}/data/day/{date_binary_pair[0]}.feather' for date_binary_pair in date_binary_pair_list]
+    feather_files = [f'{PATH}/_file/day/{date_binary_pair[0]}.feather' for date_binary_pair in date_binary_pair_list]
     #print(feather_files)
     dfs = [pd.read_feather(file) for file in feather_files if os.path.exists(file)]
     feather_df = pd.concat(dfs, ignore_index=True)
@@ -203,7 +203,7 @@ def output_excel(forecast_original, file_path):
 
 
 def output_txt(d2):
-    with open(f'{PATH}/data/fight_and_make_trouble.txt', 'w') as f:
+    with open(f'{PATH}/_file/fight_and_make_trouble.txt', 'w') as f:
         f.write(str(d2.jjd_bh.unique().tolist()))
 
 
@@ -258,7 +258,7 @@ def table_in_database(filename):
     else:
         return False
 
-    #writer = pd.ExcelWriter(f'{PATH}/data/chongfuzisha_jjd_20220401_20220715.xlsx')
+    #writer = pd.ExcelWriter(f'{PATH}/_file/chongfuzisha_jjd_20220401_20220715.xlsx')
     #data.to_excel(writer, sheet_name='20220401_20220714重复自杀接警单', index=False)
     #writer.save()
 
@@ -281,7 +281,7 @@ if __name__ == '__main__':
     date_range_df = feather_file_merge(args.date_start, args.date_end)
     print(date_range_df)
 
-# 换文件名os.rename(f'{PATH}/data/4_property/{file}', f'{PATH}/data/4_property_horizontal/{file[:9]}horizontal_{file[9:]}')
+# 换文件名os.rename(f'{PATH}/_file/4_property/{file}', f'{PATH}/_file/4_property_horizontal/{file[:9]}horizontal_{file[9:]}')
 # 统计数量还原dataframe
 # dict_soild_pd.bq_zwm.value_counts().rename_axis('bq_zwm').reset_index(name = '统计_标签总量')
 # ws_pos_one_polic['len_ws'] = ws_pos_one_polic.ws.astype(str).str.len()

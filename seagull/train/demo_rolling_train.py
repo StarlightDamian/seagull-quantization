@@ -79,7 +79,7 @@ def winsorize(df, n=3):
 
 if __name__ == '__main__':
     # 生成示例时间序列数据
-    raw_df = pd.read_feather(f'{PATH}/data/das_wide_incr_train.feather')
+    raw_df = pd.read_feather(f'{PATH}/_file/das_wide_incr_train.feather')
     
 # =============================================================================
 #     alpha_features=['alpha098'
@@ -366,7 +366,7 @@ if __name__ == '__main__':
 #     feature_df["feature"] = model.feature_name_   
 #     feature_df["importance"] = model.feature_importances_
 #     feature_df = feature_df.sort_values(by='importance', ascending=False)
-#     feature_df.to_csv(f'{PATH}/data/feature_df.csv', index=False)
+#     feature_df.to_csv(f'{PATH}/_file/feature_df.csv', index=False)
 #     feature_importance_df = feature_df[feature_df.importance>5].feature.values
 # =============================================================================
     

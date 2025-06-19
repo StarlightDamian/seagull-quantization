@@ -143,4 +143,4 @@ while since_time < to_time:
     df = pd.concat([df, new_df], ignore_index=True)
     since_time = df['candle_begin_time_GMT8'].iloc[-1] + timedelta(days=1)
 
-df.to_csv(f'{PATH}/data/demo_ccxt.csv', index=False)
+df.to_csv(f'{PATH}/_file/demo_ccxt.csv', index=False)
