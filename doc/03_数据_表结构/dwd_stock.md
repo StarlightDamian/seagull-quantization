@@ -1,0 +1,32 @@
+## 日线指标参数（包含停牌证券）
+
+|           是否新增           |      参数名称      |              参数描述              |  示例数据  |   单位   |                格式                 |                             备注                             |
+| :--------------------------: | :----------------: | :--------------------------------: | :--------: | :------: | :---------------------------------: | :----------------------------------------------------------: |
+|         primary_key          |                    |                主键                |            |          |                                     | 1.确定唯一数据，md5（时间、全代码、频率、复权类型）<br />2.关联关联信息 |
+|                              |        date        |           交易所行情日期           | 2017-07-03 |          |             YYYY-MM-DD              |                                                              |
+|                              |        code        |              证券代码              | sh.600000  |          |              sh.600000              |                      sh：上海，sz：深圳                      |
+|                              |        open        |               开盘价               |   12.64    | 人民币元 |             小数点后4位             |                                                              |
+|                              |        high        |               最高价               |   12.65    | 人民币元 |             小数点后4位             |                                                              |
+|                              |        low         |               最低价               |   12.47    | 人民币元 |             小数点后4位             |                                                              |
+|                              |       close        |              今收盘价              |   12.56    | 人民币元 |             小数点后4位             |                                                              |
+|              1               | rear_low_pct_real  | 下一个交易日跌幅比例真实值(百分比) |            |    %     |                                     |                                                              |
+|              1               | rear_high_pct_real | 下一个交易日涨幅比例真实值(百分比) |            |    %     |                                     |                                                              |
+|              1               | rear_diff_pct_real |     下一个交易日幅度变化真实值     |            |    %     |                                     |                                                              |
+|              1               | rear_low_pct_pred  |  下一个交易日跌幅比例预测(百分比)  |    -65     |    %     |   rearLow相对于close的增长百分比    | 预测目标，df['rearLowPctChg'] = ((df['rearLow'] - df['close']) / df['close']) * 100 |
+|              1               | rear_high_pct_pred |  下一个交易日涨幅比例预测(百分比)  |     59     |    %     | 计算rearHigh相对于close的增长百分比 | 预测目标，df['rearHighPctChg'] = ((df['rearHigh'] - df['close']) / df['close']) * 100 |
+|              1               | rear_diff_pct_pred |     下一个交易日幅度变化预测值     |            |    %     |                                     |                                                              |
+| prev_close（previous close） |      preclose      |             昨日收盘价             |   12.65    | 人民币元 |             小数点后4位             | 证券在指定交易日行情数据的前收盘价，当日发生除权除息时，“前收盘价”不是前一天的实际收盘价，而是根据股权登记日收盘价与分红现金的数量、配送股的数里和配股价的高低等结合起来算出来的价格。 |
+|            volume            |       volume       |              成交数量              |  38778949  |    股    |                                     |                                                              |
+|      trade_value/amount      |       amount       |              成交金额              | 486264672  | 人民币元 |          精度：小数点后4位          |                                                              |
+|           adj_type           |     adjustflag     |              复权状态              |     3      |          |       不复权、前复权、后复权        |      0: No Adj<br />1: Forward Adj<br />2: Backward Adj      |
+|           turnover           |        turn        |               换手率               |  0.137985  |    %     |          精度：小数点后6位          |                                                              |
+|         trade_status         |    tradestatus     |              交易状态              |     1      |          |         1：正常交易 0：停牌         |                                                              |
+|           chg_pct            |       pctChg       |          涨跌幅（百分比）          | —0.711456  |          |          精度：小数点后6位          | 涨跌幅=(当日收盘价 - 昨日收盘价 / 昨日收盘价)×100%<br />Percentage Change / Price Change Percentage |
+|            pe_ttm            |       peTTM        |             滚动市盈率             |            |          |          精度：小数点后6位          |       Trailing Price-to-Earnings Ratio<br />滚动12个月       |
+|            ps_ttm            |       psTTM        |             滚动市销率             |            |          |          精度：小数点后6位          |        Trailing Price-to-Sales Ratio<br />滚动12个月         |
+|           pcf_ttm            |     pcfNcfTTM      |             滚动市现率             |            |          |          精度：小数点后6位          |      Trailing Price-to-Cash Flow Ratio<br />滚动12个月       |
+|            pb_mrq            |       pbMRQ        |               市净率               |            |          |          精度：小数点后6位          |                           最近季度                           |
+|          st_status           |        isST        |               ST状态               |     0      |          |            1是ST，0非ST             |                                                              |
+|          curr_date           |                    |              今天日期              | 2023-07-03 |          |                                     |                   用于计算时序数据距今天数                   |
+|          date_diff           |                    |            日期天数差异            |    200     |          |                 int                 |                                                              |
+
