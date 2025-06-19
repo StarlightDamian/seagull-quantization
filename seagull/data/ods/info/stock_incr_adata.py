@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_adata.py
 @Description: (ods/info/stock_incr_adata)
+@Update cycle: day
 """
 import os
 

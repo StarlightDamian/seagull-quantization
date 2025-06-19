@@ -4,8 +4,8 @@
 @Author: Damian
 @Email: zengyuwei1995@163.com
 @File: fund_snap_adata.py
-@Description:
-获取所有场内ETF当前信息(ods/info/fund_snap_adata)
+@Description: 获取所有场内ETF当前信息(ods/info/fund_snap_adata)
+@Update cycle: day
 重写adata的adata.fund.info.all_etf_exchange_traded_info()接口，额外新增获取ETF的市场名称
 因为是爬虫数据，所以无法获取到历史的etf数据
 net_value净值数据是增量数据，15秒更新一次

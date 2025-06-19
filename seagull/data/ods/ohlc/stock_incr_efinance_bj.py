@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_efinance_bj.py
 @Description: 北交所日频数据(ods/ohlc/stock_incr_efinance_bj)
+@Update cycle: day
 一定要借助清洗后的dwd层的股票基本信息才能关联到到北京对应的股票代码
 """
 import os

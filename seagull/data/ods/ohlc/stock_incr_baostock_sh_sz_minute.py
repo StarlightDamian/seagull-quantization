@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_baostock_sh_sz_minute.py
 @Description: 获取指定日期全部股票的分钟数据(ods/ohlc/stock_incr_baostock_sh_sz_minute)
+@Update cycle: minute
 code_name 不属于特征，在这一层加入
 frequency：数据类型，默认为d，日k线；d=日k线、w=周、m=月、5=5分钟、15=15分钟、30=30分钟、60=60分钟k线数据，不区分大小写；指数没有分钟线数据；周线每周最后一个交易日才可以获取，月线每月最后一个交易日才可以获取。
 

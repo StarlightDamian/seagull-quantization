@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_snap_adata_level2.py
 @Description: 五档行情(ods/ohlc/stock_snap_adata_level2)
+@Update cycle: day
 https://finance.pae.baidu.com/vapi/v1/getquotation?srcid=5353&all=1&pointType=string&group=quotation_minute_ab&query=872925&code=872925&market_type=ab&newFormat=1&name=锦好医疗&finClientType=pc
 """
 import adata

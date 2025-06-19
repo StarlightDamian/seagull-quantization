@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_efinance_global_index.py
 @Description: 全球指数(ods/ohlc/stock_incr_efinance_global_index)
+@Update cycle: day
 macro_sz399101_diff
 macro_sh000001_diff
 

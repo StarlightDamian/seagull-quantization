@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_baostock_trade.py
 @Description: 获取指定交易日期所有股票列表(ods/info/stock_incr_baostock_trade)
+@Update cycle: day
 只有交易日才会更新，取当天的不一定及时更新，先尝试前一天
 """
 # from sqlalchemy import String  # Float, Numeric, 

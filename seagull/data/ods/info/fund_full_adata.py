@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: fund_full_adata.py
 @Description: (ods/info/fund_full_adata)
+@Update cycle: day
 """
 import adata
 

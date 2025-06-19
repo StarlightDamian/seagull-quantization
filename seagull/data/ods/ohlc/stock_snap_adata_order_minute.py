@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_snap_adata_order_minute.py
 @Description: 高频分析(ods/ohlc/stock_snap_adata_order_minute)
+@Update cycle: minute
 获取单个股票的成交分时，最新200条记录
 """
 import adata

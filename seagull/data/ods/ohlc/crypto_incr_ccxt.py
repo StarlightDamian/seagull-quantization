@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: crypto_incr_ccxt.py
 @Description: digital_currency(ods/ohlc/crypto_incr_ccxt)
+@Update cycle: day
 """
 
 import pandas as pd

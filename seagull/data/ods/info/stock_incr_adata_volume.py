@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_adata_volume.py
 @Description: 股票股本信息(ods/info/stock_incr_adata_volume)
+@Update cycle: day
 可以结合当前价格计算市值
 """
 

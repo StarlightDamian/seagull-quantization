@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock/full/adata_shares.py
 @Description:
+@Update cycle: day
 """
 import adata
 import pandas as pd

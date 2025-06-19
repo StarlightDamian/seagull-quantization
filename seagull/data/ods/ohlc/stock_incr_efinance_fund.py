@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_efinance_fund.py
 @Description: ETF数据(ods/ohlc/stock_incr_efinance_fund)
+@Update cycle: day
 一定要借助清洗后的dwd层的股票基本信息才能关联到到ETF对应的股票代码
 ef.stock.get_quote_history这个接口会获取实时数据
 """

@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_baostock.py
 @Description: baostock证券资料(ods/info/stock_incr_baostock)
+@Update cycle: day
 """
 import baostock as bs
 

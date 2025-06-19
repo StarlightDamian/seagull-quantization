@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: bond_snap_adata.py
 @Description: 获取所有A股市场的可转换债券代码信息	(ods/info/bond_snap_adata)
+@Update cycle: day
 https://github.com/1nchaos/adata/blob/ba93ab86af7256407db069668e84b54b5fd6dbd7/adata/bond/info/bond_code.py#L36
 # bond.info.all_convert_code()
 bond-conversion

@@ -5,6 +5,7 @@
 @Email: zengyuwei1995@163.com
 @File: stock_incr_baostock_sh_sz.py
 @Description: 获取指定日期全部股票的日K线数据(ods/ohlc/stock_incr_baostock_sh_sz)
+@Update cycle: day
 code_name 不属于特征，在这一层加入
 5、15、30、60分钟线指标参数(不包含指数)
 """
