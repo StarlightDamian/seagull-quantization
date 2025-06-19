@@ -29,6 +29,12 @@ backtest_vectorbt_example
 other/
 env/
 _*
+*.joblib
+*.html
+*.xlsx
+*.xml
+*.csv
+*.feather
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -162,3 +168,8 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+/checkpoint/lightgbm - 副本/e0ee8efca778711a1c37b48fcc6e33c2.joblib
+/checkpoint/lightgbm - 副本/e9905ab68051931581af0f8346d1fc3c.joblib
+/checkpoint/lightgbm - 副本/e150918ba924759d8e1ff1e7d582d729.joblib
+/checkpoint/lightgbm - 副本/ea7fcd309518e46f851ea5613846382c.joblib
+/checkpoint/lightgbm - 副本/3d4a77fff5f98fd0637d42cca0ea1806.joblib
