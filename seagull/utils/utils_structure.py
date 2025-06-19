@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 30 11:06:52 2024
-
-@author: awei
-数据结构(utils_structure)
+@Date: 2024/9/30 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: utils_structure.py
+@Description: 数据结构
 """
 
-class StackStructure():
-    '''
+
+class StackStructure:
+    """
     功能：栈数据结构
-    '''
+    """
     def __init__(self):
         self.stack = []
         self.stack_dict = {}

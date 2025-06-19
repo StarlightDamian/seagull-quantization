@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  8 17:09:23 2024
+@Date: 2024/8/8 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: base_log.py
+@Description: 日志
 
-@author: awei
-日志(base_log)
 debug: 调试和开发时输出细节
 info: 常规信息
 success: 成功事件
@@ -12,6 +14,7 @@ error: 发生的错误
 critical: 最严重的错误，可能导致程序崩溃或终止
 """
 from loguru import logger
+
 
 def logger_config_local(file_path, level="DEBUG", rotation="10 MB", retention="10 days"):
     """
@@ -29,6 +32,7 @@ def logger_config_local(file_path, level="DEBUG", rotation="10 MB", retention="1
         retention=retention
     )
     return logger
+
 
 def logger_config_base():
     # 配置控制台输出

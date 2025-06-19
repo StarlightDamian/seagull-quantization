@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 16 10:17:01 2022
-
-@author: admin
-时间管理(utils_time)
+@Date: 2022/5/16 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: utils_time.py
+@Description: 时间
 """
 from datetime import datetime, timedelta
 
 import pandas as pd
 
+
 def __gen_dates(b_date, days):
     day = timedelta(days=1)
     for i in range(days.days):
         yield b_date + day*i
+
 
 def __date_list(start, end):
     start_datetime = datetime.strptime(start, '%Y-%m-%d')
@@ -34,6 +37,7 @@ def date_binary_list(start_date, end_date):
         except:
             break
     return date_binary_pair_list
+
 
 def date_replace_binary_replace_list(date_start_replace, date_end_replace):
     date_start = datetime.strptime(date_start_replace, '%Y%m%d').strftime('%F')
@@ -59,6 +63,7 @@ def run_many_days(date_start, date_end, func):
     data_many_days_list = [func(date_start_replace, date_end_replace) for (date_start_replace, date_end_replace) in date_binary_replace_list(date_start, date_end)]
     return data_many_days_list
 
+
 def date_suffix(date_type='today'):
     """
     功能：获取今日日期后缀
@@ -71,6 +76,7 @@ def date_suffix(date_type='today'):
     elif date_type == 'yesterday':
         yesterday = (datetime.now()+timedelta(days=-1)).strftime('%Y%m%d')
         return '_' + yesterday + '_' + today
+
 
 def today_date_range(date_type='today'):
     """
@@ -85,12 +91,14 @@ def today_date_range(date_type='today'):
         yesterday = (datetime.now()+timedelta(days=-1)).strftime('%F')
         return [yesterday, today]
 
+
 def time_range_h(date_start='2024-03-08', date_end='2024-05-24'):
     hourly_range = pd.date_range(start=date_start, end=date_end, freq='H')
     time_pd = pd.DataFrame(hourly_range, columns=['time_start'])
     time_pd['time_end'] = time_pd['time_start'] + pd.Timedelta(minutes=59, seconds=59)
     time_pd['time_str'] = time_pd['time_start'].dt.strftime('%Y%m%d%H%M%S')+'_'+time_pd['time_end'].dt.strftime('%Y%m%d%H%M%S')
     return time_pd
+
 
 def date_plus_days(date_start = "2000-01-01", days=1):
     start_date = datetime.strptime(date_start, "%Y-%m-%d")

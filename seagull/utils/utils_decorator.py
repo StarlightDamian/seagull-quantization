@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 20 10:14:46 2024
-
-@author: awei
+@Date: 2024/5/20 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: utils_decorator.py
+@Description: 装饰器
 """
-
 import functools
 from functools import wraps
 from datetime import datetime
+
 
 def print_vars(func):
     @functools.wraps(func)
@@ -20,10 +22,12 @@ def print_vars(func):
         return result
     return wrapper
 
+
 @print_vars
 def example_function(a, b):
     c = a + b
     return c
+
 
 def run_time_decorator(func):
     """
@@ -38,6 +42,7 @@ def run_time_decorator(func):
         print(f"文件路径： {__file__}\n函数名称： {func.__name__}\n运行耗时： {time_difference}秒\n------------------")
         return result
     return wrapper
+
 
 if __name__ == '__main__':
     result = example_function(3, 4)

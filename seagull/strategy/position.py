@@ -10,37 +10,44 @@ import pandas as pd
 import numpy as np
 from pypfopt import EfficientFrontier
 
-# —— 1. 构造示例输入 ——
-tickers = ["AAPL", "GOOG", "MSFT", "AMZN", "TSLA"]
 
-# 随机生成一个“期望年化收益率”Series μ
-np.random.seed(42)
-mu = pd.Series(
-    np.random.uniform(0.05, 0.15, len(tickers)),
-    index=tickers,
-    name="Expected Return"
-)
+if __name__ == '__main__':
+    # —— 1. 构造示例输入 ——
+    tickers = ["AAPL", "GOOG", "MSFT", "AMZN", "TSLA"]
 
-# 随机生成一个对称正定的协方差矩阵 Σ
-M = np.random.randn(len(tickers), len(tickers))
-Sigma = pd.DataFrame(
-    M.T.dot(M) * 0.1,
-    index=tickers,
-    columns=tickers
-)
+    # 随机生成一个“期望年化收益率”Series μ
+    np.random.seed(42)
+    mu = pd.Series(
+        np.random.uniform(0.05, 0.15, len(tickers)),
+        index=tickers,
+        name="Expected Return"
+    )
 
-# 输入展示
-print("=== Input: Expected Returns (μ) ===")
-print(mu.to_frame())
-print("\n=== Input: Covariance Matrix (Σ) ===")
-print(Sigma)
+    # 随机生成一个对称正定的协方差矩阵 Σ
+    M = np.random.randn(len(tickers), len(tickers))
+    Sigma = pd.DataFrame(
+        M.T.dot(M) * 0.1,
+        index=tickers,
+        columns=tickers
+    )
 
-# —— 2. 优化 ——
-ef = EfficientFrontier(mu, Sigma)
-ef.max_sharpe()
-weights = ef.clean_weights()      # 取非零且格式化后的权重字典
+    # 输入展示
+    print("=== Input: Expected Returns (μ) ===")
+    print(mu.to_frame())
+    print("\n=== Input: Covariance Matrix (Σ) ===")
+    print(Sigma)
 
-# 转成 DataFrame
-weights_df = pd.Series(weights, name="Weight").to_frame()
-print("\n=== Output: Optimized Weights ===")
-print(weights_df)
+    # —— 2. 优化 ——
+    ef = EfficientFrontier(mu, Sigma)
+    ef.max_sharpe()
+    weights = ef.clean_weights()      # 取非零且格式化后的权重字典
+
+    # 转成 DataFrame
+    weights_df = pd.Series(weights, name="Weight").to_frame()
+    print("\n=== Output: Optimized Weights ===")
+    print(weights_df)
+
+    # Ledoit–Wolf 收缩：解决维度诅咒和数值稳定
+    from pypfopt import risk_models
+    Sigma = risk_models.CovarianceShrinkage(df).ledoit_wolf()
+

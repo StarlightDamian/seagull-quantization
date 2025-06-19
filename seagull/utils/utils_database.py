@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb 18 14:53:45 2022
-
-@author: admin
-连接数据库(utils_database)
+@Date: 2022/5/18 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: utils_database.py
+@Description: 连接数据库
 
 数据库连接模块考虑情况：
 1.数据库连接池，连接数量
@@ -12,8 +13,6 @@ Created on Fri Feb 18 14:53:45 2022
 4.有时候项目只需要部分类型的包支持指定数据库，如只安装hive和postgre相应的包
 5.不同类型连接的参数不一致，比如hive有'auth'、'auth_mechanism'
 6.支持windows和Linux连接同一类数据库，但是host：post不一致。windows测试，Linux正式
-
-schema
 """
 import os
 from urllib import parse

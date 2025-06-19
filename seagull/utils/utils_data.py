@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 20 10:30:03 2024
-
-@author: awei
-数据\文件管理(utils_data)
-
-schema
+@Date: 2024/7/20 13:07
+@Author: Damian
+@Email: zengyuwei1995@163.com
+@File: utils_data.py
+@Description: 数据/文件管理
 """
 import argparse
 import os
@@ -22,6 +21,7 @@ log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{path}/log/{log_filename}.log')
 import csv
 
+
 def map_dtype_to_postgres(pandas_dtype):
     """
     将 pandas 数据类型映射到 PostgreSQL 数据类型
@@ -37,6 +37,7 @@ def map_dtype_to_postgres(pandas_dtype):
         'datetime64[ns, UTC]': 'TIMESTAMP'
     }
     return dtype_map.get(str(pandas_dtype), 'TEXT')  # 默认返回 TEXT 类型
+
 
 def output_database_large(df, filename, if_exists='append'):
     conn = utils_database.psycopg2_conn()
@@ -104,7 +105,8 @@ def output_database_large(df, filename, if_exists='append'):
     # 关闭连接
     cursor.close()
     conn.close()
-    
+
+
 def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dtype=None, index=False, method="multi"):
     try:
         logger.info('Writing to database started.')
@@ -120,6 +122,7 @@ def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dty
         logger.success('Writing to database conclusion-succeeded.')
     except Exception as e:
         logger.error(f'Writing to database conclusion-failed: {e}')
+
 
 def output_database(df, **kwargs):
     """
@@ -138,6 +141,7 @@ def output_database(df, **kwargs):
     else:
         logger.warning('DataFrame is empty.')
 
+
 def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_format='csv', filepath=None):
     filepath = filepath if filepath else f"{path}/data/{filename}.{file_format}"
     if if_exists=='overwrite':
@@ -148,6 +152,7 @@ def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_forma
         df.to_csv(filepath, encoding=encoding, index=False)
     else:
         ...
+
 
 def maximum_date(table_name, field_name='date', sql=None):
     try:
@@ -165,12 +170,14 @@ def maximum_date(table_name, field_name='date', sql=None):
         logger.info(f'max_date: {max_date}')
         return max_date
 
+
 def maximum_date_next(table_name, field_name='date', sql=None):
     max_date = maximum_date(table_name, field_name=field_name, sql=sql)
     next_day = datetime.strptime(max_date, '%Y-%m-%d') + timedelta(days=1)
     date_start = next_day.strftime('%Y-%m-%d')
     logger.info(f'date_start: {date_start}')
     return date_start
+
 
 def feather_file_merge(date_start, date_end):
     date_binary_pair_list = utils_time.date_binary_list(date_start, date_end)
@@ -180,6 +187,7 @@ def feather_file_merge(date_start, date_end):
     feather_df = pd.concat(dfs, ignore_index=True)
     return feather_df
 
+
 def find_file(path):
     """
     功能：返回地址下的所有文件
@@ -187,14 +195,17 @@ def find_file(path):
     """
     for root, dirs, files in os.walk(path):
         return files
-    
+
+
 def output_excel(forecast_original, file_path):
     with pd.ExcelWriter(file_path) as writer:
         forecast_original.to_excel(writer, sheet_name='预测表', index=False)
-        
+
+
 def output_txt(d2):
     with open(f'{path}/data/fight_and_make_trouble.txt', 'w') as f:
         f.write(str(d2.jjd_bh.unique().tolist()))
+
 
 def file_is_open(file_path):
     """
@@ -209,7 +220,8 @@ def file_is_open(file_path):
             return True
         else:
             return False
-        
+
+
 def rename_filename():
     import os
     
@@ -227,11 +239,13 @@ def rename_filename():
             new_path = os.path.join(directory, new_filename)
             os.rename(old_path, new_path)
     print("文件重命名完成。")
-    
+
+
 def text_to_text_pd(texts):
     text_pd = pd.DataFrame([range(len(texts)), texts]).T.rename(columns={0: 'xxzjbh', 1: 'text'}).fillna('')
     text_pd.xxzjbh = text_pd.xxzjbh.astype(str)
     return text_pd
+
 
 def table_in_database(filename):
     with utils_database.engine_conn('postgre') as conn:
@@ -254,6 +268,7 @@ def local_matrix(df, field, window = 5, direction='max'):
 
 # data = pd.DataFrame({'high': np.random.randn(20).cumsum() + 10})
 # local_matrix(data,field='high')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -301,3 +316,4 @@ if __name__ == '__main__':
 # 键值对：key_value_dict = dict(zip(df['KeyColumn'], df['ValueColumn']))
 # df['date_column'] = pd.to_datetime(df['date_column'])
 # df['year_column'] = df['date_column'].dt.year
+# isinstance(5,int)
