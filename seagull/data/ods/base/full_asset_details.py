@@ -3,8 +3,8 @@
 @Date: 2024/5/26 13:07
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: ods_info_full_asset_base_details.py
-@Description: 投资品种明细
+@File: full_asset_details.py
+@Description: 投资品种明细(ods_base_full_asset_details)
 """
 import pandas as pd
 from datetime import datetime

@@ -3,8 +3,8 @@
 @Date: 2024/8/22 13:07
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: data_ods_info_full_asset_base.py
-@Description:
+@File: full_asset.py
+@Description:(ods_base_full_asset)
 """
 exchange = ccxt.binance({
     "enableRateLimit": True,
