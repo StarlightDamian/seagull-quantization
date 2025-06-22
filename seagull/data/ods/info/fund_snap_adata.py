@@ -9,6 +9,7 @@
 重写adata的adata.fund.info.all_etf_exchange_traded_info()接口，额外新增获取ETF的市场名称
 因为是爬虫数据，所以无法获取到历史的etf数据
 net_value净值数据是增量数据，15秒更新一次
+修改adata获取基金的输出格式
 """
 import json
 import requests

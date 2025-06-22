@@ -18,7 +18,7 @@ log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
 
-def ods_info_stock_incr_adata():
+def get_stock_incr_adata():
     ods_adata_stock_base = adata.stock.info.all_code()
     print(ods_adata_stock_base)  # ['stock_code', 'short_name', 'exchange', 'list_date']
     utils_data.output_database(ods_adata_stock_base,
@@ -27,4 +27,4 @@ def ods_info_stock_incr_adata():
 
 
 if __name__ == '__main__':
-    ods_info_stock_incr_adata()
+    get_stock_incr_adata()

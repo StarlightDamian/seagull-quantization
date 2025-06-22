@@ -24,7 +24,7 @@ def _apply_stock_shares_1(sub):
     return stock_shares_sub_df
 
 
-if __name__ == '__main__':
+def pipeline():
     with utils_database.engine_conn("POSTGRES") as conn:
         stock_df = pd.read_sql("ods_info_stock_incr_adata", con=conn.engine)
 
@@ -32,3 +32,7 @@ if __name__ == '__main__':
     utils_data.output_database(stock_shares_df,
                                filename='ods_info_stock_full_adata_shares',
                                if_exists='replace')
+
+
+if __name__ == '__main__':
+    pipeline()

@@ -13,11 +13,11 @@ from seagull.settings import PATH
 from seagull.utils import utils_data
 
 
-def ods_info_fund_full_data():
+def get_fund_full_data():
     df = adata.fund.info.all_etf_exchange_traded_info()
     utils_data.output_database(df,
                                filename='ods_info_fund_full_adata')
 
 
 if __name__ == '__main__':
-    ods_info_fund_full_data()
+    get_fund_full_data()

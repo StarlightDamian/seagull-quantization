@@ -10,6 +10,7 @@ https://github.com/1nchaos/adata/blob/ba93ab86af7256407db069668e84b54b5fd6dbd7/a
 # bond.info.all_convert_code()
 bond-conversion
 不能开国外VPN获取数据
+修改adata获取债券的输出格式
 """
 
 import copy
@@ -30,7 +31,7 @@ class OdsInfoBondSnapAdata(BondCode):
     def __init__(self) -> None:
         super().__init__()
         
-    def ods_info_bond_snap_adata_ths(self):
+    def __convert_code_ths(self):
         """
         获取同花顺可转换债券列表
         web： http://data.10jqka.com.cn/ipo/kzz/
@@ -64,7 +65,7 @@ class OdsInfoBondSnapAdata(BondCode):
         return df
 
     def pipeline(self):
-        bond_df = self.ods_info_bond_snap_adata_ths()
+        bond_df = self.__convert_code_ths()
         utils_data.output_database(bond_df,
                                    'ods_info_bond_snap_adata',
                                    if_exists='replace')
