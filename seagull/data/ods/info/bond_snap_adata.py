@@ -64,8 +64,8 @@ class OdsInfoBondSnapAdata(BondCode):
         return df
 
     def pipeline(self):
-        convertibles_base_df = self.ods_info_bond_snap_adata_ths()
-        utils_data.output_database(convertibles_base_df,
+        bond_df = self.ods_info_bond_snap_adata_ths()
+        utils_data.output_database(bond_df,
                                    'ods_info_bond_snap_adata',
                                    if_exists='replace')
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     ods_info_bond_snap_adata = OdsInfoBondSnapAdata()
     ods_info_bond_snap_adata.pipeline()
 
-# =============================================================================
+
 #  {'sub_date': '2017-03-17',
 #   'bond_code': '113011',
 #   'bond_name': '光大转债',
@@ -93,5 +93,4 @@ if __name__ == '__main__':
 #   'quota': '0.75300',  # 暂不需要
 #   'number': '0',  # 暂不需要
 #   'market_id': '19', 
-#   'stock_market_id': '17' } 
-# =============================================================================
+#   'stock_market_id': '17' }

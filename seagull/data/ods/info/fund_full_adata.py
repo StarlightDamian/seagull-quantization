@@ -10,14 +10,14 @@
 import adata
 
 from seagull.settings import PATH
-from seagull.utils import utils_database, utils_log, utils_data
+from seagull.utils import utils_data
 
 
-def ods_fund_full_data():
+def ods_info_fund_full_data():
     df = adata.fund.info.all_etf_exchange_traded_info()
     utils_data.output_database(df,
                                filename='ods_info_fund_full_adata')
 
 
 if __name__ == '__main__':
-    ods_fund_full_data()
+    ods_info_fund_full_data()

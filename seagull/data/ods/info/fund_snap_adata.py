@@ -20,7 +20,7 @@ from seagull.settings import PATH
 from seagull.utils import utils_data
 
 
-class odsNrtdAdataPortfolioBaseReptile(FundInfo):
+class OdsInfoFundSnapAdata(FundInfo):
     """
     ETF信息,只有SH和SZ的ETF
     """
@@ -56,13 +56,13 @@ class odsNrtdAdataPortfolioBaseReptile(FundInfo):
         result_df = pd.DataFrame(data=data, columns=self.__ETF_INFO_COLUMNS)
         return result_df
 
-    def portfolio_base(self):
-        portfolio_base_df = self.all_etf_exchange_traded_info_east()
-        utils_data.output_database(portfolio_base_df,
-                                   filename='ods_info_nrtd_adata_portfolio_base',
+    def pipeline(self):
+        fund_df = self.all_etf_exchange_traded_info_east()
+        utils_data.output_database(fund_df,
+                                   filename='ods_info_fund_snap_adata',
                                    if_exists='replace')
 
 
 if __name__ == '__main__':
-    ods_snap_adata_portfolio_base_reptile = odsNrtdAdataPortfolioBaseReptile()
-    ods_snap_adata_portfolio_base_reptile.portfolio_base()
+    ods_info_fund_snap_adata = OdsInfoFundSnapAdata()
+    ods_info_fund_snap_adata.pipeline()
