@@ -20,16 +20,17 @@ from adata.bond.info.bond_code import BondCode
 from adata.common.headers import ths_headers
 
 from seagull.settings import PATH
-from seagull.data import data_utils
+from seagull.utils import utils_data
 
-class odsIncrAdataBondBaseReptile(BondCode):
+
+class OdsInfoBondSnapAdata(BondCode):
     """
     债券代码
     """
     def __init__(self) -> None:
         super().__init__()
         
-    def convert_code_ths(self):
+    def ods_info_bond_snap_adata_ths(self):
         """
         获取同花顺可转换债券列表
         web： http://data.10jqka.com.cn/ipo/kzz/
@@ -62,17 +63,17 @@ class odsIncrAdataBondBaseReptile(BondCode):
         df['issue_amount'] = df['issue_amount'].astype(float) * 100000000
         return df
 
-    def conversion_base(self):
-        convertibles_base_df = self.convert_code_ths()
-        data_utils.output_database(convertibles_base_df, 'ods_info_nrtd_adata_bond_base', if_exists='replace')
-        
-        
+    def pipeline(self):
+        convertibles_base_df = self.ods_info_bond_snap_adata_ths()
+        utils_data.output_database(convertibles_base_df,
+                                   'ods_info_bond_snap_adata',
+                                   if_exists='replace')
+
+
 if __name__ == '__main__':
-    ods_incr_adata_bond_base_reptile = odsIncrAdataBondBaseReptile()
-    # conversion_base_df = ods_incr_adata_bond_base_reptile.convert_code_ths()
-    # print(conversion_base_df)
-    ods_incr_adata_bond_base_reptile.conversion_base()
-    
+    ods_info_bond_snap_adata = OdsInfoBondSnapAdata()
+    ods_info_bond_snap_adata.pipeline()
+
 # =============================================================================
 #  {'sub_date': '2017-03-17',
 #   'bond_code': '113011',

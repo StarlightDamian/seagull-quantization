@@ -33,11 +33,19 @@ class OdsLabel:
                                    filename='ods_flag_full_adata_stock_label_code',
                                    if_exists='replace')
         
-    def _apply_stock_label_1(self, subtable):
-        index_code = subtable.name  # concept_code有部分为空，尽量用index_code
-        concept_code = subtable.concept_code.values[0]
-        source = subtable.source.values[0]
-        name = subtable['name'].values[0]
+    def _apply_stock_label_1(self, sub):
+        """
+
+        Args:
+            sub:
+
+        Returns:
+
+        """
+        index_code = sub.name  # concept_code有部分为空，尽量用index_code
+        concept_code = sub.concept_code.values[0]
+        source = sub.source.values[0]
+        name = sub['name'].values[0]
         try:
             if source=='同花顺':
                 stock_label_df = adata.stock.info.concept_constituent_ths(index_code=index_code, wait_time=15000)

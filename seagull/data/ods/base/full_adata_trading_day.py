@@ -26,13 +26,21 @@ class TradingDay:
 
     @staticmethod
     def _ods_adata_trading_day_1(self, year):
+        """
+        获取指定年份的交易日
         # 2005年开始至今的交易日,不能翻墙
+        """
         trading_day_df = adata.stock.info.trade_calendar(year=int(year))
         # trading_day_df = adata.stock.info.trade_calendar(year=2025)
         logger.info(f'trading_year: {year}')
         return trading_day_df
 
     def _ods_adata_trading_day(self):
+        """
+        获取所有A股市场的交易日信息
+        Returns:
+
+        """
         two_years_later = str(datetime.today().year + 2)
         years = pd.date_range(start='2005', end=two_years_later, freq='YE').year
         trading_day_df = pd.concat([self._ods_adata_trading_day_1(year) for year in years], ignore_index=True)

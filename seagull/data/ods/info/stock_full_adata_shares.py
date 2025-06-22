@@ -26,9 +26,9 @@ def _apply_stock_shares_1(sub):
 
 if __name__ == '__main__':
     with utils_database.engine_conn("POSTGRES") as conn:
-        stock_df = pd.read_sql("ods_info_incr_adata_stock_base", con=conn.engine)
+        stock_df = pd.read_sql("ods_info_stock_incr_adata", con=conn.engine)
 
     stock_shares_df = stock_df.groupby('stock_code').apply(_apply_stock_shares_1)
     utils_data.output_database(stock_shares_df,
-                               filename='ods_info_full_adata_stock_shares',
+                               filename='ods_info_stock_full_adata_shares',
                                if_exists='replace')
