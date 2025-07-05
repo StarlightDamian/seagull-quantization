@@ -49,5 +49,6 @@ if __name__ == '__main__':
     # 找到文件夹下指定代码片段
     # Linux
     # grep -r --include="*.py" "portfolio_plot" E:/03_software_engineering/github/seagull-quantization
+
     # Windows
     # findstr /s /i "query_stock_basic" D:\03_software_engineering\05_github\seagull\seagull\*.py

@@ -104,7 +104,7 @@ def get_backtest_config():
     backtest_config = {
         "start_time": "2017-01-01",
         "end_time": "2020-08-01",
-        "account": 100000000,
+        "financials": 100000000,
         "benchmark": "SH000300",
         "exchange_kwargs": {
             "freq": "day",

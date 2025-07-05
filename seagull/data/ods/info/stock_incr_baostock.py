@@ -9,9 +9,8 @@
 """
 import baostock as bs
 
-from seagull.settings import PATH
 from seagull.utils import utils_data
-from seagull.data import utils_api_baostock
+from seagull.utils.api import utils_api_baostock
 
 
 def get_stock_incr_baostock():

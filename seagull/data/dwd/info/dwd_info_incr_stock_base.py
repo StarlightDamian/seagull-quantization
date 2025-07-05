@@ -16,9 +16,8 @@ exchange：表示交易所，可以存储交易所的名称，如"北交所"。
 """
 import pandas as pd
 
-from seagull.settings import PATH
 from seagull.utils import utils_data, utils_database
-from seagull.data import utils_api_baostock
+from seagull.utils.api import utils_api_baostock
 
 
 def dwd_stock_base():

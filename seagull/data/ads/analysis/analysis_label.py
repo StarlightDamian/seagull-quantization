@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 # 假设你已经读取了标签表和特征表
-tags_df = pd.read_csv('tags.csv', sep='\t', names=['full_code', 'code', 'name', 'industry', 'level', 'update_time'])
+tags_df = pd.read_csv('tag.csv', sep='\t', names=['full_code', 'code', 'name', 'industry', 'level', 'update_time'])
 asset_df = pd.read_csv('features.csv', names=['primary_key', 'date', 'datetime', 'type', 'full_code', 'code', 'market', 'name'])
 
 # 数据预处理

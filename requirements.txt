@@ -3,7 +3,7 @@ loguru==0.7.3
 logger==1.4
 psycopg2==2.9.10
 baostock==0.8.9
-numpy~=2.0.2
+numpy~=1.23.5
 pandas~=2.3.0
 sqlalchemy~=2.0.41
 joblib~=1.5.1
@@ -19,3 +19,11 @@ jsonpath~=0.82.2
 tqdm~=4.67.1
 adata
 schedule~=1.2.2
+scikit-learn~=1.6.1
+matplotlib~=3.9.4
+PyYAML~=6.0.2
+numba~=0.56.4
+cvxpy~=1.6.6
+efinance~=0.5.5.2
+multitasking~=0.0.11
+retry~=0.9.2

@@ -115,8 +115,7 @@ import pandas as pd
 # from joblib import Parallel, delayed
 
 from seagull.settings import PATH
-from seagull.utils import utils_database, utils_log, utils_data, utils_character, utils_thread, utils_time
-from seagull.data import utils_api_baostock
+from seagull.utils import utils_database, utils_log
 
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')

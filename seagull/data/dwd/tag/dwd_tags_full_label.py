@@ -6,13 +6,11 @@ Created on Wed Oct 23 23:09:47 2024
 (dwd_flag_full_label)
 ods_flag_full_baostock_stock_industry
 """
-import os
-import adata
 import pandas as pd
 
-from seagull.settings import PATH
-from seagull.utils import utils_database, utils_data, utils_log
-from seagull.data import utils_api_baostock, utils_api_adata
+from seagull.utils import utils_database, utils_data
+from seagull.utils.api import utils_api_adata, utils_api_baostock
+
 
 class DwdLabel:
     def __init__(self):

@@ -20,24 +20,25 @@ from seagull.utils import utils_database, utils_log
 log_filename = os.path.splitext(os.path.basename(__file__))[0]
 logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 
-class OdsIncrBaostockStockShSzApi():
+
+class OdsOhlcStockIncrBaostockShSzApi:
     """
     A股的K线数据，全量历史数据接口
     """
     def __init__(self):
         with utils_database.engine_conn("POSTGRES") as conn:
-            self.ods_stock_base_df = pd.read_sql("select code from ods_info_incr_baostock_stock_base", con=conn.engine)# 获取指数、股票数据
+            self.ods_stock_base_df = pd.read_sql("select code from ods_info_stock_incr_baostock", con=conn.engine)  # 获取指数、股票数据
             # code = pd.read_sql("select distinct code from ods_ohlc_incr_baostock_stock_sh_sz_daily", con=conn.engine)
             # self.ods_stock_base_df = self.ods_stock_base_df[~self.ods_stock_base_df.code.isin(code)]
             
-    def stock_sh_sz_1(self, substring,
+    def stock_sh_sz_1(self, code,
                             date_start,
                             date_end,
                             fields='date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,peTTM,psTTM,pcfNcfTTM,pbMRQ,isST',
                             frequency='d',
                             adjustflag='3'):
-        code = substring.name
-        logger.info(f'start code: {code}')
+        #code = substring.name
+        logger.info(f'start code: {code}{fields}{date_start} - {date_end} | frequency: {frequency} | adjustflag: {adjustflag}')
         k_rs = bs.query_history_k_data_plus(code,
                                             fields=fields,
                                             start_date=date_start,

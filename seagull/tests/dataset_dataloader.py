@@ -22,7 +22,7 @@ class CustomDataset(Dataset):
 if __name__ == '__main__':
     # Set params
     data_stream_size = 16384  # Size of the data that is loaded into memory at once
-    chunk_size = 1024  # Size of the chunks that are sent to each process
+    chunk_size = 1024  # Size of the chunks that are sentiment to each process
     encode_batch_size = 128  # Batch size of the model
     
     # Your sentences

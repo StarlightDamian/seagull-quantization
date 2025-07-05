@@ -20,10 +20,12 @@ from datetime import datetime  # , timedelta
 import pandas as pd
 
 from seagull.utils import utils_time, utils_data, utils_thread
-from data.ods.ohlc import ods_ohlc_incr_baostock_stock_sh_sz_api
+from seagull.data.ods.ohlc.stock_incr_baostock_sh_sz import OdsOhlcStockIncrBaostockShSzApi
+
+# logger.add(f"{PATH}/log/data_plate.log", rotation="10 MB", retention="10 days")
 
 
-class OdsIncrBaostockStockShSzCycle(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIncrBaostockStockShSzApi):
+class OdsOhlcStockIncrBaostockShSzCycle(OdsOhlcStockIncrBaostockShSzApi):
     """
     ODS层_baostock接口_证券_上海_深圳_每日数据_接口：A股的K线数据，全量历史数据接口
     """
@@ -31,49 +33,50 @@ class OdsIncrBaostockStockShSzCycle(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIn
         super().__init__()
     
     def stock_sh_sz_daily(self, date_start="1990-01-01", date_end="2100-01-01"):
-        date_start = utils_data.maximum_date_next(table_name='ods_ohlc_incr_baostock_stock_sh_sz_daily', field_name='date')
+        date_start = utils_data.maximum_date_next(table_name='ods_ohlc_incr_baostock_stock_sh_sz_daily',
+                                                  field_name='date')
         stock_sh_sz_daily_df = self.stock_sh_sz(date_start=date_start, date_end=date_end)
         utils_data.output_database(stock_sh_sz_daily_df,
                                    filename='ods_ohlc_incr_baostock_stock_sh_sz_daily')
         # return stock_sh_sz_daily_df
 
-    def stock_sh_sz_minute_date_1(self, subtable, fields='date,time,code,high,low,close,volume'):
-        #fields='date,time,code,open,high,low,close,volume,amount'
-        #print(subtable.name.)
-        date = str(subtable.name)
-        date_start = utils_time.date_plus_days(date, days=1)
-        date_end = utils_time.date_plus_days(date, days=250)  # 和freq='100D'匹配
-        #if utils_database.table_exists('ods_ohlc_incr_baostock_stock_sh_sz_minute'):
-        #    sql=f'SELECT max(date) FROM ods_ohlc_incr_baostock_stock_sh_sz_minute_api BETWEEN {date_start} AND {date_end}'
-        #    date_start = utils_data.maximum_date(table_name='ods_ohlc_incr_baostock_stock_sh_sz_minute', sql=sql)
+    # def stock_sh_sz_minute_date_1(self, subtable, fields='date,time,code,high,low,close,volume'):
+    #     # fields='date,time,code,open,high,low,close,volume,amount'
+    #     # print(subtable.name.)
+    #     date = str(subtable.name)
+    #     date_start = utils_time.date_plus_days(date, days=1)
+    #     date_end = utils_time.date_plus_days(date, days=250)  # 和freq='100D'匹配
+    #     # if utils_database.table_exists('ods_ohlc_incr_baostock_stock_sh_sz_minute'):
+    #     #    sql=f'SELECT max(date) FROM ods_ohlc_incr_baostock_stock_sh_sz_minute_api BETWEEN {date_start} AND {date_end}'
+    #     #    date_start = utils_data.maximum_date(table_name='ods_ohlc_incr_baostock_stock_sh_sz_minute', sql=sql)
+    #
+    #     stock_sh_sz_minute_df = self.stock_sh_sz(date_start=date_start,
+    #                                              date_end=date_end,
+    #                                              fields=fields,
+    #                                              frequency='5')
+    #     if not stock_sh_sz_minute_df.empty:
+    #         utils_data.output_database_large(stock_sh_sz_minute_df,
+    #                                    filename='ods_ohlc_incr_baostock_stock_sh_sz_minute',
+    #                                    if_exists='append',
+    #                                    )
         
-        stock_sh_sz_minute_df = self.stock_sh_sz(date_start=date_start,
-                                                 date_end=date_end,
-                                                 fields=fields,
-                                                 frequency='5')
-        if not stock_sh_sz_minute_df.empty:
-            utils_data.output_database_large(stock_sh_sz_minute_df,
-                                       filename='ods_ohlc_incr_baostock_stock_sh_sz_minute',
-                                       if_exists='append',
-                                       )
-        
-    def stock_sh_sz_minute(self, date_start, date_end):
-        daily_dates = pd.date_range(start=date_start, end=date_end, freq='250d')  # bs.query_history_k_data_plus返回数据量不超过10000,分日获取
-        daily_dates_df = pd.DataFrame(daily_dates, columns=['date'])
-        daily_dates_df.date = daily_dates_df.date.astype(str)
-        #daily_dates_df.groupby('date').apply(self.stock_sh_sz_minute_date_1, fields='date,time,code,high,low,close,volume')
-        
-    def stock_sh_sz_weekly_monthly(self, date_start, date_end):
-        # 周期型数据,和日线的参数有些不同
-        date_start = utils_data.maximum_date(table_name='ods_ohlc_incr_baostock_stock_sh_sz_cycle', field_name='date')
-        stock_sh_sz_cycle_df = self.stock_sh_sz(date_start=date_start, date_end=date_end, frequency='w')  # weekly
-        stock_sh_sz_cycle_df = self.stock_sh_sz(date_start=date_start, date_end=date_end, frequency='m')  # monthly
-        utils_data.output_database(stock_sh_sz_cycle_df,
-                                   filename='ods_ohlc_incr_baostock_stock_sh_sz_cycle')
+    # def stock_sh_sz_minute(self, date_start, date_end):
+    #     daily_dates = pd.date_range(start=date_start, end=date_end, freq='250d')  # bs.query_history_k_data_plus返回数据量不超过10000,分日获取
+    #     daily_dates_df = pd.DataFrame(daily_dates, columns=['date'])
+    #     daily_dates_df.date = daily_dates_df.date.astype(str)
+    #     # daily_dates_df.groupby('date').apply(self.stock_sh_sz_minute_date_1, fields='date,time,code,high,low,close,volume')
+    #
+    # def stock_sh_sz_weekly_monthly(self, date_start, date_end):
+    #     # 周期型数据,和日线的参数有些不同
+    #     date_start = utils_data.maximum_date(table_name='ods_ohlc_incr_baostock_stock_sh_sz_cycle', field_name='date')
+    #     stock_sh_sz_cycle_df = self.stock_sh_sz(date_start=date_start, date_end=date_end, frequency='w')  # weekly
+    #     stock_sh_sz_cycle_df = self.stock_sh_sz(date_start=date_start, date_end=date_end, frequency='m')  # monthly
+    #     utils_data.output_database(stock_sh_sz_cycle_df,
+    #                                filename='ods_ohlc_incr_baostock_stock_sh_sz_cycle')
     # 异步执行单日抓取的示例
     async def async_fetch_date(self, date: str) -> pd.DataFrame:
-        #await asyncio.sleep(0.1)  # 模拟网络 I/O
-        #date = str(subtable.name)
+        # await asyncio.sleep(0.1)  # 模拟网络 I/O
+        # date = str(subtable.name)
         date_start = utils_time.date_plus_days(date, days=1)
         date_end = utils_time.date_plus_days(date, days=250)  # 和freq='100D'匹配
         # if utils_database.table_exists('ods_ohlc_incr_baostock_stock_sh_sz_minute'):
@@ -82,7 +85,7 @@ class OdsIncrBaostockStockShSzCycle(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIn
 
         stock_sh_sz_minute_df = self.stock_sh_sz(date_start=date_start,
                                                  date_end=date_end,
-                                                 fields=fields,
+                                                 fields='date,time,code,high,low,close,volume',
                                                  frequency='5')
 
         return stock_sh_sz_minute_df
@@ -99,32 +102,36 @@ class OdsIncrBaostockStockShSzCycle(ods_ohlc_incr_baostock_stock_sh_sz_api.OdsIn
         if not batch_df.empty:
             utils_data.output_database_large(
                 batch_df,
-                filename='ods_ohlc_incr_baostock_stock_sh_sz_minute',
+                filename='ods_ohlc_stock_incr_baostock_sh_sz_minute',
                 if_exists='append'
             )
         return batch_df
-        
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # parser.add_argument('--date_start', type=str, default='2019-01-01', help='Start time for backtesting')
-    #parser.add_argument('--date_start', type=str, default='1990-01-01', help='Start time for backtesting')
+    # parser.add_argument('--date_start', type=str, default='1990-01-01', help='Start time for backtesting')
     parser.add_argument('--date_start', type=str, default='2021-09-27', help='Start time for backtesting')
-    #parser.add_argument('--date_start', type=str, default='1990-01-01', help='Start time for backtesting')
+    # parser.add_argument('--date_start', type=str, default='1990-01-01', help='Start time for backtesting')
     parser.add_argument('--date_end', type=str, default='2025-05-23', help='End time for backtesting')
-    #parser.add_argument('--update_type', type=str, default='incr', help='Data update method')
+    # parser.add_argument('--update_type', type=str, default='incr', help='Data update method')
     parser.add_argument('--freq_type', type=str, default='minute', help='daily or minute')
     args = parser.parse_args()
     
-    ods_incr_baostock_stock_sh_sz_cycle = OdsIncrBaostockStockShSzCycle()
-    date_end = args.date_end if args.date_end !='' else datetime.now().strftime("%F")
-    if args.freq_type=='daily':
-        ods_incr_baostock_stock_sh_sz_cycle.stock_sh_sz_daily(date_start=args.date_start,
+    ods_ohlc_stock_incr_baostock_sh_sz_cycle = OdsOhlcStockIncrBaostockShSzCycle()
+    date_end = args.date_end if args.date_end != '' else datetime.now().strftime("%F")
+    if args.freq_type == 'daily':
+        ods_ohlc_stock_incr_baostock_sh_sz_cycle.stock_sh_sz_daily(date_start=args.date_start,
                                                               date_end=args.date_end)  # 每日沪深
-    elif args.freq_type=='minute':
-        daily_dates = pd.date_range(start=args.date_start, end=args.date_end, freq='250d')  # bs.query_history_k_data_plus返回数据量不超过10000,分日获取
+    elif args.freq_type == 'minute':
+        # bs.query_history_k_data_plus返回数据量不超过10000,分日获取
+        daily_dates = pd.date_range(start=args.date_start, end=args.date_end, freq='250d')
         daily_dates_df = pd.DataFrame(daily_dates, columns=['date'])
         daily_dates_df.date = daily_dates_df.date.astype(str).tolist()
-        df_all = utils_thread.thread(daily_dates_df, ods_incr_baostock_stock_sh_sz_cycle.process_batch, max_workers=32)
+        df_all = utils_thread.thread(daily_dates_df,
+                                     ods_ohlc_stock_incr_baostock_sh_sz_cycle.process_batch,
+                                     max_workers=32)
 
         # ods_incr_baostock_stock_sh_sz_cycle.stock_sh_sz_minute(date_start=args.date_start,
         #                                                        date_end=args.date_end)

@@ -100,11 +100,86 @@ def time_range_h(date_start='2024-03-08', date_end='2024-05-24'):
     return time_pd
 
 
-def date_plus_days(date_start = "2000-01-01", days=1):
+def date_plus_days(date_start="2000-01-01", days=1):
     start_date = datetime.strptime(date_start, "%Y-%m-%d")
     date_n_days_later = start_date + timedelta(days=days)
     formatted_date = date_n_days_later.strftime('%Y-%m-%d')
     return formatted_date  # '2000-04-11'
+
+
+import datetime
+import itertools
+from typing import List, Dict, Any
+
+
+def split_time_windows(
+        start_date: str,
+        end_date: str,
+        window_days: int
+) -> List[Dict[str, str]]:
+    """
+    将 [start_date, end_date] 区间按 window_days 切分，返回一系列 {'date_start', 'date_end'} dict。
+    自动将 end_date 限制为不超过今天。
+    """
+    today = datetime.date.today().isoformat()
+    # 取不超过今天的结束日期
+    end_date = min(end_date, today)
+
+    windows = []
+    current_start = start_date
+    while current_start < end_date:
+        # 下一个结束点
+        next_end = date_plus_days(current_start, days=window_days)
+        current_end = next_end if next_end < end_date else end_date
+
+        windows.append({
+            'date_start': current_start,
+            'date_end': current_end
+        })
+
+        current_start = current_end
+
+    return windows
+
+
+def make_param_grid(
+        date_start: str,
+        date_end: str,
+        window_days: int = 30,
+        **dimensions: List[Any]
+) -> List[Dict[str, Any]]:
+    """
+    生成参数字典列表：
+      - 先用 split_time_windows 切出所有时间窗口；
+      - 再对传入的每个 dimension（如 codes=[...], users=[...]）做笛卡尔积，
+        将每个组合与每个时间窗口逐一合并。
+
+    :param date_start:   全局起始日期 "YYYY-MM-DD"
+    :param date_end:     全局结束日期上限 "YYYY-MM-DD"
+    :param window_days:  每个子区间天数，默认 30
+    :param dimensions:   可选的命名维度列表，如 codes=['sh.000001', ...]、users=['u1','u2'] 等
+    :return: List of dicts，key 包含 'date_start','date_end' + 所有维度名
+    """
+    # 切分出的所有时间窗口
+    time_windows = split_time_windows(date_start, date_end, window_days)
+
+    # 如果没有额外维度，只返回时间窗口
+    if not dimensions:
+        return time_windows
+
+    # 准备笛卡尔积：dim_names=['codes','users',...], dim_values=[ [...], [...] ]
+    dim_names = list(dimensions.keys())
+    dim_values = [dimensions[k] for k in dim_names]
+
+    param_list = []
+    # 对每个维度组合 × 每个时间窗口
+    for combo in itertools.product(*dim_values):
+        base = dict(zip(dim_names, combo))
+        for tw in time_windows:
+            entry = {**base, **tw}
+            param_list.append(entry)
+
+    return param_list
 
 
 if __name__ == '__main__':
