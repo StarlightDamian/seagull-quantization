@@ -29,8 +29,11 @@ class OdsOhlcStockIncrBaostockShSzApi:
         with utils_database.engine_conn("POSTGRES") as conn:
             self.ods_stock_base_df = pd.read_sql("select code from ods_info_stock_incr_baostock", con=conn.engine)  # 获取指数、股票数据
             # code = pd.read_sql("select distinct code from ods_ohlc_incr_baostock_stock_sh_sz_daily", con=conn.engine)
-            # self.ods_stock_base_df = self.ods_stock_base_df[~self.ods_stock_base_df.code.isin(code)]
-            
+            # self.ods_stock_base_df = self.ods_stock_base_df[~(self.ods_stock_base_df.code.isin(code))]
+
+        # 创建异步HTTP会话
+        self.session = None
+
     def stock_sh_sz_1(self, code,
                             date_start,
                             date_end,
@@ -70,16 +73,14 @@ class OdsOhlcStockIncrBaostockShSzApi:
                                                           fields=fields,
                                                           frequency=frequency,
                                                           adjustflag=adjustflag)
-        df['freq']=frequency
+        df['freq'] = frequency
         
-        # adjustment_type as adj_type in ['None', 'pre', 'post'], 复权状态(1：后复权， 2：前复权，3：不复权）	
-        if adjustflag == '1':
-            df['adj_type'] = 'post'
-        elif adjustflag == '2':
-            df['adj_type'] = 'pre'
-        elif adjustflag == '3':
-            df['adj_type'] = None
-            
+        # adjustment_type as adj_type in ['None', 'pre', 'post'], 复权状态(1：后复权， 2：前复权，3：不复权）
+        adj_type_dict = {"1": "post",
+                         "2": "pre",
+                         "3": None}
+        df['adj_type'] = adj_type_dict.get(adjustflag)
+
         bs.logout()
         return df.reset_index(drop=True)
     

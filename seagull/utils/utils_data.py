@@ -38,73 +38,109 @@ def map_dtype_to_postgres(pandas_dtype):
     }
     return dtype_map.get(str(pandas_dtype), 'TEXT')  # 默认返回 TEXT 类型
 
+import csv
+import numpy as np
+import pandas as pd
+from io import StringIO
+from datetime import datetime
+from psycopg2 import sql
+
 
 def output_database_large(df, filename, if_exists='append'):
+    """
+    1.na_rep=''把 Pandas 的NaN变成空字符串，在 CSV 下会被当作NULL
+    2.quoting=csv.QUOTE_MINIMAL+escapechar='\\' + 明确 line_terminator='\n'：保证每行末尾都是 \n，且字段里的逗号、双引号都被正确转义
+    3.copy_expert("COPY ... WITH CSV", sio)相比copy_from、copy_expert能直接指定CSV格式，更灵活
+    4.捕获异常并rollback():一旦COPY失败，保证能看到完整日志并且不留未提交事务
+
+    Args:
+        df:
+        filename:
+        if_exists:
+
+    Returns:
+
+    """
+
     conn = utils_database.psycopg2_conn()
     cursor = conn.cursor()
-    # Step 2: 如果 if_exists 为 'replace'，先删除表再重新创建
+    # 1. 如果 if_exists 为 'replace'，先删除表再重新创建
     if if_exists == 'replace':
-        logger.info(f"Table {filename} exists, dropping and recreating it.")
+        logger.info(f"Dropping and recreating table {filename}")
         cursor.execute(f"DROP TABLE IF EXISTS {filename};")
         conn.commit()
-     
-    df[df.select_dtypes(include=['float']).columns] = df.select_dtypes(include=['float']).fillna(0)
+
+    # 2. 填 NaN
+    float_cols = df.select_dtypes(include=['float']).columns
+    df[float_cols] = df[float_cols].fillna(0)
     df['insert_timestamp'] = datetime.now().strftime("%F %T")
-    
-    # Step 1: 确保表存在，如果表不存在则创建
+
+    # 3. 确保表存在，如果表不存在则创建
     cursor.execute(f"""
         SELECT EXISTS (
-            SELECT FROM information_schema.tables 
-            WHERE table_schema = 'public' 
+            SELECT FROM information_schema.tables
+            WHERE table_schema = 'public'
             AND table_name = '{filename}'
         );
-    """)
+                    """)
     table_exists = cursor.fetchone()[0]
-    
+
     if not table_exists:
         # 动态生成创建表的 SQL 语句
-        #columns = ', '.join([f"{col} {dtype}" for col, dtype in zip(df.columns, ['TEXT']*len(df.columns))])
+        # columns = ', '.join([f"{col} {dtype}" for col, dtype in zip(df.columns, ['TEXT']*len(df.columns))])
         columns = ', '.join([f"{col} {map_dtype_to_postgres(df[col].dtype.name)}" for col in df.columns])
         logger.info(columns)
-        create_table_query = f"""
+        ddl = f"""
             CREATE TABLE {filename} (
                 {columns}
             );
         """
-        cursor.execute(create_table_query)
+        cursor.execute(ddl)
         conn.commit()
-    
-    # Step 2: 确保字段一致，如果有缺失的列，添加 NULL 值
+
+    # 4. 补齐列 确保字段一致，如果有缺失的列，添加 NULL 值
     # 获取目标表的列名
-    cursor.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{filename}' ORDER BY ordinal_position;")
+    cursor.execute(f"""
+        SELECT column_name FROM information_schema.columns 
+         WHERE table_schema='public' AND table_name={filename}
+         ORDER BY ordinal_position;
+        """)
     existing_columns = [col[0] for col in cursor.fetchall()]
-    
+
     # 将 DataFrame 的列与表的列进行对比，添加缺失列
-    missing_columns = set(existing_columns) - set(df.columns)
-    for col in missing_columns:
-        df[col] = np.nan  # 为缺失的列添加空值（NULL）
-    
+    for col in existing_columns:
+        if col not in df.columns:
+            df[col] = None
+
     # 重新排列 DataFrame 列的顺序，确保顺序与表中的列一致
     df = df[existing_columns]
-    
-    # Step 3: 将 DataFrame 转换为 CSV 格式并写入数据库
-    csv_buffer = StringIO()
-    #df = df.where(pd.notnull(df), None)  # Replace NaN with None to treat as NULL
-    df.to_csv(csv_buffer,
+
+    # 5. 转成 CSV 格式并写入数据库
+    sio = StringIO()
+    # df = df.where(pd.notnull(df), None)  # Replace NaN with None to treat as NULL
+    df.to_csv(sio,
               index=False,
-              #quoting=csv.QUOTE_MINIMAL,
-              #escapechar='\\',
-              header=False
+              header=False,
+              na_rep='',  # new, 空字符串 -> NULL
+              escapechar='\\',  # new
+              quoting=csv.QUOTE_MINIMAL,  # new
+              line_terminator='\n',  # new
               )
-    csv_buffer.seek(0)
-    
-    # 使用 COPY 命令将数据写入数据库
-    cursor.copy_from(csv_buffer, filename, sep=',')
-    conn.commit()
-    
-    # 关闭连接
-    cursor.close()
-    conn.close()
+    sio.seek(0)
+
+    # cursor.copy_from(sio, filename, sep=',')
+    try:
+        # 注意：COPY ... FROM STDIN WITH CSV
+        copy_sql = f"COPY {filename} ({', '.join(existing)}) FROM STDIN WITH CSV"
+        cursor.copy_expert(copy_sql, sio)
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        logger.exception("COPY failed")
+        raise
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dtype=None, index=False, method="multi"):

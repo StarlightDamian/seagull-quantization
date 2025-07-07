@@ -24,12 +24,14 @@ def logger_config_local(file_path, level="DEBUG", rotation="10 MB", retention="1
     :param rotation: 文件轮换条件，例如 "500 MB" 或 "1 week"
     :param retention: 文件保留时长，例如 "10 days"
     """
+    # logger.remove()  # 先清除默认 sink，避免重复
     logger.add(
         file_path,
         format="{time:YY-MM-DD HH:mm:ss} | {level} | {message} ({file}:{line})",
         level=level,
         rotation=rotation,
-        retention=retention
+        retention=retention,
+        enqueue=True,  # 所有写入都经由后台线程，避免多线程直接操作文件
     )
     return logger
 

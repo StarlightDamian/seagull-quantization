@@ -6,7 +6,7 @@
 @File: utils_time.py
 @Description: 时间
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,date
 
 import pandas as pd
 
@@ -107,7 +107,6 @@ def date_plus_days(date_start="2000-01-01", days=1):
     return formatted_date  # '2000-04-11'
 
 
-import datetime
 import itertools
 from typing import List, Dict, Any
 
@@ -121,7 +120,7 @@ def split_time_windows(
     将 [start_date, end_date] 区间按 window_days 切分，返回一系列 {'date_start', 'date_end'} dict。
     自动将 end_date 限制为不超过今天。
     """
-    today = datetime.date.today().isoformat()
+    today = date.today().isoformat()
     # 取不超过今天的结束日期
     end_date = min(end_date, today)
 
@@ -151,13 +150,13 @@ def make_param_grid(
     """
     生成参数字典列表：
       - 先用 split_time_windows 切出所有时间窗口；
-      - 再对传入的每个 dimension（如 codes=[...], users=[...]）做笛卡尔积，
+      - 再对传入的每个 dimension（如 full_code=[...], users=[...]）做笛卡尔积，
         将每个组合与每个时间窗口逐一合并。
 
     :param date_start:   全局起始日期 "YYYY-MM-DD"
     :param date_end:     全局结束日期上限 "YYYY-MM-DD"
     :param window_days:  每个子区间天数，默认 30
-    :param dimensions:   可选的命名维度列表，如 codes=['sh.000001', ...]、users=['u1','u2'] 等
+    :param dimensions:   可选的命名维度列表，如 full_code=['sh.000001', ...]、users=['u1','u2'] 等
     :return: List of dicts，key 包含 'date_start','date_end' + 所有维度名
     """
     # 切分出的所有时间窗口
@@ -167,7 +166,7 @@ def make_param_grid(
     if not dimensions:
         return time_windows
 
-    # 准备笛卡尔积：dim_names=['codes','users',...], dim_values=[ [...], [...] ]
+    # 准备笛卡尔积：dim_names=['full_code','users',...], dim_values=[ [...], [...] ]
     dim_names = list(dimensions.keys())
     dim_values = [dimensions[k] for k in dim_names]
 
