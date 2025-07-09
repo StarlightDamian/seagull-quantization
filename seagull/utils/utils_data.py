@@ -17,8 +17,8 @@ import pandas as pd
 from seagull.settings import PATH
 from seagull.utils import utils_time, utils_database, utils_log
 
-log_filename = os.path.splitext(os.path.basename(__file__))[0]
-logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
+# log_filename = os.path.splitext(os.path.basename(__file__))[0]
+# logger = utils_log.logger_config_local(f'{PATH}/log/{log_filename}.log')
 import csv
 
 
@@ -66,7 +66,7 @@ def output_database_large(df, filename, if_exists='append'):
     cursor = conn.cursor()
     # 1. 如果 if_exists 为 'replace'，先删除表再重新创建
     if if_exists == 'replace':
-        logger.info(f"Dropping and recreating table {filename}")
+        # logger.info(f"Dropping and recreating table {filename}")
         cursor.execute(f"DROP TABLE IF EXISTS {filename};")
         conn.commit()
 
@@ -76,20 +76,24 @@ def output_database_large(df, filename, if_exists='append'):
     df['insert_timestamp'] = datetime.now().strftime("%F %T")
 
     # 3. 确保表存在，如果表不存在则创建
-    cursor.execute(f"""
+    cursor.execute(
+        """
         SELECT EXISTS (
-            SELECT FROM information_schema.tables
-            WHERE table_schema = 'public'
-            AND table_name = '{filename}'
+            SELECT 1
+              FROM information_schema.tables
+             WHERE table_schema = %s
+               AND table_name   = %s
         );
-                    """)
+        """,
+        ('public', filename)  # 第二个 %s 就由 filename 来填充，并自动加上单引号
+    )
     table_exists = cursor.fetchone()[0]
 
     if not table_exists:
         # 动态生成创建表的 SQL 语句
         # columns = ', '.join([f"{col} {dtype}" for col, dtype in zip(df.columns, ['TEXT']*len(df.columns))])
         columns = ', '.join([f"{col} {map_dtype_to_postgres(df[col].dtype.name)}" for col in df.columns])
-        logger.info(columns)
+        # logger.info(columns)
         ddl = f"""
             CREATE TABLE {filename} (
                 {columns}
@@ -100,11 +104,16 @@ def output_database_large(df, filename, if_exists='append'):
 
     # 4. 补齐列 确保字段一致，如果有缺失的列，添加 NULL 值
     # 获取目标表的列名
-    cursor.execute(f"""
-        SELECT column_name FROM information_schema.columns 
-         WHERE table_schema='public' AND table_name={filename}
+    cursor.execute(
+        """
+        SELECT column_name
+          FROM information_schema.columns
+         WHERE table_schema = %s
+           AND table_name   = %s
          ORDER BY ordinal_position;
-        """)
+        """,
+        ('public', filename)
+    )
     existing_columns = [col[0] for col in cursor.fetchall()]
 
     # 将 DataFrame 的列与表的列进行对比，添加缺失列
@@ -124,19 +133,19 @@ def output_database_large(df, filename, if_exists='append'):
               na_rep='',  # new, 空字符串 -> NULL
               escapechar='\\',  # new
               quoting=csv.QUOTE_MINIMAL,  # new
-              line_terminator='\n',  # new
+             #  line_terminator='\n',  # new
               )
     sio.seek(0)
 
     # cursor.copy_from(sio, filename, sep=',')
     try:
         # 注意：COPY ... FROM STDIN WITH CSV
-        copy_sql = f"COPY {filename} ({', '.join(existing)}) FROM STDIN WITH CSV"
+        copy_sql = f"COPY {filename} ({', '.join(existing_columns)}) FROM STDIN WITH CSV"
         cursor.copy_expert(copy_sql, sio)
         conn.commit()
     except Exception:
         conn.rollback()
-        logger.exception("COPY failed")
+        # logger.exception("COPY failed")
         raise
     finally:
         cursor.close()
@@ -145,7 +154,7 @@ def output_database_large(df, filename, if_exists='append'):
 
 def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dtype=None, index=False, method="multi"):
     try:
-        logger.info('Writing to database started.')
+        # logger.info('Writing to database started.')
         with utils_database.engine_conn('POSTGRES') as conn:
             df.to_sql(filename,
                       con=conn.engine,
@@ -155,9 +164,10 @@ def output_database_mini(df, filename, chunksize=50_000, if_exists='append', dty
                       dtype=dtype,
                       method=method
                       )
-        logger.success('Writing to database conclusion-succeeded.')
+        # logger.success('Writing to database conclusion-succeeded.')
     except Exception as e:
-        logger.error(f'Writing to database conclusion-failed: {e}')
+        ...
+        # logger.error(f'Writing to database conclusion-failed: {e}')
 
 
 def output_database(df, **kwargs):
@@ -167,7 +177,7 @@ def output_database(df, **kwargs):
     if not df.empty:
         df['insert_timestamp'] = datetime.now().strftime("%F %T")
         len_df = df.shape[0]
-        logger.info(f'The DataFrame has {len_df} rows.')
+        # logger.info(f'The DataFrame has {len_df} rows.')
         chunk_size = 50_000
         for start in range(0, len_df, chunk_size):
             df_chunk = df.iloc[start: start+chunk_size]
@@ -175,7 +185,8 @@ def output_database(df, **kwargs):
                 kwargs['if_exists']='append'
             output_database_mini(df_chunk, **kwargs)
     else:
-        logger.warning('DataFrame is empty.')
+        ...
+        # logger.warning('DataFrame is empty.')
 
 
 def output_local_file(df, filename, if_exists='skip', encoding='gbk', file_format='csv', filepath=None):
@@ -198,12 +209,12 @@ def maximum_date(table_name, field_name='date', sql=None):
             else:
                 max_date = pd.read_sql(f"SELECT max({field_name}) FROM {table_name}", con=conn.engine)
         max_date = max_date.values[0][0]
-        logger.info(f'max_date: {max_date}')
+        # logger.info(f'max_date: {max_date}')
     except:
-        logger.error('Exception in querying database maximum date')
+        # logger.error('Exception in querying database maximum date')
         max_date = '1990-01-01'
     finally:
-        logger.info(f'max_date: {max_date}')
+        # logger.info(f'max_date: {max_date}')
         return max_date
 
 
@@ -211,7 +222,7 @@ def maximum_date_next(table_name, field_name='date', sql=None):
     max_date = maximum_date(table_name, field_name=field_name, sql=sql)
     next_day = datetime.strptime(max_date, '%Y-%m-%d') + timedelta(days=1)
     date_start = next_day.strftime('%Y-%m-%d')
-    logger.info(f'date_start: {date_start}')
+    # logger.info(f'date_start: {date_start}')
     return date_start
 
 

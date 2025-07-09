@@ -3,7 +3,7 @@
 @Date: 2025/6/24 23:31
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: fund_incr.py
+@File: fund_full.py
 @Description: 
 """
 import os
@@ -29,3 +29,11 @@ def get_dwd_info_fund_incr():
     fund_df['full_code'] = fund_df.market_code + '.' + fund_df.asset_code
     return fund_df
     # utils_data.output_database(fund_df, filename='dwd_info_fund_incr', if_exists='replace')
+
+def pipeline():
+    trade_df = dwd_stock_base()
+    utils_data.output_database(trade_df, filename='dwd_info_stock_incr_2', if_exists='replace')
+    # trade_df.to_csv(f'{PATH}/_file/dwd_info_stock_incr.csv', index=False)
+
+if __name__ == '__main__':
+    pipeline()
