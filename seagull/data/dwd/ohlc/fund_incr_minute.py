@@ -1,49 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-@Date: 2025/6/24 23:38
+@Date: 2025/7/9 16:58
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: fund_incr_daily.py
-@Description:
-
-获取dwd层基本信息(data_dwd)
-1股票基本信息
-2股票标签
-
-Now I have three considerations
-1. I want to use a code abbreviation across various assets, including stocks, real estate, bonds, futures, and ETFs
-2. My database table contains fields such as 'SH', '510300', and 'SH.510300'. I hope to give them three columns with corresponding field names.
-3. This naming is best for China and the United States
-
-For Chinese ETF:
-    market_code: 'SH'
-    asset_code: '510300'
-    full_code: 'SH.510300'
-
-
-For US Stock:
-    market_code: 'NYSE'
-    asset_code: 'AAPL'
-    full_code: 'NYSE.AAPL'
-
-1.market_code: Represents the market or exchange (e.g., 'SH' for Shanghai, 'SZ' for Shenzhen, 'NYSE' for New York Stock Exchange)
-2.asset_code: The specific identifier for the asset (e.g., '510300' for an ETF in China, or 'AAPL' for Apple stock)
-3.full_code: A combination of market_code and asset_code (e.g., 'SH.510300' or 'NYSE.AAPL')
-4.asset_type: Specifies the type of asset (e.g., 'STOCK', 'ETF', 'BOND', 'FUTURE', 'REIT')
-5.asset_name: The full name of the asset
-
-ETF,创业板可以突破10%的限制和地域限制
-
+@File: fund_incr_minute.py
+@Description: 
 """
 import pandas as pd
 
 from seagull.utils import utils_database, utils_character, utils_log, utils_data, utils_thread
 
 
-def get_dwd_ohlc_fund_incr_daily():
+def get_dwd_ohlc_fund_incr_minute():
     # 清洗efinance的get_quote_history()接口数据
     with utils_database.engine_conn("POSTGRES") as conn:
-        fund_df = pd.read_sql('ods_ohlc_fund_incr_efinance_daily', con=conn.engine)
+        fund_df = pd.read_sql('ods_ohlc_fund_incr_efinance_minute', con=conn.engine)
         fund_info_df = pd.read_sql('dwd_info_fund_full', con=conn.engine)
     fund_info_df = fund_info_df[['market_code', 'full_code', 'asset_code']]
 
@@ -62,10 +33,11 @@ def get_dwd_ohlc_fund_incr_daily():
                                       '换手率': 'turn'
                                        })
 
-    fund_df['freq_code'] = 101
+    fund_df['freq_code'] = 5
     fund_df['adj_code'] = 0  # adj_code = {0: None, 1: "pre", 2: "post"}
     # primary_key主键不参与训练，用于关联对应数据. code_name因为是最新的中文名,ST不具有长期意义
     fund_df['time'] = pd.to_datetime(fund_df['date']).dt.strftime("%Y%m%d%H%M%S")
+    fund_df['date'] = fund_df['date'].str[:10]
     fund_df = pd.merge(fund_df, fund_info_df, on='asset_code')
 
     fund_df['primary_key'] = (fund_df['time'].astype(str) +
@@ -76,12 +48,11 @@ def get_dwd_ohlc_fund_incr_daily():
     fund_df = fund_df[['full_code', 'asset_code', 'market_code', 'code_name', 'date', 'time', 'open', 'high', 'low',
                        'close', 'volume', 'amount', 'amplitude', 'pct_chg', 'price_chg', 'turn', 'freq_code',
                        'adj_code', 'primary_key']]
-    
+
     utils_data.output_database_large(fund_df,
-                                     filename='dwd_ohlc_fund_incr_daily',
+                                     filename='dwd_ohlc_fund_incr_minute',
                                      if_exists='replace')
 
 
 if __name__ == '__main__':
-    get_dwd_ohlc_fund_incr_daily()
-
+    get_dwd_ohlc_fund_incr_minute()

@@ -72,7 +72,7 @@ if __name__ == '__main__':
         date_start_prev = trading_day_alignment.shift_day(date_start=date_start, date_num=25)
         
         raw_df = pipeline(date_start=date_start_prev, date_end=date_end)
-        df = raw_df[raw_df.date>=date_start]
+        df = raw_df[raw_df.date >= date_start]
         
         utils_data.output_database_large(df,
                                          filename=args.filename,

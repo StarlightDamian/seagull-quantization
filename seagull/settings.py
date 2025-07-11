@@ -15,7 +15,7 @@ import sys
 sys.path.insert(0, f"{PATH}/venv/Lib/site-packages")
 
 # frequency
-freq_code = {1: "1分钟",
+FREQ_CODE = {1: "1分钟",
              5: "5分钟",
              15: "15分钟",
              30: "30分钟",
@@ -25,7 +25,7 @@ freq_code = {1: "1分钟",
              103: "月"}
 
 # price adjustment
-adj_code = {0: None,  # unadjusted,不复权
+ADJ_CODE = {0: None,  # unadjusted,不复权
             1: "pre",  # forward adjustment,前复权
             2: "post",  # backward adjustment,后复权
             }

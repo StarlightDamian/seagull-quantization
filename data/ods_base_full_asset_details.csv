@@ -1,9 +1,10 @@
-country_region,country_region_cn,asset,board_type,price_limit_pct,remark
-China,中国,stock,主板,0.1,
-China,中国,stock,创业板,0.2,
-China,中国,stock,科创板,0.2,
-China,中国,stock,新三板,0.1,
-China,中国,stock,北交所,0.3,
-China,中国,stock,ST,0.05,
-China,中国,stock,ETF,0.1,
-China,中国,stock,指数,0.1,
+country_region,country_region_cn,asset,board_type,exchange,market_code,price_limit_pct,remark
+China,中国,stock,主板,SSE,sh,0.1,"代码前缀：60*, 68*（科创板）"
+China,中国,stock,主板,SZSE,sz,0.1,代码前缀：00*
+China,中国,stock,创业板,SZSE,sz,0.2,"代码前缀：30*, 31*"
+China,中国,stock,科创板,SSE,sh,0.2,"代码前缀：68*, 69*"
+China,中国,stock,新三板,NEEQ,sz,0.1,"代码前缀：43*, 83*"
+China,中国,stock,北交所,BSE,bj,0.3,北京证券交易所，代码前缀 87*
+China,中国,stock,ST,"SSE, SZSE","sh, sz",0.05,ST 标记股（代码中含 “ST”）
+China,中国,fund,ETF,"SSE, SZSE","sh, sz",0.1,上交所 ETF 前缀 510*；深交所 159*
+China,中国,index,指数,"SSE, SZSE","sh, sz",0.1,上证指数 000*；深证成指 399*

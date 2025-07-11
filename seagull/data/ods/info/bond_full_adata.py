@@ -3,8 +3,8 @@
 @Date: 2024/8/27 13:07
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: bond_snap_adata.py
-@Description: 获取所有A股市场的可转换债券代码信息	(ods/info/bond_snap_adata)
+@File: bond_full_adata.py
+@Description: 获取所有A股市场的可转换债券代码信息	(ods/info/bond_full_adata)
 @Update cycle: day
 https://github.com/1nchaos/adata/blob/ba93ab86af7256407db069668e84b54b5fd6dbd7/adata/bond/info/bond_code.py#L36
 # bond.info.all_convert_code()
@@ -66,14 +66,14 @@ class OdsInfoBondSnapAdata(BondCode):
 
     def pipeline(self):
         bond_df = self.__convert_code_ths()
-        utils_data.output_database(bond_df,
-                                   'ods_info_bond_snap_adata',
-                                   if_exists='replace')
+        utils_data.output_database_large(bond_df,
+                                         filename='ods_info_bond_full_adata',
+                                         if_exists='replace')
 
 
 if __name__ == '__main__':
-    ods_info_bond_snap_adata = OdsInfoBondSnapAdata()
-    ods_info_bond_snap_adata.pipeline()
+    ods_info_bond_full_adata = OdsInfoBondSnapAdata()
+    ods_info_bond_full_adata.pipeline()
 
 
 #  {'sub_date': '2017-03-17',

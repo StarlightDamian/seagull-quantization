@@ -6,6 +6,12 @@
 @File: stock_full_adata.py
 @Description: (ods/info/stock_full_adata)
 @Update cycle: day
+
+stock_code
+short_name
+exchange
+list_date,上市日期,部分退市的股票存在无法获取，属于正常情况
+insert_timestamp
 """
 import os
 

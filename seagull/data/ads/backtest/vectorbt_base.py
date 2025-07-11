@@ -432,6 +432,16 @@ class backtestVectorbt:
         fig.write_html("./html/portfolio_plot.html")
         
 
+def dwd_freq_full_portfolio_daily_backtest(self):
+    with utils_database.engine_conn("POSTGRES") as conn:
+        fund_df = pd.read_sql("dwd_freq_incr_portfolio_daily", con=conn.engine)
+        # fund_df = pd.read_sql("select * from dwd_freq_incr_portfolio_daily where date between '2019-01-01' and '2023-01-01'", con=conn.engine)
+    fund_df = fund_df[['date', 'full_code', 'close']]
+    fund_df['date'] = pd.to_datetime(fund_df['date'])
+    portfolio_daily_backtest_df = fund_df.pivot(index='date', columns='full_code', values='close')
+    utils_data.output_database(portfolio_daily_backtest_df, filename='dwd_freq_full_portfolio_daily_backtest',
+                               index=True)
+
 if __name__ == '__main__':
     # symbols=["ADA-USD"]
     symbols=["ADA-USD", "ETH-USD"]  # "BTC-USD", 'AAPL', 'MSFT', 'GOOG'

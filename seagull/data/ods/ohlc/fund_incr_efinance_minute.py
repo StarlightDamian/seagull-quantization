@@ -3,7 +3,7 @@
 @Date: 2025/7/8 7:57
 @Author: Damian
 @Email: zengyuwei1995@163.com
-@File: fund_incr_efinance.py
+@File: fund_incr_efinance_minute.py
 @Description:
      股票名称    股票代码                日期     开盘  ...    振幅   涨跌幅    涨跌额   换手率
 0     游戏ETF  159869  2025-05-23 09:35  1.109  ...  0.72 -0.36 -0.004  0.69
@@ -27,12 +27,15 @@ from seagull.utils import utils_time, utils_data, utils_thread, utils_database, 
 
 # ETF 代码（以中概互联网 ETF 为例）
 with utils_database.engine_conn("POSTGRES") as conn:
-    asset_code_list = pd.read_sql(
+    asset_code_df = pd.read_sql(
         "SELECT 基金代码 as asset_code FROM ods_info_fund_full_efinance where 基金类型 = 'etf'",
-        con=conn.engine
-    )['asset_code'].tolist()
+        con=conn.engine)
+    fund_df = pd.read_sql("select distinct 股票代码 as asset_code from ods_ohlc_fund_incr_efinance_minute", con=conn.engine)
+
+asset_code_list = asset_code_df[~(asset_code_df['asset_code'].isin(fund_df.asset_code))]['asset_code'].tolist()
+print(len(asset_code_list))
 fund_df_dict = ef.stock.get_quote_history(asset_code_list, klt=5, fqt=1, beg="19000101", end="20500101")
-fund_df = pd.concat({k: v for k, v in fund_df_dict.items()}).reset_index(drop=True)
+fund_df = pd.concat({asset_code: df for asset_code, df in fund_df_dict.items() if not df.empty}, ignore_index=True)
 fund_df['freq_code'] = 5  # 5分钟
 utils_data.output_database_large(fund_df,
                                  filename='ods_ohlc_fund_incr_efinance_minute',

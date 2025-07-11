@@ -51,4 +51,4 @@ if __name__ == '__main__':
     # grep -r --include="*.py" "portfolio_plot" E:/03_software_engineering/github/seagull-quantization
 
     # Windows
-    # findstr /s /i "query_stock_basic" D:\03_software_engineering\05_github\seagull\seagull\*.py
+    # findstr /s /i "finance_limit" D:\03_software_engineering\05_github\seagull\seagull\*.py
